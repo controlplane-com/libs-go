@@ -1,4 +1,4 @@
-# libs-go~~~~
+# libs-go
 
 Shared Go libraries for the ControlPlane platform. This module provides foundational utilities, abstractions, and integrations used across multiple services. These libraries are provided in the hope that they may be as useful to you as they have been to our engineering team
 
