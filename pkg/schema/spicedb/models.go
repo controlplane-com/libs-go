@@ -38,7 +38,7 @@ type SpicedbCluster struct {
 	Id           string             `json:"id,omitempty"`
 	Name         base.Name          `json:"name,omitempty"`
 	Kind         base.Kind          `json:"kind,omitempty"`
-	Version      float32            `json:"version"`
+	Version      *float32           `json:"version,omitempty"`
 	Description  string             `json:"description,omitempty"`
 	Tags         SpicedbClusterTags `json:"tags,omitempty"`
 	Created      string             `json:"created,omitempty"`

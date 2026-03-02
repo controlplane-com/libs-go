@@ -12,10 +12,10 @@ const (
 )
 
 type DnsConfigRecord struct {
-	Type  string  `json:"type,omitempty"`
-	Ttl   float32 `json:"ttl"`
-	Host  string  `json:"host,omitempty"`
-	Value string  `json:"value,omitempty"`
+	Type  string   `json:"type,omitempty"`
+	Ttl   *float32 `json:"ttl,omitempty"`
+	Host  string   `json:"host,omitempty"`
+	Value string   `json:"value,omitempty"`
 }
 
 type DomainTags map[string]any
@@ -23,7 +23,7 @@ type DomainTags map[string]any
 type Domain struct {
 	Id           string       `json:"id,omitempty"`
 	Kind         base.Kind    `json:"kind,omitempty"`
-	Version      float32      `json:"version"`
+	Version      *float32     `json:"version,omitempty"`
 	Description  string       `json:"description,omitempty"`
 	Tags         DomainTags   `json:"tags,omitempty"`
 	Created      string       `json:"created,omitempty"`
@@ -178,7 +178,7 @@ type ExternalPortTls struct {
 }
 
 type ExternalPort struct {
-	Number   float32              `json:"number"`
+	Number   *float32             `json:"number,omitempty"`
 	Protocol ExternalPortProtocol `json:"protocol,omitempty"`
 	Routes   []Route              `json:"routes,omitempty"`
 	Cors     ExternalPortCors     `json:"cors,omitempty"`
@@ -202,14 +202,20 @@ type RouteHeaders struct {
 	Request HeaderOperation `json:"request,omitempty"`
 }
 
+type RouteMirror struct {
+	WorkloadLink string  `json:"workloadLink"`
+	Percent      float32 `json:"percent"`
+}
+
 type Route struct {
-	ReplacePrefix string       `json:"replacePrefix,omitempty"`
-	Regex         string       `json:"regex,omitempty"`
-	Prefix        string       `json:"prefix,omitempty"`
-	WorkloadLink  string       `json:"workloadLink"`
-	Port          float32      `json:"port"`
-	HostPrefix    string       `json:"hostPrefix,omitempty"`
-	HostRegex     string       `json:"hostRegex,omitempty"`
-	Headers       RouteHeaders `json:"headers,omitempty"`
-	Replica       float32      `json:"replica"`
+	ReplacePrefix string        `json:"replacePrefix,omitempty"`
+	Regex         string        `json:"regex,omitempty"`
+	Prefix        string        `json:"prefix,omitempty"`
+	WorkloadLink  string        `json:"workloadLink"`
+	Port          *float32      `json:"port,omitempty"`
+	HostPrefix    string        `json:"hostPrefix,omitempty"`
+	HostRegex     string        `json:"hostRegex,omitempty"`
+	Headers       RouteHeaders  `json:"headers,omitempty"`
+	Replica       *float32      `json:"replica,omitempty"`
+	Mirror        []RouteMirror `json:"mirror,omitempty"`
 }

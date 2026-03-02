@@ -12,9 +12,9 @@ type AuthConfig struct {
 }
 
 type ObservabilityConfig struct {
-	LogsRetentionDays    float32  `json:"logsRetentionDays"`
-	MetricsRetentionDays float32  `json:"metricsRetentionDays"`
-	TracesRetentionDays  float32  `json:"tracesRetentionDays"`
+	LogsRetentionDays    *float32 `json:"logsRetentionDays,omitempty"`
+	MetricsRetentionDays *float32 `json:"metricsRetentionDays,omitempty"`
+	TracesRetentionDays  *float32 `json:"tracesRetentionDays,omitempty"`
 	DefaultAlertEmails   []string `json:"defaultAlertEmails,omitempty"`
 }
 
@@ -23,7 +23,7 @@ type OrgTags map[string]any
 type Org struct {
 	Id           string     `json:"id,omitempty"`
 	Kind         base.Kind  `json:"kind,omitempty"`
-	Version      float32    `json:"version"`
+	Version      *float32   `json:"version,omitempty"`
 	Description  string     `json:"description,omitempty"`
 	Tags         OrgTags    `json:"tags,omitempty"`
 	Created      string     `json:"created,omitempty"`
@@ -67,9 +67,9 @@ type OrgSpecExtraLogging struct {
 }
 
 type OrgSpecObservability struct {
-	LogsRetentionDays    float32  `json:"logsRetentionDays"`
-	MetricsRetentionDays float32  `json:"metricsRetentionDays"`
-	TracesRetentionDays  float32  `json:"tracesRetentionDays"`
+	LogsRetentionDays    *float32 `json:"logsRetentionDays,omitempty"`
+	MetricsRetentionDays *float32 `json:"metricsRetentionDays,omitempty"`
+	TracesRetentionDays  *float32 `json:"tracesRetentionDays,omitempty"`
 	DefaultAlertEmails   []string `json:"defaultAlertEmails,omitempty"`
 }
 
@@ -81,7 +81,7 @@ type OrgSpec struct {
 	Logging               OrgSpecLogging        `json:"logging,omitempty"`
 	ExtraLogging          []OrgSpecExtraLogging `json:"extraLogging,omitempty"`
 	Tracing               tracing.Tracing       `json:"tracing,omitempty"`
-	SessionTimeoutSeconds float32               `json:"sessionTimeoutSeconds"`
+	SessionTimeoutSeconds *float32              `json:"sessionTimeoutSeconds,omitempty"`
 	AuthConfig            AuthConfig            `json:"authConfig,omitempty"`
 	Observability         OrgSpecObservability  `json:"observability,omitempty"`
 	Security              OrgSpecSecurity       `json:"security,omitempty"`

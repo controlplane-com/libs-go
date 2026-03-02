@@ -72,6 +72,7 @@ const (
 	TermOpMatch     TermOp = "~"
 	TermOpExists    TermOp = "exists"
 	TermOpNotExists TermOp = "!exists"
+	TermOpContains  TermOp = "contains"
 )
 
 type Term struct {

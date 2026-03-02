@@ -15,7 +15,7 @@ type Gvc struct {
 	Id           string     `json:"id,omitempty"`
 	Name         base.Name  `json:"name,omitempty"`
 	Kind         base.Kind  `json:"kind,omitempty"`
-	Version      float32    `json:"version"`
+	Version      *float32   `json:"version,omitempty"`
 	Description  string     `json:"description,omitempty"`
 	Tags         GvcTags    `json:"tags,omitempty"`
 	Created      string     `json:"created,omitempty"`
@@ -31,24 +31,24 @@ type GvcConfigClusters map[string]GvcConfigClusterEntry
 type GvcConfigPreferredClusters map[string]GvcConfigPreferredClusterEntry
 
 type GvcConfigProxy struct {
-	MinCpu float32 `json:"minCpu"`
+	MinCpu *float32 `json:"minCpu,omitempty"`
 }
 
 type GvcConfigLoadBalancerReadinessProbe struct {
-	TimeoutSeconds   float32 `json:"timeoutSeconds"`
-	FailureThreshold float32 `json:"failureThreshold"`
-	SuccessThreshold float32 `json:"successThreshold"`
+	TimeoutSeconds   *float32 `json:"timeoutSeconds,omitempty"`
+	FailureThreshold *float32 `json:"failureThreshold,omitempty"`
+	SuccessThreshold *float32 `json:"successThreshold,omitempty"`
 }
 
 type GvcConfigLoadBalancerLivenessProbe struct {
-	TimeoutSeconds   float32 `json:"timeoutSeconds"`
-	FailureThreshold float32 `json:"failureThreshold"`
-	SuccessThreshold float32 `json:"successThreshold"`
+	TimeoutSeconds   *float32 `json:"timeoutSeconds,omitempty"`
+	FailureThreshold *float32 `json:"failureThreshold,omitempty"`
+	SuccessThreshold *float32 `json:"successThreshold,omitempty"`
 }
 
 type GvcConfigLoadBalancer struct {
-	MinScale       float32                              `json:"minScale"`
-	MaxScale       float32                              `json:"maxScale"`
+	MinScale       *float32                             `json:"minScale,omitempty"`
+	MaxScale       *float32                             `json:"maxScale,omitempty"`
 	MinCpu         string                               `json:"minCpu,omitempty"`
 	MinMemory      string                               `json:"minMemory,omitempty"`
 	ReadinessProbe *GvcConfigLoadBalancerReadinessProbe `json:"readinessProbe,omitempty"`
@@ -56,7 +56,7 @@ type GvcConfigLoadBalancer struct {
 }
 
 type GvcConfigCapacityAi struct {
-	MemToCpuRatio float32 `json:"memToCpuRatio"`
+	MemToCpuRatio *float32 `json:"memToCpuRatio,omitempty"`
 }
 
 type GvcConfig struct {
@@ -64,7 +64,7 @@ type GvcConfig struct {
 	PreferredClusters GvcConfigPreferredClusters `json:"preferredClusters,omitempty"`
 	Proxy             *GvcConfigProxy            `json:"proxy,omitempty"`
 	LoadBalancer      *GvcConfigLoadBalancer     `json:"loadBalancer,omitempty"`
-	ThinProvision     float32                    `json:"thinProvision"`
+	ThinProvision     *float32                   `json:"thinProvision,omitempty"`
 	LargeDiskSize     workload.Memory            `json:"largeDiskSize,omitempty"`
 	CapacityAI        *GvcConfigCapacityAi       `json:"capacityAI,omitempty"`
 }
@@ -79,20 +79,20 @@ type GvcConfigPreferredClusterEntry struct {
 }
 
 type GvcLoadBalancerConfigReadinessProbe struct {
-	TimeoutSeconds   float32 `json:"timeoutSeconds"`
-	FailureThreshold float32 `json:"failureThreshold"`
-	SuccessThreshold float32 `json:"successThreshold"`
+	TimeoutSeconds   *float32 `json:"timeoutSeconds,omitempty"`
+	FailureThreshold *float32 `json:"failureThreshold,omitempty"`
+	SuccessThreshold *float32 `json:"successThreshold,omitempty"`
 }
 
 type GvcLoadBalancerConfigLivenessProbe struct {
-	TimeoutSeconds   float32 `json:"timeoutSeconds"`
-	FailureThreshold float32 `json:"failureThreshold"`
-	SuccessThreshold float32 `json:"successThreshold"`
+	TimeoutSeconds   *float32 `json:"timeoutSeconds,omitempty"`
+	FailureThreshold *float32 `json:"failureThreshold,omitempty"`
+	SuccessThreshold *float32 `json:"successThreshold,omitempty"`
 }
 
 type GvcLoadBalancerConfig struct {
-	MinScale       float32                              `json:"minScale"`
-	MaxScale       float32                              `json:"maxScale"`
+	MinScale       *float32                             `json:"minScale,omitempty"`
+	MaxScale       *float32                             `json:"maxScale,omitempty"`
 	MinCpu         string                               `json:"minCpu,omitempty"`
 	MinMemory      string                               `json:"minMemory,omitempty"`
 	ReadinessProbe *GvcLoadBalancerConfigReadinessProbe `json:"readinessProbe,omitempty"`
@@ -159,7 +159,7 @@ type GvcSpecLoadBalancerRedirect struct {
 type GvcSpecLoadBalancer struct {
 	Dedicated      bool                          `json:"dedicated,omitempty"`
 	MultiZone      *GvcSpecLoadBalancerMultiZone `json:"multiZone,omitempty"`
-	TrustedProxies float32                       `json:"trustedProxies"`
+	TrustedProxies *float32                      `json:"trustedProxies,omitempty"`
 	Redirect       *GvcSpecLoadBalancerRedirect  `json:"redirect,omitempty"`
 	IpSet          string                        `json:"ipSet,omitempty"`
 }

@@ -60,25 +60,25 @@ type ByokAddonConfigConfigActuator struct {
 }
 
 type ByokAddonConfigConfigMiddlebox struct {
-	Enabled            bool    `json:"enabled,omitempty"`
-	BandwidthAlertMbps float32 `json:"bandwidthAlertMbps"`
-	Port               float32 `json:"port"`
-	Ip                 string  `json:"ip,omitempty"`
+	Enabled            bool     `json:"enabled,omitempty"`
+	BandwidthAlertMbps *float32 `json:"bandwidthAlertMbps,omitempty"`
+	Port               *float32 `json:"port,omitempty"`
+	Ip                 string   `json:"ip,omitempty"`
 }
 
 type ByokAddonConfigConfigCommonPdb struct {
-	MaxUnavailable float32 `json:"maxUnavailable"`
+	MaxUnavailable *float32 `json:"maxUnavailable,omitempty"`
 }
 
 type ByokAddonConfigConfigCommon struct {
-	DeploymentReplicas float32                        `json:"deploymentReplicas"`
+	DeploymentReplicas *float32                       `json:"deploymentReplicas,omitempty"`
 	Pdb                ByokAddonConfigConfigCommonPdb `json:"pdb,omitempty"`
 }
 
 type ByokAddonConfigConfigLonghorn struct {
-	NumberOfReplicas float32 `json:"numberOfReplicas"`
-	Replicas         float32 `json:"replicas"`
-	IsDefault        bool    `json:"isDefault,omitempty"`
+	NumberOfReplicas *float32 `json:"numberOfReplicas,omitempty"`
+	Replicas         *float32 `json:"replicas,omitempty"`
+	IsDefault        bool     `json:"isDefault,omitempty"`
 }
 
 type ByokAddonConfigConfigByok struct {
@@ -88,20 +88,20 @@ type ByokAddonConfigConfigByok struct {
 type ByokAddonConfigConfigIngress struct {
 	Cpu           workload.Cpu    `json:"cpu,omitempty"`
 	Memory        workload.Memory `json:"memory,omitempty"`
-	TargetPercent float32         `json:"targetPercent"`
+	TargetPercent *float32        `json:"targetPercent,omitempty"`
 }
 
 type ByokAddonConfigConfigIstioIstiod struct {
-	Replicas  float32         `json:"replicas"`
+	Replicas  *float32        `json:"replicas,omitempty"`
 	MinCpu    workload.Cpu    `json:"minCpu,omitempty"`
 	MaxCpu    workload.Cpu    `json:"maxCpu,omitempty"`
 	MinMemory workload.Memory `json:"minMemory,omitempty"`
 	MaxMemory workload.Memory `json:"maxMemory,omitempty"`
-	Pdb       float32         `json:"pdb"`
+	Pdb       *float32        `json:"pdb,omitempty"`
 }
 
 type ByokAddonConfigConfigIstioIngressgateway struct {
-	Replicas  float32         `json:"replicas"`
+	Replicas  *float32        `json:"replicas,omitempty"`
 	MaxCpu    workload.Cpu    `json:"maxCpu,omitempty"`
 	MaxMemory workload.Memory `json:"maxMemory,omitempty"`
 }
@@ -123,7 +123,7 @@ type ByokAddonConfigConfigLogSplitter struct {
 	MinMemory     workload.Memory `json:"minMemory,omitempty"`
 	MaxMemory     workload.Memory `json:"maxMemory,omitempty"`
 	MemBufferSize string          `json:"memBufferSize,omitempty"`
-	PerPodRate    float32         `json:"perPodRate"`
+	PerPodRate    *float32        `json:"perPodRate,omitempty"`
 }
 
 type ByokAddonConfigConfigMonitoringKubeStateMetrics struct {
@@ -216,7 +216,7 @@ type ByokAddonConfigConfigRedisHa struct {
 	MaxCpu    workload.Cpu    `json:"maxCpu,omitempty"`
 	MinMemory workload.Memory `json:"minMemory,omitempty"`
 	MaxMemory workload.Memory `json:"maxMemory,omitempty"`
-	Storage   float32         `json:"storage"`
+	Storage   *float32        `json:"storage,omitempty"`
 }
 
 type ByokAddonConfigConfigRedisSentinel struct {
@@ -224,7 +224,7 @@ type ByokAddonConfigConfigRedisSentinel struct {
 	MaxCpu    workload.Cpu    `json:"maxCpu,omitempty"`
 	MinMemory workload.Memory `json:"minMemory,omitempty"`
 	MaxMemory workload.Memory `json:"maxMemory,omitempty"`
-	Storage   float32         `json:"storage"`
+	Storage   *float32        `json:"storage,omitempty"`
 }
 
 type ByokAddonConfigConfigTempoAgent struct {
@@ -289,7 +289,7 @@ type LogsAddonStatus struct {
 }
 
 type MetricsAddonConfigScrapeAnnotated struct {
-	IntervalSeconds   float32           `json:"intervalSeconds"`
+	IntervalSeconds   *float32          `json:"intervalSeconds,omitempty"`
 	IncludeNamespaces RegularExpression `json:"includeNamespaces,omitempty"`
 	ExcludeNamespaces RegularExpression `json:"excludeNamespaces,omitempty"`
 	RetainLabels      RegularExpression `json:"retainLabels,omitempty"`

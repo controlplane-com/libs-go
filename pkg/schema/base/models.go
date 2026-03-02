@@ -3,11 +3,11 @@
 package base
 
 type ApiError struct {
-	Status  float32 `json:"status"`
-	Message string  `json:"message,omitempty"`
-	Code    string  `json:"code,omitempty"`
-	Details any     `json:"details,omitempty"`
-	Id      string  `json:"id,omitempty"`
+	Status  *float32 `json:"status,omitempty"`
+	Message string   `json:"message,omitempty"`
+	Code    string   `json:"code,omitempty"`
+	Details any      `json:"details,omitempty"`
+	Id      string   `json:"id,omitempty"`
 }
 
 type BaseTags map[string]any
@@ -16,7 +16,7 @@ type Base struct {
 	Id           string   `json:"id,omitempty"`
 	Name         Name     `json:"name,omitempty"`
 	Kind         Kind     `json:"kind,omitempty"`
-	Version      float32  `json:"version"`
+	Version      *float32 `json:"version,omitempty"`
 	Description  string   `json:"description,omitempty"`
 	Tags         BaseTags `json:"tags,omitempty"`
 	Created      string   `json:"created,omitempty"`

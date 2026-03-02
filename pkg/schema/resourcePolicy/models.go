@@ -12,7 +12,7 @@ type ResourcePolicyBindings struct {
 type ResourcePolicy struct {
 	Id           string                   `json:"id,omitempty"`
 	Kind         base.Kind                `json:"kind,omitempty"`
-	Version      float32                  `json:"version"`
+	Version      *float32                 `json:"version,omitempty"`
 	Created      string                   `json:"created,omitempty"`
 	LastModified string                   `json:"lastModified,omitempty"`
 	Links        base.Links               `json:"links,omitempty"`

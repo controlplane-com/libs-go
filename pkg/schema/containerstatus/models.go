@@ -3,10 +3,10 @@
 package containerstatus
 
 type ContainerStatusRestarts struct {
-	LastRestartTime string  `json:"lastRestartTime,omitempty"`
-	ExitCode        float32 `json:"exitCode"`
-	Reason          string  `json:"reason,omitempty"`
-	Count           float32 `json:"count"`
+	LastRestartTime string   `json:"lastRestartTime,omitempty"`
+	ExitCode        *float32 `json:"exitCode,omitempty"`
+	Reason          string   `json:"reason,omitempty"`
+	Count           *float32 `json:"count,omitempty"`
 }
 
 type ContainerStatus struct {
@@ -19,8 +19,8 @@ type ContainerStatus struct {
 }
 
 type DeploymentResources struct {
-	Replicas      float32 `json:"replicas"`
-	ReplicasReady float32 `json:"replicasReady"`
-	Cpu           float32 `json:"cpu"`
-	Memory        float32 `json:"memory"`
+	Replicas      *float32 `json:"replicas,omitempty"`
+	ReplicasReady *float32 `json:"replicasReady,omitempty"`
+	Cpu           *float32 `json:"cpu,omitempty"`
+	Memory        *float32 `json:"memory,omitempty"`
 }

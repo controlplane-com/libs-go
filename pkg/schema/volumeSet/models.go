@@ -71,9 +71,9 @@ type PersistentVolumeStatus struct {
 	ResourceName        string                           `json:"resourceName,omitempty"`
 	Index               float32                          `json:"index"`
 	CurrentSize         float32                          `json:"currentSize"`
-	CurrentBytesUsed    float32                          `json:"currentBytesUsed"`
-	Iops                float32                          `json:"iops"`
-	Throughput          float32                          `json:"throughput"`
+	CurrentBytesUsed    *float32                         `json:"currentBytesUsed,omitempty"`
+	Iops                *float32                         `json:"iops,omitempty"`
+	Throughput          *float32                         `json:"throughput,omitempty"`
 	Driver              string                           `json:"driver"`
 	VolumeSnapshots     []VolumeSnapshot                 `json:"volumeSnapshots,omitempty"`
 	Attributes          PersistentVolumeStatusAttributes `json:"attributes,omitempty"`
@@ -92,7 +92,7 @@ type VolumeSet struct {
 	Id           string          `json:"id,omitempty"`
 	Name         base.Name       `json:"name,omitempty"`
 	Kind         base.Kind       `json:"kind,omitempty"`
-	Version      float32         `json:"version"`
+	Version      *float32        `json:"version,omitempty"`
 	Description  string          `json:"description,omitempty"`
 	Tags         VolumeSetTags   `json:"tags,omitempty"`
 	Created      string          `json:"created,omitempty"`
@@ -110,18 +110,18 @@ type VolumeSetSpecCustomEncryption struct {
 }
 
 type VolumeSetSpecAutoscalingPredictive struct {
-	Enabled                bool    `json:"enabled,omitempty"`
-	LookbackHours          float32 `json:"lookbackHours"`
-	ProjectionHours        float32 `json:"projectionHours"`
-	MinDataPoints          float32 `json:"minDataPoints"`
-	MinGrowthRateGBPerHour float32 `json:"minGrowthRateGBPerHour"`
-	ScalingFactor          float32 `json:"scalingFactor"`
+	Enabled                bool     `json:"enabled,omitempty"`
+	LookbackHours          *float32 `json:"lookbackHours,omitempty"`
+	ProjectionHours        *float32 `json:"projectionHours,omitempty"`
+	MinDataPoints          *float32 `json:"minDataPoints,omitempty"`
+	MinGrowthRateGBPerHour *float32 `json:"minGrowthRateGBPerHour,omitempty"`
+	ScalingFactor          *float32 `json:"scalingFactor,omitempty"`
 }
 
 type VolumeSetSpecAutoscaling struct {
-	MaxCapacity       float32                             `json:"maxCapacity"`
-	MinFreePercentage float32                             `json:"minFreePercentage"`
-	ScalingFactor     float32                             `json:"scalingFactor"`
+	MaxCapacity       *float32                            `json:"maxCapacity,omitempty"`
+	MinFreePercentage *float32                            `json:"minFreePercentage,omitempty"`
+	ScalingFactor     *float32                            `json:"scalingFactor,omitempty"`
 	Predictive        *VolumeSetSpecAutoscalingPredictive `json:"predictive,omitempty"`
 }
 
@@ -158,7 +158,7 @@ type VolumeSetStatus struct {
 type VolumeSetStatusLocation struct {
 	Name               string                   `json:"name"`
 	Volumes            []PersistentVolumeStatus `json:"volumes,omitempty"`
-	DesiredVolumeCount float32                  `json:"desiredVolumeCount"`
+	DesiredVolumeCount *float32                 `json:"desiredVolumeCount,omitempty"`
 	ClusterId          string                   `json:"clusterId,omitempty"`
 }
 
@@ -169,6 +169,6 @@ type VolumeSnapshot struct {
 	Id      string               `json:"id,omitempty"`
 	Created string               `json:"created"`
 	Expires string               `json:"expires,omitempty"`
-	Size    float32              `json:"size"`
+	Size    *float32             `json:"size,omitempty"`
 	Tags    []VolumeSnapshotTags `json:"tags,omitempty"`
 }

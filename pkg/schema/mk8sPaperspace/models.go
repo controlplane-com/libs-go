@@ -71,7 +71,7 @@ type PaperspacePool struct {
 	MinSize      float32                    `json:"minSize"`
 	MaxSize      float32                    `json:"maxSize"`
 	PublicIpType PaperspacePoolPublicIpType `json:"publicIpType,omitempty"`
-	BootDiskSize float32                    `json:"bootDiskSize"`
+	BootDiskSize *float32                   `json:"bootDiskSize,omitempty"`
 	MachineType  PaperspacePoolMachineType  `json:"machineType,omitempty"`
 }
 

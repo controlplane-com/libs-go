@@ -89,12 +89,12 @@ type DnsResolverOptions struct {
 
 type DoubleMatcher struct {
 	Range DoubleRange `json:"range,omitempty"`
-	Exact float32     `json:"exact"`
+	Exact *float32    `json:"exact,omitempty"`
 }
 
 type DoubleRange struct {
-	Start float32 `json:"start"`
-	End   float32 `json:"end"`
+	Start *float32 `json:"start,omitempty"`
+	End   *float32 `json:"end,omitempty"`
 }
 
 type Duration any /* TODO: [object Object]*/
@@ -122,13 +122,13 @@ type ExtraSourceAddress struct {
 }
 
 type FractionalPercent struct {
-	Numerator   float32 `json:"numerator"`
-	Denominator float32 `json:"denominator"`
+	Numerator   *float32 `json:"numerator,omitempty"`
+	Denominator *float32 `json:"denominator,omitempty"`
 }
 
 type GoogleCallCredentialsServiceAccountJwtAccess struct {
-	Json_key               string  `json:"json_key,omitempty"`
-	Token_lifetime_seconds float32 `json:"token_lifetime_seconds"`
+	Json_key               string   `json:"json_key,omitempty"`
+	Token_lifetime_seconds *float32 `json:"token_lifetime_seconds,omitempty"`
 }
 
 type GoogleCallCredentialsGoogleIam struct {
@@ -356,8 +356,8 @@ type HttpStatus struct {
 }
 
 type IntRange struct {
-	Start float32 `json:"start"`
-	End   float32 `json:"end"`
+	Start *float32 `json:"start,omitempty"`
+	End   *float32 `json:"end,omitempty"`
 }
 
 type KeepaliveSettings struct {
@@ -406,8 +406,8 @@ type PathConfigSource struct {
 type Percent float32
 
 type Pipe struct {
-	Path string  `json:"path"`
-	Mode float32 `json:"mode"`
+	Path string   `json:"path"`
+	Mode *float32 `json:"mode,omitempty"`
 }
 
 type Port float32
@@ -421,12 +421,12 @@ type QueryParameterMatcher struct {
 }
 
 type RateLimitSettings struct {
-	Max_tokens UInt32  `json:"max_tokens,omitempty"`
-	Fill_rate  float32 `json:"fill_rate"`
+	Max_tokens UInt32   `json:"max_tokens,omitempty"`
+	Fill_rate  *float32 `json:"fill_rate,omitempty"`
 }
 
 type RegexMatcherGoogleRe2 struct {
-	Max_program_size float32 `json:"max_program_size"`
+	Max_program_size *float32 `json:"max_program_size,omitempty"`
 }
 
 type RegexMatcher struct {
@@ -451,7 +451,7 @@ const (
 
 type RetryPolicy struct {
 	Retry_back_off TimeInterval `json:"retry_back_off,omitempty"`
-	Num_retries    float32      `json:"num_retries"`
+	Num_retries    *float32     `json:"num_retries,omitempty"`
 }
 
 type RouteMatchGrpc struct {
@@ -492,8 +492,8 @@ const (
 )
 
 type RuntimeDouble struct {
-	Default_value float32 `json:"default_value"`
-	Runtime_key   string  `json:"runtime_key"`
+	Default_value *float32 `json:"default_value,omitempty"`
+	Runtime_key   string   `json:"runtime_key"`
 }
 
 type RuntimeFeatureFlag struct {
@@ -516,7 +516,7 @@ const (
 type SocketAddress struct {
 	Protocol      SocketAddressProtocol `json:"protocol,omitempty"`
 	Address       string                `json:"address"`
-	Port_value    float32               `json:"port_value"`
+	Port_value    *float32              `json:"port_value,omitempty"`
 	Named_port    string                `json:"named_port,omitempty"`
 	Resolver_name any                   `json:"resolver_name,omitempty"`
 	Ipv4_compat   bool                  `json:"ipv4_compat,omitempty"`
@@ -531,10 +531,10 @@ const (
 )
 
 type SocketOption struct {
-	Description string  `json:"description,omitempty"`
-	Level       float32 `json:"level"`
-	Name        float32 `json:"name"`
-	Int_value   float32 `json:"int_value"`
+	Description string   `json:"description,omitempty"`
+	Level       *float32 `json:"level,omitempty"`
+	Name        *float32 `json:"name,omitempty"`
+	Int_value   *float32 `json:"int_value,omitempty"`
 	Buf_value   any/* TODO: [object Object]*/ `json:"buf_value,omitempty"`
 	State       SocketOptionState `json:"state,omitempty"`
 }

@@ -2,14 +2,24 @@
 
 package workload
 
-import "github.com/controlplane-com/libs-go/pkg/schema/base"
 import "github.com/controlplane-com/libs-go/pkg/schema/env"
+import "github.com/controlplane-com/libs-go/pkg/schema/base"
 import "github.com/controlplane-com/libs-go/pkg/schema/volumeSpec"
 import "github.com/controlplane-com/libs-go/pkg/schema/workloadOptions"
 import "github.com/controlplane-com/libs-go/pkg/schema/envoyAccessLog"
 import "github.com/controlplane-com/libs-go/pkg/schema/envoyCluster"
 import "github.com/controlplane-com/libs-go/pkg/schema/envoyExcExtAuth"
 import "github.com/controlplane-com/libs-go/pkg/schema/envoyHttp"
+
+type ContainerOverride struct {
+	Name    string       `json:"name"`
+	Env     []env.EnvVar `json:"env,omitempty"`
+	Command string       `json:"command,omitempty"`
+	Args    []string     `json:"args,omitempty"`
+	Memory  string       `json:"memory,omitempty"`
+	Cpu     string       `json:"cpu,omitempty"`
+	Image   string       `json:"image,omitempty"`
+}
 
 type ContainerSpecMetrics struct {
 	Port        float32      `json:"port"`
@@ -36,11 +46,11 @@ type ContainerSpecReadinessProbeExec struct {
 }
 
 type ContainerSpecReadinessProbeGrpc struct {
-	Port float32 `json:"port"`
+	Port *float32 `json:"port,omitempty"`
 }
 
 type ContainerSpecReadinessProbeTcpSocket struct {
-	Port float32 `json:"port"`
+	Port *float32 `json:"port,omitempty"`
 }
 
 type ContainerSpecReadinessProbeHttpGetHttpHeaders struct {
@@ -57,7 +67,7 @@ const (
 
 type ContainerSpecReadinessProbeHttpGet struct {
 	Path        string                                          `json:"path,omitempty"`
-	Port        float32                                         `json:"port"`
+	Port        *float32                                        `json:"port,omitempty"`
 	HttpHeaders []ContainerSpecReadinessProbeHttpGetHttpHeaders `json:"httpHeaders,omitempty"`
 	Scheme      ContainerSpecReadinessProbeHttpGetScheme        `json:"scheme,omitempty"`
 }
@@ -67,11 +77,11 @@ type ContainerSpecReadinessProbe struct {
 	Grpc                *ContainerSpecReadinessProbeGrpc      `json:"grpc,omitempty"`
 	TcpSocket           *ContainerSpecReadinessProbeTcpSocket `json:"tcpSocket,omitempty"`
 	HttpGet             *ContainerSpecReadinessProbeHttpGet   `json:"httpGet,omitempty"`
-	InitialDelaySeconds float32                               `json:"initialDelaySeconds"`
-	PeriodSeconds       float32                               `json:"periodSeconds"`
-	TimeoutSeconds      float32                               `json:"timeoutSeconds"`
-	SuccessThreshold    float32                               `json:"successThreshold"`
-	FailureThreshold    float32                               `json:"failureThreshold"`
+	InitialDelaySeconds *float32                              `json:"initialDelaySeconds,omitempty"`
+	PeriodSeconds       *float32                              `json:"periodSeconds,omitempty"`
+	TimeoutSeconds      *float32                              `json:"timeoutSeconds,omitempty"`
+	SuccessThreshold    *float32                              `json:"successThreshold,omitempty"`
+	FailureThreshold    *float32                              `json:"failureThreshold,omitempty"`
 }
 
 type ContainerSpecLivenessProbeExec struct {
@@ -79,11 +89,11 @@ type ContainerSpecLivenessProbeExec struct {
 }
 
 type ContainerSpecLivenessProbeGrpc struct {
-	Port float32 `json:"port"`
+	Port *float32 `json:"port,omitempty"`
 }
 
 type ContainerSpecLivenessProbeTcpSocket struct {
-	Port float32 `json:"port"`
+	Port *float32 `json:"port,omitempty"`
 }
 
 type ContainerSpecLivenessProbeHttpGetHttpHeaders struct {
@@ -100,7 +110,7 @@ const (
 
 type ContainerSpecLivenessProbeHttpGet struct {
 	Path        string                                         `json:"path,omitempty"`
-	Port        float32                                        `json:"port"`
+	Port        *float32                                       `json:"port,omitempty"`
 	HttpHeaders []ContainerSpecLivenessProbeHttpGetHttpHeaders `json:"httpHeaders,omitempty"`
 	Scheme      ContainerSpecLivenessProbeHttpGetScheme        `json:"scheme,omitempty"`
 }
@@ -110,22 +120,22 @@ type ContainerSpecLivenessProbe struct {
 	Grpc                *ContainerSpecLivenessProbeGrpc      `json:"grpc,omitempty"`
 	TcpSocket           *ContainerSpecLivenessProbeTcpSocket `json:"tcpSocket,omitempty"`
 	HttpGet             *ContainerSpecLivenessProbeHttpGet   `json:"httpGet,omitempty"`
-	InitialDelaySeconds float32                              `json:"initialDelaySeconds"`
-	PeriodSeconds       float32                              `json:"periodSeconds"`
-	TimeoutSeconds      float32                              `json:"timeoutSeconds"`
-	SuccessThreshold    float32                              `json:"successThreshold"`
-	FailureThreshold    float32                              `json:"failureThreshold"`
+	InitialDelaySeconds *float32                             `json:"initialDelaySeconds,omitempty"`
+	PeriodSeconds       *float32                             `json:"periodSeconds,omitempty"`
+	TimeoutSeconds      *float32                             `json:"timeoutSeconds,omitempty"`
+	SuccessThreshold    *float32                             `json:"successThreshold,omitempty"`
+	FailureThreshold    *float32                             `json:"failureThreshold,omitempty"`
 }
 
 type ContainerSpecGpuNvidia struct {
-	Model    any     `json:"model,omitempty"`
-	Quantity float32 `json:"quantity"`
+	Model    any      `json:"model,omitempty"`
+	Quantity *float32 `json:"quantity,omitempty"`
 }
 
 type ContainerSpecGpuCustom struct {
-	Resource     string  `json:"resource"`
-	RuntimeClass string  `json:"runtimeClass,omitempty"`
-	Quantity     float32 `json:"quantity"`
+	Resource     string   `json:"resource"`
+	RuntimeClass string   `json:"runtimeClass,omitempty"`
+	Quantity     *float32 `json:"quantity,omitempty"`
 }
 
 type ContainerSpecGpu struct {
@@ -231,14 +241,14 @@ type FirewallSpec struct {
 }
 
 type GpuResourceNvidia struct {
-	Model    any     `json:"model,omitempty"`
-	Quantity float32 `json:"quantity"`
+	Model    any      `json:"model,omitempty"`
+	Quantity *float32 `json:"quantity,omitempty"`
 }
 
 type GpuResourceCustom struct {
-	Resource     string  `json:"resource"`
-	RuntimeClass string  `json:"runtimeClass,omitempty"`
-	Quantity     float32 `json:"quantity"`
+	Resource     string   `json:"resource"`
+	RuntimeClass string   `json:"runtimeClass,omitempty"`
+	Quantity     *float32 `json:"quantity,omitempty"`
 }
 
 type GpuResource struct {
@@ -257,11 +267,11 @@ type HealthCheckSpecExec struct {
 }
 
 type HealthCheckSpecGrpc struct {
-	Port float32 `json:"port"`
+	Port *float32 `json:"port,omitempty"`
 }
 
 type HealthCheckSpecTcpSocket struct {
-	Port float32 `json:"port"`
+	Port *float32 `json:"port,omitempty"`
 }
 
 type HealthCheckSpecHttpGetHttpHeaders struct {
@@ -278,7 +288,7 @@ const (
 
 type HealthCheckSpecHttpGet struct {
 	Path        string                              `json:"path,omitempty"`
-	Port        float32                             `json:"port"`
+	Port        *float32                            `json:"port,omitempty"`
 	HttpHeaders []HealthCheckSpecHttpGetHttpHeaders `json:"httpHeaders,omitempty"`
 	Scheme      HealthCheckSpecHttpGetScheme        `json:"scheme,omitempty"`
 }
@@ -288,11 +298,11 @@ type HealthCheckSpec struct {
 	Grpc                *HealthCheckSpecGrpc      `json:"grpc,omitempty"`
 	TcpSocket           *HealthCheckSpecTcpSocket `json:"tcpSocket,omitempty"`
 	HttpGet             *HealthCheckSpecHttpGet   `json:"httpGet,omitempty"`
-	InitialDelaySeconds float32                   `json:"initialDelaySeconds"`
-	PeriodSeconds       float32                   `json:"periodSeconds"`
-	TimeoutSeconds      float32                   `json:"timeoutSeconds"`
-	SuccessThreshold    float32                   `json:"successThreshold"`
-	FailureThreshold    float32                   `json:"failureThreshold"`
+	InitialDelaySeconds *float32                  `json:"initialDelaySeconds,omitempty"`
+	PeriodSeconds       *float32                  `json:"periodSeconds,omitempty"`
+	TimeoutSeconds      *float32                  `json:"timeoutSeconds,omitempty"`
+	SuccessThreshold    *float32                  `json:"successThreshold,omitempty"`
+	FailureThreshold    *float32                  `json:"failureThreshold,omitempty"`
 }
 
 type HealthCheckStatus struct {
@@ -300,8 +310,8 @@ type HealthCheckStatus struct {
 	Success     bool     `json:"success,omitempty"`
 	Code        *float32 `json:"code,omitempty"`
 	Message     string   `json:"message,omitempty"`
-	Failures    float32  `json:"failures"`
-	Successes   float32  `json:"successes"`
+	Failures    *float32 `json:"failures,omitempty"`
+	Successes   *float32 `json:"successes,omitempty"`
 	LastChecked string   `json:"lastChecked,omitempty"`
 }
 
@@ -321,7 +331,8 @@ const (
 )
 
 type JobSpec struct {
-	Schedule              ScheduleType             `json:"schedule"`
+	Schedule              string                   `json:"schedule,omitempty"`
+	Schedules             []ScheduleEntry          `json:"schedules,omitempty"`
 	ConcurrencyPolicy     JobSpecConcurrencyPolicy `json:"concurrencyPolicy,omitempty"`
 	HistoryLimit          *float32                 `json:"historyLimit,omitempty"`
 	RestartPolicy         JobSpecRestartPolicy     `json:"restartPolicy,omitempty"`
@@ -349,7 +360,7 @@ type LoadBalancerPort struct {
 	ExternalPort  float32                  `json:"externalPort"`
 	Protocol      LoadBalancerPortProtocol `json:"protocol,omitempty"`
 	Scheme        LoadBalancerPortScheme   `json:"scheme,omitempty"`
-	ContainerPort float32                  `json:"containerPort"`
+	ContainerPort *float32                 `json:"containerPort,omitempty"`
 }
 
 type LoadBalancerSpecDirect struct {
@@ -386,7 +397,7 @@ type Memory string
 type PodZoneMap map[string]string
 
 type RequestRetryPolicy struct {
-	Attempts float32  `json:"attempts"`
+	Attempts *float32 `json:"attempts,omitempty"`
 	RetryOn  []string `json:"retryOn,omitempty"`
 }
 
@@ -420,11 +431,11 @@ const (
 )
 
 type RolloutOptions struct {
-	MinReadySeconds               float32                     `json:"minReadySeconds"`
+	MinReadySeconds               *float32                    `json:"minReadySeconds,omitempty"`
 	MaxUnavailableReplicas        string                      `json:"maxUnavailableReplicas,omitempty"`
 	MaxSurgeReplicas              string                      `json:"maxSurgeReplicas,omitempty"`
 	ScalingPolicy                 RolloutOptionsScalingPolicy `json:"scalingPolicy,omitempty"`
-	TerminationGracePeriodSeconds float32                     `json:"terminationGracePeriodSeconds"`
+	TerminationGracePeriodSeconds *float32                    `json:"terminationGracePeriodSeconds,omitempty"`
 }
 
 type RolloutOptionsStatefulScalingPolicy string
@@ -435,11 +446,17 @@ const (
 )
 
 type RolloutOptionsStateful struct {
-	MinReadySeconds               float32                             `json:"minReadySeconds"`
+	MinReadySeconds               *float32                            `json:"minReadySeconds,omitempty"`
 	MaxSurgeReplicas              string                              `json:"maxSurgeReplicas,omitempty"`
 	ScalingPolicy                 RolloutOptionsStatefulScalingPolicy `json:"scalingPolicy,omitempty"`
-	TerminationGracePeriodSeconds float32                             `json:"terminationGracePeriodSeconds"`
+	TerminationGracePeriodSeconds *float32                            `json:"terminationGracePeriodSeconds,omitempty"`
 	MaxUnavailableReplicas        string                              `json:"maxUnavailableReplicas,omitempty"`
+}
+
+type ScheduleEntry struct {
+	Name               string              `json:"name"`
+	Schedule           string              `json:"schedule"`
+	ContainerOverrides []ContainerOverride `json:"containerOverrides,omitempty"`
 }
 
 type ScheduleType string
@@ -513,7 +530,8 @@ const (
 )
 
 type WorkloadSpecJob struct {
-	Schedule              ScheduleType                     `json:"schedule"`
+	Schedule              string                           `json:"schedule,omitempty"`
+	Schedules             []ScheduleEntry                  `json:"schedules,omitempty"`
 	ConcurrencyPolicy     WorkloadSpecJobConcurrencyPolicy `json:"concurrencyPolicy,omitempty"`
 	HistoryLimit          *float32                         `json:"historyLimit,omitempty"`
 	RestartPolicy         WorkloadSpecJobRestartPolicy     `json:"restartPolicy,omitempty"`
@@ -570,7 +588,7 @@ type WorkloadSpecExtras struct {
 }
 
 type WorkloadSpecRequestRetryPolicy struct {
-	Attempts float32  `json:"attempts"`
+	Attempts *float32 `json:"attempts,omitempty"`
 	RetryOn  []string `json:"retryOn,omitempty"`
 }
 
@@ -596,8 +614,8 @@ type WorkloadStatusHealthCheck struct {
 	Success     bool     `json:"success,omitempty"`
 	Code        *float32 `json:"code,omitempty"`
 	Message     string   `json:"message,omitempty"`
-	Failures    float32  `json:"failures"`
-	Successes   float32  `json:"successes"`
+	Failures    *float32 `json:"failures,omitempty"`
+	Successes   *float32 `json:"successes,omitempty"`
 	LastChecked string   `json:"lastChecked,omitempty"`
 }
 
@@ -616,9 +634,10 @@ type WorkloadStatus struct {
 	InternalName         string                       `json:"internalName,omitempty"`
 	ReplicaInternalNames []string                     `json:"replicaInternalNames,omitempty"`
 	HealthCheck          WorkloadStatusHealthCheck    `json:"healthCheck,omitempty"`
-	CurrentReplicaCount  float32                      `json:"currentReplicaCount"`
+	CurrentReplicaCount  *float32                     `json:"currentReplicaCount,omitempty"`
 	ResolvedImages       WorkloadStatusResolvedImages `json:"resolvedImages,omitempty"`
 	LoadBalancer         []LoadBalancerStatus         `json:"loadBalancer,omitempty"`
+	SuspendedStatus      string                       `json:"suspendedStatus,omitempty"`
 
 	/* WARNING!! Arbitrary properties are being ignored! */
 }
@@ -626,7 +645,7 @@ type WorkloadStatus struct {
 type Workload struct {
 	Id           string         `json:"id,omitempty"`
 	Kind         base.Kind      `json:"kind,omitempty"`
-	Version      float32        `json:"version"`
+	Version      *float32       `json:"version,omitempty"`
 	Description  string         `json:"description,omitempty"`
 	Tags         WorkloadTags   `json:"tags,omitempty"`
 	Created      string         `json:"created,omitempty"`

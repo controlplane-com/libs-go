@@ -12,7 +12,7 @@ type Image struct {
 	Id           string        `json:"id,omitempty"`
 	Name         string        `json:"name,omitempty"`
 	Kind         base.Kind     `json:"kind,omitempty"`
-	Version      float32       `json:"version"`
+	Version      *float32      `json:"version,omitempty"`
 	Created      string        `json:"created,omitempty"`
 	LastModified string        `json:"lastModified,omitempty"`
 	Tags         ImageTags     `json:"tags,omitempty"`
@@ -24,8 +24,8 @@ type Image struct {
 }
 
 type ImageSummaryRepositories struct {
-	Name      string  `json:"name,omitempty"`
-	TagsCount float32 `json:"tagsCount"`
+	Name      string   `json:"name,omitempty"`
+	TagsCount *float32 `json:"tagsCount,omitempty"`
 }
 
 type ImageSummary struct {

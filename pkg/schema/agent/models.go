@@ -10,7 +10,7 @@ type Agent struct {
 	Id           string      `json:"id,omitempty"`
 	Name         base.Name   `json:"name,omitempty"`
 	Kind         base.Kind   `json:"kind,omitempty"`
-	Version      float32     `json:"version"`
+	Version      *float32    `json:"version,omitempty"`
 	Description  string      `json:"description,omitempty"`
 	Tags         AgentTags   `json:"tags,omitempty"`
 	Created      string      `json:"created,omitempty"`
@@ -33,8 +33,8 @@ type AgentInfo struct {
 	InstanceId      string                   `json:"instanceId,omitempty"`
 	LastActive      string                   `json:"lastActive,omitempty"`
 	Env             AgentInfoEnv             `json:"env,omitempty"`
-	PeerCount       float32                  `json:"peerCount"`
-	ServiceCount    float32                  `json:"serviceCount"`
+	PeerCount       *float32                 `json:"peerCount,omitempty"`
+	ServiceCount    *float32                 `json:"serviceCount,omitempty"`
 }
 
 type AgentStatusProtocolVersion string
@@ -45,7 +45,7 @@ const (
 )
 
 type AgentStatus struct {
-	BootstrapConfig BootstrapConfig            `json:"bootstrapConfig,omitempty"`
+	BootstrapConfig *BootstrapConfig           `json:"bootstrapConfig,omitempty"`
 	ProtocolVersion AgentStatusProtocolVersion `json:"protocolVersion,omitempty"`
 }
 

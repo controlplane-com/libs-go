@@ -31,7 +31,7 @@ type Location struct {
 	Id           string           `json:"id,omitempty"`
 	Name         base.Name        `json:"name,omitempty"`
 	Kind         base.Kind        `json:"kind,omitempty"`
-	Version      float32          `json:"version"`
+	Version      *float32         `json:"version,omitempty"`
 	Description  string           `json:"description,omitempty"`
 	Tags         LocationTags     `json:"tags,omitempty"`
 	Created      string           `json:"created,omitempty"`
@@ -49,12 +49,12 @@ type LocationSpec struct {
 }
 
 type LocationStatusGeo struct {
-	Lat       float32 `json:"lat"`
-	Lon       float32 `json:"lon"`
-	Country   string  `json:"country,omitempty"`
-	State     string  `json:"state,omitempty"`
-	City      string  `json:"city,omitempty"`
-	Continent string  `json:"continent,omitempty"`
+	Lat       *float32 `json:"lat,omitempty"`
+	Lon       *float32 `json:"lon,omitempty"`
+	Country   string   `json:"country,omitempty"`
+	State     string   `json:"state,omitempty"`
+	City      string   `json:"city,omitempty"`
+	Continent string   `json:"continent,omitempty"`
 }
 
 type LocationStatus struct {

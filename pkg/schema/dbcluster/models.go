@@ -40,7 +40,7 @@ type ClusterSpecPostgresLocations struct {
 	Name      string                           `json:"name,omitempty"`
 	Writable  bool                             `json:"writable,omitempty"`
 	Size      ClusterSpecPostgresLocationsSize `json:"size,omitempty"`
-	Instances float32                          `json:"instances"`
+	Instances *float32                         `json:"instances,omitempty"`
 }
 
 type ClusterSpecPostgres struct {
@@ -68,7 +68,7 @@ type DbCluster struct {
 	Id           string        `json:"id,omitempty"`
 	Name         base.Name     `json:"name,omitempty"`
 	Kind         base.Kind     `json:"kind,omitempty"`
-	Version      float32       `json:"version"`
+	Version      *float32      `json:"version,omitempty"`
 	Description  string        `json:"description,omitempty"`
 	Tags         DbClusterTags `json:"tags,omitempty"`
 	Created      string        `json:"created,omitempty"`
@@ -82,5 +82,5 @@ type DbCluster struct {
 type DbClusterStatus struct {
 	Data         ClusterStatus `json:"data,omitempty"`
 	LastModified string        `json:"lastModified,omitempty"`
-	Version      float32       `json:"version"`
+	Version      *float32      `json:"version,omitempty"`
 }

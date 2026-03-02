@@ -12,10 +12,10 @@ const (
 )
 
 type ClusterSpecOptions struct {
-	EvictionsDisabled  bool    `json:"evictionsDisabled,omitempty"`
-	IdleTimeoutSeconds float32 `json:"idleTimeoutSeconds"`
-	MaxItemSizeKiB     float32 `json:"maxItemSizeKiB"`
-	MaxConnections     float32 `json:"maxConnections"`
+	EvictionsDisabled  bool     `json:"evictionsDisabled,omitempty"`
+	IdleTimeoutSeconds *float32 `json:"idleTimeoutSeconds,omitempty"`
+	MaxItemSizeKiB     *float32 `json:"maxItemSizeKiB,omitempty"`
+	MaxConnections     *float32 `json:"maxConnections,omitempty"`
 }
 
 type ClusterSpec struct {
@@ -38,10 +38,10 @@ const (
 )
 
 type MemcacheClusterSpecOptions struct {
-	EvictionsDisabled  bool    `json:"evictionsDisabled,omitempty"`
-	IdleTimeoutSeconds float32 `json:"idleTimeoutSeconds"`
-	MaxItemSizeKiB     float32 `json:"maxItemSizeKiB"`
-	MaxConnections     float32 `json:"maxConnections"`
+	EvictionsDisabled  bool     `json:"evictionsDisabled,omitempty"`
+	IdleTimeoutSeconds *float32 `json:"idleTimeoutSeconds,omitempty"`
+	MaxItemSizeKiB     *float32 `json:"maxItemSizeKiB,omitempty"`
+	MaxConnections     *float32 `json:"maxConnections,omitempty"`
 }
 
 type MemcacheClusterSpec struct {
@@ -56,7 +56,7 @@ type MemcacheCluster struct {
 	Id           string              `json:"id,omitempty"`
 	Name         base.Name           `json:"name,omitempty"`
 	Kind         base.Kind           `json:"kind,omitempty"`
-	Version      float32             `json:"version"`
+	Version      *float32            `json:"version,omitempty"`
 	Description  string              `json:"description,omitempty"`
 	Tags         MemcacheClusterTags `json:"tags,omitempty"`
 	Created      string              `json:"created,omitempty"`
@@ -67,8 +67,8 @@ type MemcacheCluster struct {
 }
 
 type MemcacheOptions struct {
-	EvictionsDisabled  bool    `json:"evictionsDisabled,omitempty"`
-	IdleTimeoutSeconds float32 `json:"idleTimeoutSeconds"`
-	MaxItemSizeKiB     float32 `json:"maxItemSizeKiB"`
-	MaxConnections     float32 `json:"maxConnections"`
+	EvictionsDisabled  bool     `json:"evictionsDisabled,omitempty"`
+	IdleTimeoutSeconds *float32 `json:"idleTimeoutSeconds,omitempty"`
+	MaxItemSizeKiB     *float32 `json:"maxItemSizeKiB,omitempty"`
+	MaxConnections     *float32 `json:"maxConnections,omitempty"`
 }

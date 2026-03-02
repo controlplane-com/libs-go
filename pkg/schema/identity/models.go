@@ -50,7 +50,7 @@ type Identity struct {
 	Id                     string                  `json:"id,omitempty"`
 	Name                   base.Name               `json:"name,omitempty"`
 	Kind                   base.Kind               `json:"kind,omitempty"`
-	Version                float32                 `json:"version"`
+	Version                *float32                `json:"version,omitempty"`
 	Description            string                  `json:"description,omitempty"`
 	Tags                   IdentityTags            `json:"tags,omitempty"`
 	Created                string                  `json:"created,omitempty"`
@@ -115,8 +115,8 @@ type NgsIdentitySub struct {
 }
 
 type NgsIdentityResp struct {
-	Max float32 `json:"max"`
-	Ttl string  `json:"ttl,omitempty"`
+	Max *float32 `json:"max,omitempty"`
+	Ttl string   `json:"ttl,omitempty"`
 }
 
 type NgsIdentity struct {
@@ -124,9 +124,9 @@ type NgsIdentity struct {
 	Pub              NgsIdentityPub  `json:"pub,omitempty"`
 	Sub              NgsIdentitySub  `json:"sub,omitempty"`
 	Resp             NgsIdentityResp `json:"resp,omitempty"`
-	Subs             float32         `json:"subs"`
-	Data             float32         `json:"data"`
-	Payload          float32         `json:"payload"`
+	Subs             *float32        `json:"subs,omitempty"`
+	Data             *float32        `json:"data,omitempty"`
+	Payload          *float32        `json:"payload,omitempty"`
 }
 
 type PolicyRef string

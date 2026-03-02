@@ -30,7 +30,7 @@ type CloudWatchLoggingExtractFields map[string]string
 type CloudWatchLogging struct {
 	Region        CloudWatchLoggingRegion        `json:"region,omitempty"`
 	Credentials   string                         `json:"credentials"`
-	RetentionDays float32                        `json:"retentionDays"`
+	RetentionDays *float32                       `json:"retentionDays,omitempty"`
 	GroupName     string                         `json:"groupName"`
 	StreamName    string                         `json:"streamName"`
 	ExtractFields CloudWatchLoggingExtractFields `json:"extractFields,omitempty"`
@@ -84,14 +84,14 @@ type ElasticLoggingElasticCloud struct {
 }
 
 type ElasticLoggingGeneric struct {
-	Host        string  `json:"host"`
-	Port        float32 `json:"port"`
-	Path        string  `json:"path,omitempty"`
-	Index       string  `json:"index"`
-	Type        string  `json:"type"`
-	Credentials string  `json:"credentials"`
-	Username    string  `json:"username,omitempty"`
-	Password    string  `json:"password,omitempty"`
+	Host        string   `json:"host"`
+	Port        *float32 `json:"port,omitempty"`
+	Path        string   `json:"path,omitempty"`
+	Index       string   `json:"index"`
+	Type        string   `json:"type"`
+	Credentials string   `json:"credentials"`
+	Username    string   `json:"username,omitempty"`
+	Password    string   `json:"password,omitempty"`
 }
 
 type ElasticLogging struct {
@@ -101,8 +101,8 @@ type ElasticLogging struct {
 }
 
 type FluentdLogging struct {
-	Host string  `json:"host"`
-	Port float32 `json:"port"`
+	Host string   `json:"host"`
+	Port *float32 `json:"port,omitempty"`
 }
 
 type LogzioLoggingListenerHost string

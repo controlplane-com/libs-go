@@ -118,7 +118,7 @@ type OptionsAutoscalingKedaFallback struct {
 }
 
 type OptionsAutoscalingKeda struct {
-	Triggers              []KedaTrigger                   `json:"triggers,omitempty"`
+	Triggers              []KedaTrigger                   `json:"triggers"`
 	Advanced              *OptionsAutoscalingKedaAdvanced `json:"advanced,omitempty"`
 	Fallback              *OptionsAutoscalingKedaFallback `json:"fallback,omitempty"`
 	PollingInterval       *float32                        `json:"pollingInterval,omitempty"`
@@ -131,9 +131,9 @@ type OptionsAutoscaling struct {
 	Multi            []OptionsAutoscalingMulti          `json:"multi,omitempty"`
 	MetricPercentile OptionsAutoscalingMetricPercentile `json:"metricPercentile,omitempty"`
 	Target           *float32                           `json:"target,omitempty"`
-	MaxScale         float32                            `json:"maxScale"`
-	MinScale         float32                            `json:"minScale"`
+	MaxScale         *float32                           `json:"maxScale,omitempty"`
+	MinScale         *float32                           `json:"minScale,omitempty"`
 	ScaleToZeroDelay *float32                           `json:"scaleToZeroDelay,omitempty"`
-	MaxConcurrency   float32                            `json:"maxConcurrency"`
+	MaxConcurrency   *float32                           `json:"maxConcurrency,omitempty"`
 	Keda             *OptionsAutoscalingKeda            `json:"keda,omitempty"`
 }

@@ -16,15 +16,15 @@ const (
 type Quota struct {
 	Id           string          `json:"id,omitempty"`
 	Kind         base.Kind       `json:"kind,omitempty"`
-	Version      float32         `json:"version"`
+	Version      *float32        `json:"version,omitempty"`
 	Description  string          `json:"description,omitempty"`
 	Name         base.Name       `json:"name,omitempty"`
 	Unit         string          `json:"unit,omitempty"`
 	Dimensions   QuotaDimensions `json:"dimensions,omitempty"`
-	Max          float32         `json:"max"`
+	Max          *float32        `json:"max,omitempty"`
 	Created      string          `json:"created,omitempty"`
 	LastModified string          `json:"lastModified,omitempty"`
-	Current      float32         `json:"current"`
+	Current      *float32        `json:"current,omitempty"`
 	Origin       QuotaOrigin     `json:"origin,omitempty"`
 	Links        base.Links      `json:"links,omitempty"`
 }

@@ -5,9 +5,9 @@ package envoyHttp
 import "github.com/controlplane-com/libs-go/pkg/schema/envoyCommon"
 
 type BufferSettings struct {
-	Max_request_bytes     float32 `json:"max_request_bytes"`
-	Allow_partial_message bool    `json:"allow_partial_message,omitempty"`
-	Pack_as_bytes         bool    `json:"pack_as_bytes,omitempty"`
+	Max_request_bytes     *float32 `json:"max_request_bytes,omitempty"`
+	Allow_partial_message bool     `json:"allow_partial_message,omitempty"`
+	Pack_as_bytes         bool     `json:"pack_as_bytes,omitempty"`
 }
 
 type ConnectRpcName string
@@ -400,7 +400,7 @@ const (
 
 type RateLimitTypedConfig struct {
 	Domain                             string                                      `json:"domain"`
-	Stage                              float32                                     `json:"stage"`
+	Stage                              *float32                                    `json:"stage,omitempty"`
 	Request_type                       RateLimitTypedConfigRequestType             `json:"request_type,omitempty"`
 	Timeout                            envoyCommon.Duration                        `json:"timeout,omitempty"`
 	Failure_mode_deny                  bool                                        `json:"failure_mode_deny,omitempty"`

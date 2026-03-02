@@ -21,8 +21,8 @@ type ManualMetadata map[string]string
 type ManualTags map[string]string
 
 type ManualLogging struct {
-	NodePort       float32 `json:"nodePort"`
-	ExternalSyslog string  `json:"externalSyslog,omitempty"`
+	NodePort       *float32 `json:"nodePort,omitempty"`
+	ExternalSyslog string   `json:"externalSyslog,omitempty"`
 }
 
 type Manual struct {

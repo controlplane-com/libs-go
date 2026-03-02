@@ -3,9 +3,9 @@
 package command
 
 import "github.com/controlplane-com/libs-go/pkg/schema/base"
-import "github.com/controlplane-com/libs-go/pkg/schema/env"
-import "github.com/controlplane-com/libs-go/pkg/schema/workload"
+import "github.com/controlplane-com/libs-go/pkg/schema/query"
 import "github.com/controlplane-com/libs-go/pkg/schema/volumeSet"
+import "github.com/controlplane-com/libs-go/pkg/schema/workload"
 
 type Cluster struct {
 	ClusterId string `json:"clusterId,omitempty"`
@@ -20,11 +20,53 @@ type CommandSpec map[string]any
 
 type CommandStatus map[string]any
 
+type CommandConflictQueryContext map[string]any
+
+type CommandConflictQueryFetch string
+
+const (
+	CommandConflictQueryFetchLinks CommandConflictQueryFetch = "links"
+	CommandConflictQueryFetchItems CommandConflictQueryFetch = "items"
+)
+
+type CommandConflictQuerySpecMatch string
+
+const (
+	CommandConflictQuerySpecMatchAll  CommandConflictQuerySpecMatch = "all"
+	CommandConflictQuerySpecMatchAny  CommandConflictQuerySpecMatch = "any"
+	CommandConflictQuerySpecMatchNone CommandConflictQuerySpecMatch = "none"
+)
+
+type CommandConflictQuerySpecSortOrder string
+
+const (
+	CommandConflictQuerySpecSortOrderAsc  CommandConflictQuerySpecSortOrder = "asc"
+	CommandConflictQuerySpecSortOrderDesc CommandConflictQuerySpecSortOrder = "desc"
+)
+
+type CommandConflictQuerySpecSort struct {
+	By    string                            `json:"by"`
+	Order CommandConflictQuerySpecSortOrder `json:"order,omitempty"`
+}
+
+type CommandConflictQuerySpec struct {
+	Match CommandConflictQuerySpecMatch `json:"match,omitempty"`
+	Terms []query.Term                  `json:"terms,omitempty"`
+	Sort  *CommandConflictQuerySpecSort `json:"sort,omitempty"`
+}
+
+type CommandConflictQuery struct {
+	Kind    base.Kind                    `json:"kind,omitempty"`
+	Context *CommandConflictQueryContext `json:"context,omitempty"`
+	Fetch   CommandConflictQueryFetch    `json:"fetch,omitempty"`
+	Spec    *CommandConflictQuerySpec    `json:"spec,omitempty"`
+}
+
 type Command struct {
 	Id             string                `json:"id,omitempty"`
 	OwnerId        string                `json:"ownerId,omitempty"`
 	Kind           base.Kind             `json:"kind,omitempty"`
-	Version        float32               `json:"version"`
+	Version        *float32              `json:"version,omitempty"`
 	Created        string                `json:"created,omitempty"`
 	LastModified   string                `json:"lastModified,omitempty"`
 	Links          base.Links            `json:"links,omitempty"`
@@ -33,6 +75,7 @@ type Command struct {
 	LifecycleStage CommandLifecycleStage `json:"lifecycleStage,omitempty"`
 	Spec           CommandSpec           `json:"spec,omitempty"`
 	Status         CommandStatus         `json:"status,omitempty"`
+	ConflictQuery  CommandConflictQuery  `json:"conflictQuery,omitempty"`
 }
 
 type CommandLifecycleStage string
@@ -72,18 +115,8 @@ type CreateVolumeSnapshotStatus struct {
 	ClusterId           string                                        `json:"clusterId,omitempty"`
 	ClusterIdByLocation CreateVolumeSnapshotStatusClusterIdByLocation `json:"clusterIdByLocation,omitempty"`
 	NewSnapshotId       string                                        `json:"newSnapshotId,omitempty"`
-	NewSnapshotSize     float32                                       `json:"newSnapshotSize"`
+	NewSnapshotSize     *float32                                      `json:"newSnapshotSize,omitempty"`
 	CreationStartTime   string                                        `json:"creationStartTime,omitempty"`
-}
-
-type CronWorkloadContainerOverrides struct {
-	Name    string          `json:"name"`
-	Env     []env.EnvVar    `json:"env,omitempty"`
-	Command string          `json:"command,omitempty"`
-	Args    []string        `json:"args,omitempty"`
-	Memory  workload.Memory `json:"memory,omitempty"`
-	Cpu     workload.Cpu    `json:"cpu,omitempty"`
-	Image   base.ImageLink  `json:"image,omitempty"`
 }
 
 type DeleteCloudDevicesStatusClusterIdByLocation map[string]string
@@ -108,9 +141,9 @@ type DeleteCloudDevicesStatusVolume struct {
 	ResourceName        string                                   `json:"resourceName,omitempty"`
 	Index               float32                                  `json:"index"`
 	CurrentSize         float32                                  `json:"currentSize"`
-	CurrentBytesUsed    float32                                  `json:"currentBytesUsed"`
-	Iops                float32                                  `json:"iops"`
-	Throughput          float32                                  `json:"throughput"`
+	CurrentBytesUsed    *float32                                 `json:"currentBytesUsed,omitempty"`
+	Iops                *float32                                 `json:"iops,omitempty"`
+	Throughput          *float32                                 `json:"throughput,omitempty"`
 	Driver              string                                   `json:"driver"`
 	VolumeSnapshots     []volumeSet.VolumeSnapshot               `json:"volumeSnapshots,omitempty"`
 	Attributes          DeleteCloudDevicesStatusVolumeAttributes `json:"attributes,omitempty"`
@@ -213,7 +246,7 @@ type DeleteVolumeSetSpecVolumeSet struct {
 	Id           string                           `json:"id,omitempty"`
 	Name         base.Name                        `json:"name,omitempty"`
 	Kind         base.Kind                        `json:"kind,omitempty"`
-	Version      float32                          `json:"version"`
+	Version      *float32                         `json:"version,omitempty"`
 	Description  string                           `json:"description,omitempty"`
 	Tags         DeleteVolumeSetSpecVolumeSetTags `json:"tags,omitempty"`
 	Created      string                           `json:"created,omitempty"`
@@ -246,7 +279,7 @@ type DeleteVolumeSnapshotStatusSnapshot struct {
 	Id      string                                   `json:"id,omitempty"`
 	Created string                                   `json:"created"`
 	Expires string                                   `json:"expires,omitempty"`
-	Size    float32                                  `json:"size"`
+	Size    *float32                                 `json:"size,omitempty"`
 	Tags    []DeleteVolumeSnapshotStatusSnapshotTags `json:"tags,omitempty"`
 }
 
@@ -294,10 +327,10 @@ type DeleteVolumeStatus struct {
 }
 
 type ExpandVolumeSpec struct {
-	Location           string  `json:"location"`
-	VolumeIndex        float32 `json:"volumeIndex"`
-	NewStorageCapacity float32 `json:"newStorageCapacity"`
-	TimeoutSeconds     float32 `json:"timeoutSeconds"`
+	Location           string   `json:"location"`
+	VolumeIndex        float32  `json:"volumeIndex"`
+	NewStorageCapacity float32  `json:"newStorageCapacity"`
+	TimeoutSeconds     *float32 `json:"timeoutSeconds,omitempty"`
 }
 
 type ExpandVolumeStatusClusterIdByLocation map[string]string
@@ -362,7 +395,7 @@ type ReplaceVolumeStatus struct {
 	NewStorageDeviceId      string                                 `json:"newStorageDeviceId,omitempty"`
 	NewVolumeAttributes     ReplaceVolumeStatusNewVolumeAttributes `json:"newVolumeAttributes,omitempty"`
 	NewResourceName         string                                 `json:"newResourceName,omitempty"`
-	NextVolumeSize          float32                                `json:"nextVolumeSize"`
+	NextVolumeSize          *float32                               `json:"nextVolumeSize,omitempty"`
 }
 
 type RestoreVolumeSpec struct {
@@ -373,8 +406,9 @@ type RestoreVolumeSpec struct {
 }
 
 type RunCronWorkloadSpec struct {
-	Location           string                           `json:"location"`
-	ContainerOverrides []CronWorkloadContainerOverrides `json:"containerOverrides,omitempty"`
+	Location           string                       `json:"location"`
+	ScheduleName       string                       `json:"scheduleName,omitempty"`
+	ContainerOverrides []workload.ContainerOverride `json:"containerOverrides,omitempty"`
 }
 
 type RunCronWorkloadStatusClusterIdByLocation map[string]string
@@ -382,14 +416,14 @@ type RunCronWorkloadStatusClusterIdByLocation map[string]string
 type RunCronWorkloadStatus struct {
 	Replica                string                                   `json:"replica,omitempty"`
 	ClusterIdByLocation    RunCronWorkloadStatusClusterIdByLocation `json:"clusterIdByLocation,omitempty"`
-	MinimumWorkloadVersion float32                                  `json:"minimumWorkloadVersion"`
+	MinimumWorkloadVersion *float32                                 `json:"minimumWorkloadVersion,omitempty"`
 }
 
 type ShrinkVolumeSpec struct {
-	Location           string  `json:"location"`
-	VolumeIndex        float32 `json:"volumeIndex"`
-	NewStorageCapacity float32 `json:"newStorageCapacity"`
-	TimeoutSeconds     float32 `json:"timeoutSeconds"`
+	Location           string   `json:"location"`
+	VolumeIndex        float32  `json:"volumeIndex"`
+	NewStorageCapacity float32  `json:"newStorageCapacity"`
+	TimeoutSeconds     *float32 `json:"timeoutSeconds,omitempty"`
 }
 
 type SnapshotDeletionStatusStage string

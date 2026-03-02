@@ -15,7 +15,7 @@ type AutoscalerConfig struct {
 	Expander             []AutoscalerConfigExpander `json:"expander,omitempty"`
 	UnneededTime         string                     `json:"unneededTime,omitempty"`
 	UnreadyTime          string                     `json:"unreadyTime,omitempty"`
-	UtilizationThreshold float32                    `json:"utilizationThreshold"`
+	UtilizationThreshold *float32                   `json:"utilizationThreshold,omitempty"`
 }
 
 type CacertsRes struct {

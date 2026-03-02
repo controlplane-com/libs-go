@@ -17,8 +17,8 @@ type Deployment struct {
 type DeploymentStatus struct {
 	Endpoint                  string                       `json:"endpoint,omitempty"`
 	Remote                    string                       `json:"remote,omitempty"`
-	LastProcessedVersion      float32                      `json:"lastProcessedVersion"`
-	ExpectedDeploymentVersion float32                      `json:"expectedDeploymentVersion"`
+	LastProcessedVersion      *float32                     `json:"lastProcessedVersion,omitempty"`
+	ExpectedDeploymentVersion *float32                     `json:"expectedDeploymentVersion,omitempty"`
 	Internal                  any                          `json:"internal,omitempty"`
 	Ready                     bool                         `json:"ready,omitempty"`
 	Deploying                 bool                         `json:"deploying,omitempty"`
@@ -32,8 +32,8 @@ type DeploymentVersionContainers map[string]containerstatus.ContainerStatus
 type DeploymentVersion struct {
 	Name       string                      `json:"name,omitempty"`
 	Created    string                      `json:"created,omitempty"`
-	Workload   float32                     `json:"workload"`
-	Gvc        float32                     `json:"gvc"`
+	Workload   *float32                    `json:"workload,omitempty"`
+	Gvc        *float32                    `json:"gvc,omitempty"`
 	Containers DeploymentVersionContainers `json:"containers,omitempty"`
 	Ready      bool                        `json:"ready,omitempty"`
 	Message    string                      `json:"message,omitempty"`

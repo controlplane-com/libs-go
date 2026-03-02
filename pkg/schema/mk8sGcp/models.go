@@ -17,7 +17,7 @@ type GcpPool struct {
 	MaxSize              float32           `json:"maxSize"`
 	Preemptible          bool              `json:"preemptible,omitempty"`
 	Subnet               string            `json:"subnet"`
-	LocalPersistentDisks float32           `json:"localPersistentDisks"`
+	LocalPersistentDisks *float32          `json:"localPersistentDisks,omitempty"`
 }
 
 type GcpProviderLabels map[string]string

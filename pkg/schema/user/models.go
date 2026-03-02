@@ -29,7 +29,7 @@ type User struct {
 	Id           string     `json:"id,omitempty"`
 	Name         string     `json:"name,omitempty"`
 	Kind         UserKind   `json:"kind,omitempty"`
-	Version      float32    `json:"version"`
+	Version      *float32   `json:"version,omitempty"`
 	Tags         UserTags   `json:"tags,omitempty"`
 	Created      string     `json:"created,omitempty"`
 	LastModified string     `json:"lastModified,omitempty"`

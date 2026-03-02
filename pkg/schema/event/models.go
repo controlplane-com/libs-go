@@ -39,7 +39,7 @@ type Event struct {
 	Created       string       `json:"created,omitempty"`
 	Kind          string       `json:"kind,omitempty"`
 	LastEventTime string       `json:"lastEventTime,omitempty"`
-	EventCount    float32      `json:"eventCount"`
+	EventCount    *float32     `json:"eventCount,omitempty"`
 	Status        string       `json:"status"`
 	Pinned        bool         `json:"pinned,omitempty"`
 	Context       EventContext `json:"context,omitempty"`
