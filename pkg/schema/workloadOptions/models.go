@@ -118,7 +118,7 @@ type OptionsAutoscalingKedaFallback struct {
 }
 
 type OptionsAutoscalingKeda struct {
-	Triggers              []KedaTrigger                   `json:"triggers"`
+	Triggers              []KedaTrigger                   `json:"triggers,omitempty"`
 	Advanced              *OptionsAutoscalingKedaAdvanced `json:"advanced,omitempty"`
 	Fallback              *OptionsAutoscalingKedaFallback `json:"fallback,omitempty"`
 	PollingInterval       *float32                        `json:"pollingInterval,omitempty"`
