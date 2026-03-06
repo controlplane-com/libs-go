@@ -396,6 +396,7 @@ type ReplaceVolumeStatus struct {
 	NewVolumeAttributes     ReplaceVolumeStatusNewVolumeAttributes `json:"newVolumeAttributes,omitempty"`
 	NewResourceName         string                                 `json:"newResourceName,omitempty"`
 	NextVolumeSize          *float32                               `json:"nextVolumeSize,omitempty"`
+	TempStorageClassName    string                                 `json:"tempStorageClassName,omitempty"`
 }
 
 type RestoreVolumeSpec struct {
@@ -406,9 +407,10 @@ type RestoreVolumeSpec struct {
 }
 
 type RunCronWorkloadSpec struct {
-	Location           string                       `json:"location"`
-	ScheduleName       string                       `json:"scheduleName,omitempty"`
-	ContainerOverrides []workload.ContainerOverride `json:"containerOverrides,omitempty"`
+	Location              string                       `json:"location"`
+	ScheduleName          string                       `json:"scheduleName,omitempty"`
+	ContainerOverrides    []workload.ContainerOverride `json:"containerOverrides,omitempty"`
+	ActiveDeadlineSeconds *float32                     `json:"activeDeadlineSeconds,omitempty"`
 }
 
 type RunCronWorkloadStatusClusterIdByLocation map[string]string
@@ -424,6 +426,28 @@ type ShrinkVolumeSpec struct {
 	VolumeIndex        float32  `json:"volumeIndex"`
 	NewStorageCapacity float32  `json:"newStorageCapacity"`
 	TimeoutSeconds     *float32 `json:"timeoutSeconds,omitempty"`
+}
+
+type ShrinkVolumeStatusStage string
+
+const (
+	ShrinkVolumeStatusStageUpdateVolumeSet         ShrinkVolumeStatusStage = "update-volume-set"
+	ShrinkVolumeStatusStageDeleteStorageResources  ShrinkVolumeStatusStage = "delete-storage-resources"
+	ShrinkVolumeStatusStageShutdownReplica         ShrinkVolumeStatusStage = "shutdown-replica"
+	ShrinkVolumeStatusStageAwaitReplicaTermination ShrinkVolumeStatusStage = "await-replica-termination"
+	ShrinkVolumeStatusStageFail                    ShrinkVolumeStatusStage = "fail"
+	ShrinkVolumeStatusStageCleanupK8S              ShrinkVolumeStatusStage = "cleanup-k8s"
+)
+
+type ShrinkVolumeStatusClusterIdByLocation map[string]string
+
+type ShrinkVolumeStatus struct {
+	Stage                   ShrinkVolumeStatusStage               `json:"stage,omitempty"`
+	ClusterId               string                                `json:"clusterId,omitempty"`
+	ClusterIdByLocation     ShrinkVolumeStatusClusterIdByLocation `json:"clusterIdByLocation,omitempty"`
+	Messages                []string                              `json:"messages,omitempty"`
+	InUseByWorkloadId       string                                `json:"inUseByWorkloadId,omitempty"`
+	StorageDeviceIdToRemove string                                `json:"storageDeviceIdToRemove,omitempty"`
 }
 
 type SnapshotDeletionStatusStage string
