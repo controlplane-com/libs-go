@@ -653,8 +653,14 @@ type Workload struct {
 	Links        base.Links     `json:"links,omitempty"`
 	Name         string         `json:"name,omitempty"`
 	Gvc          string         `json:"gvc,omitempty"`
+	Health       WorkloadHealth `json:"health,omitempty"`
 	Spec         WorkloadSpec   `json:"spec"`
 	Status       WorkloadStatus `json:"status,omitempty"`
+}
+
+type WorkloadHealth struct {
+	Readiness  string `json:"readiness,omitempty"`
+	SyncFailed bool   `json:"syncFailed,omitempty"`
 }
 
 type WorkloadType string

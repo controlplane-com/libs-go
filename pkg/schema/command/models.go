@@ -81,11 +81,12 @@ type Command struct {
 type CommandLifecycleStage string
 
 const (
-	CommandLifecycleStagePending   CommandLifecycleStage = "pending"
-	CommandLifecycleStageRunning   CommandLifecycleStage = "running"
-	CommandLifecycleStageCancelled CommandLifecycleStage = "cancelled"
-	CommandLifecycleStageCompleted CommandLifecycleStage = "completed"
-	CommandLifecycleStageFailed    CommandLifecycleStage = "failed"
+	CommandLifecycleStagePending               CommandLifecycleStage = "pending"
+	CommandLifecycleStageRunning               CommandLifecycleStage = "running"
+	CommandLifecycleStageCancellationRequested CommandLifecycleStage = "cancellation-requested"
+	CommandLifecycleStageCancelled             CommandLifecycleStage = "cancelled"
+	CommandLifecycleStageCompleted             CommandLifecycleStage = "completed"
+	CommandLifecycleStageFailed                CommandLifecycleStage = "failed"
 )
 
 type CreateVolumeSnapshotSpecSnapshotTags map[string]string
