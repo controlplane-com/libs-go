@@ -13,23 +13,13 @@ const (
 	EventContextComponentDataService   EventContextComponent = "data-service"
 )
 
-type EventContextCloudProvider string
-
-const (
-	EventContextCloudProviderAws    EventContextCloudProvider = "aws"
-	EventContextCloudProviderGcp    EventContextCloudProvider = "gcp"
-	EventContextCloudProviderAzure  EventContextCloudProvider = "azure"
-	EventContextCloudProviderLinode EventContextCloudProvider = "linode"
-	EventContextCloudProviderByok   EventContextCloudProvider = "byok"
-)
-
 type EventContext struct {
-	Category      string                    `json:"category,omitempty"`
-	Component     EventContextComponent     `json:"component,omitempty"`
-	CloudProvider EventContextCloudProvider `json:"cloudProvider,omitempty"`
-	Cluster       string                    `json:"cluster,omitempty"`
-	PrincipalLink string                    `json:"principalLink,omitempty"`
-	Fingerprint   string                    `json:"fingerprint,omitempty"`
+	Category      string                `json:"category,omitempty"`
+	Component     EventContextComponent `json:"component,omitempty"`
+	CloudProvider string                `json:"cloudProvider,omitempty"`
+	Cluster       string                `json:"cluster,omitempty"`
+	PrincipalLink string                `json:"principalLink,omitempty"`
+	Fingerprint   string                `json:"fingerprint,omitempty"`
 
 	/* WARNING!! Arbitrary properties are being ignored! */
 }

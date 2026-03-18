@@ -358,6 +358,7 @@ type ExpandVolumeStatus struct {
 	ReplicaRestartedAt    string                                `json:"replicaRestartedAt,omitempty"`
 	OnlineResizeStartedAt string                                `json:"onlineResizeStartedAt,omitempty"`
 	LockNames             []string                              `json:"lockNames,omitempty"`
+	StorageDeviceId       string                                `json:"storageDeviceId,omitempty"`
 }
 
 type ReplaceVolumeSpec struct {

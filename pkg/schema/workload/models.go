@@ -331,8 +331,7 @@ const (
 )
 
 type JobSpec struct {
-	Schedule              string                   `json:"schedule,omitempty"`
-	Schedules             []ScheduleEntry          `json:"schedules,omitempty"`
+	Schedule              string                   `json:"schedule"`
 	ConcurrencyPolicy     JobSpecConcurrencyPolicy `json:"concurrencyPolicy,omitempty"`
 	HistoryLimit          *float32                 `json:"historyLimit,omitempty"`
 	RestartPolicy         JobSpecRestartPolicy     `json:"restartPolicy,omitempty"`
@@ -453,12 +452,6 @@ type RolloutOptionsStateful struct {
 	MaxUnavailableReplicas        string                              `json:"maxUnavailableReplicas,omitempty"`
 }
 
-type ScheduleEntry struct {
-	Name               string              `json:"name"`
-	Schedule           string              `json:"schedule"`
-	ContainerOverrides []ContainerOverride `json:"containerOverrides,omitempty"`
-}
-
 type ScheduleType string
 
 type SecurityOptions struct {
@@ -530,8 +523,7 @@ const (
 )
 
 type WorkloadSpecJob struct {
-	Schedule              string                           `json:"schedule,omitempty"`
-	Schedules             []ScheduleEntry                  `json:"schedules,omitempty"`
+	Schedule              string                           `json:"schedule"`
 	ConcurrencyPolicy     WorkloadSpecJobConcurrencyPolicy `json:"concurrencyPolicy,omitempty"`
 	HistoryLimit          *float32                         `json:"historyLimit,omitempty"`
 	RestartPolicy         WorkloadSpecJobRestartPolicy     `json:"restartPolicy,omitempty"`
@@ -659,8 +651,12 @@ type Workload struct {
 }
 
 type WorkloadHealth struct {
-	Readiness  string `json:"readiness,omitempty"`
-	SyncFailed bool   `json:"syncFailed,omitempty"`
+	Readiness      string   `json:"readiness,omitempty"`
+	SyncFailed     bool     `json:"syncFailed,omitempty"`
+	ReadyLocations *float32 `json:"readyLocations,omitempty"`
+	TotalLocations *float32 `json:"totalLocations,omitempty"`
+	ReadyReplicas  *float32 `json:"readyReplicas,omitempty"`
+	TotalReplicas  *float32 `json:"totalReplicas,omitempty"`
 }
 
 type WorkloadType string
