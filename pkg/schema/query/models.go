@@ -70,6 +70,7 @@ const (
 	TermOpLte       TermOp = "<="
 	TermOpNe        TermOp = "!="
 	TermOpMatch     TermOp = "~"
+	TermOpRegex     TermOp = "=~"
 	TermOpExists    TermOp = "exists"
 	TermOpNotExists TermOp = "!exists"
 	TermOpContains  TermOp = "contains"
