@@ -203,8 +203,9 @@ type RouteHeaders struct {
 }
 
 type RouteMirror struct {
-	WorkloadLink string  `json:"workloadLink"`
-	Percent      float32 `json:"percent"`
+	WorkloadLink string   `json:"workloadLink"`
+	Port         *float32 `json:"port,omitempty"`
+	Percent      float32  `json:"percent"`
 }
 
 type Route struct {

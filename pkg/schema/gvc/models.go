@@ -184,6 +184,15 @@ type GvcSpec struct {
 
 type GvcStatus map[string]any
 
+type LocationOptions []LocationOptionsItem
+
+type LocationOptionsItem struct {
+	LocationLink       string   `json:"locationLink"`
+	RoutingTier        *float32 `json:"routingTier,omitempty"`
+	LatencyOffsetMs    *float32 `json:"latencyOffsetMs,omitempty"`
+	LatencyToleranceMs *float32 `json:"latencyToleranceMs,omitempty"`
+}
+
 type StaticPlacementLocationQueryContext map[string]any
 
 type StaticPlacementLocationQueryFetch string
@@ -227,6 +236,7 @@ type StaticPlacementLocationQuery struct {
 }
 
 type StaticPlacement struct {
-	LocationLinks []string                      `json:"locationLinks,omitempty"`
-	LocationQuery *StaticPlacementLocationQuery `json:"locationQuery,omitempty"`
+	LocationLinks   []string                      `json:"locationLinks,omitempty"`
+	LocationQuery   *StaticPlacementLocationQuery `json:"locationQuery,omitempty"`
+	LocationOptions *[]LocationOptionsItem        `json:"locationOptions,omitempty"`
 }

@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"github.com/controlplane-com/libs-go/pkg/web/services"
 	"github.com/gorilla/mux"
+	"github.com/controlplane-com/libs-go/pkg/web/services"
 )
 
 type RouterHost interface {

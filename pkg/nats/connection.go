@@ -3,9 +3,9 @@ package nats
 import (
 	"context"
 	"fmt"
-	"github.com/controlplane-com/libs-go/pkg/threading"
 	"github.com/nats-io/nats.go"
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/controlplane-com/libs-go/pkg/threading"
 	"go.uber.org/zap"
 	"strings"
 	"sync"

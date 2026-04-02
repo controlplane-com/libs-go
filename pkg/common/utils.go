@@ -69,6 +69,58 @@ func BoolPtr(b bool) *bool {
 	return &b
 }
 
+// Value functions safely dereference pointers, returning zero value if nil.
+// These are useful when working with optional fields that are represented as pointers.
+
+func StrVal(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
+}
+
+func Float32Val(f *float32) float32 {
+	if f == nil {
+		return 0
+	}
+	return *f
+}
+
+func Float64Val(f *float64) float64 {
+	if f == nil {
+		return 0
+	}
+	return *f
+}
+
+func IntVal(i *int) int {
+	if i == nil {
+		return 0
+	}
+	return *i
+}
+
+func Int32Val(i *int32) int32 {
+	if i == nil {
+		return 0
+	}
+	return *i
+}
+
+func Int64Val(i *int64) int64 {
+	if i == nil {
+		return 0
+	}
+	return *i
+}
+
+func BoolVal(b *bool) bool {
+	if b == nil {
+		return false
+	}
+	return *b
+}
+
 func ExecuteWithRetries(fn func() error, numRetries int, base float64, maximum float64) (int, error) {
 	var err error
 	i := 1

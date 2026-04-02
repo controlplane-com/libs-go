@@ -3,10 +3,9 @@ package postgresql
 import (
 	"errors"
 	"fmt"
+	"github.com/controlplane-com/libs-go/pkg/common"
 	"regexp"
 	"strings"
-
-	"github.com/controlplane-com/libs-go/pkg/common"
 )
 
 var pathSeparator = "/"
@@ -112,7 +111,8 @@ func (q *ContainmentQuery) workOnStackFrame(stack *common.Stack[toJsonStackFrame
 	b.Write([]byte("}"))
 }
 
-func (q *ContainmentQuery) ensureQueryAtPathSlice(path ...string) *ContainmentQuery {
+
+func (q * ContainmentQuery) ensureQueryAtPathSlice(path ...string) *ContainmentQuery {
 	currentQueryLevel := q
 	for _, p := range path {
 		if child, ok := currentQueryLevel.children[p]; ok {

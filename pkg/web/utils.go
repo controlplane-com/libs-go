@@ -5,15 +5,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
-	"net/http"
-	"strings"
-
+	"github.com/go-http-utils/headers"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/controlplane-com/libs-go/pkg/common"
 	cplnErrors "github.com/controlplane-com/libs-go/pkg/errors"
 	"github.com/controlplane-com/libs-go/pkg/logging"
-	"github.com/go-http-utils/headers"
-	"github.com/golang-jwt/jwt/v4"
+	"io"
+	"net/http"
+	"strings"
 )
 
 func GetBearerToken(r *http.Request) (string, error) {

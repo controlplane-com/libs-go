@@ -2,9 +2,9 @@ package scanner
 
 import (
 	"fmt"
+	"github.com/lib/pq"
 	"github.com/controlplane-com/libs-go/pkg/common"
 	"github.com/controlplane-com/libs-go/pkg/types"
-	"github.com/lib/pq"
 	"testing"
 )
 

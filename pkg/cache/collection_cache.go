@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/redis/go-redis/v9"
 	"github.com/controlplane-com/libs-go/pkg/batches"
 	"github.com/controlplane-com/libs-go/pkg/logging"
-	"github.com/redis/go-redis/v9"
 )
 
 // CollectionCache defines a generic interface for caching collection entries keyed by name.

@@ -5,11 +5,11 @@ import (
 	"time"
 	"unsafe"
 
+	"github.com/robfig/cron/v3"
 	"github.com/controlplane-com/libs-go/pkg/common"
 	leaderElection "github.com/controlplane-com/libs-go/pkg/leader-election"
 	"github.com/controlplane-com/libs-go/pkg/logging"
 	"github.com/controlplane-com/libs-go/pkg/threading"
-	"github.com/robfig/cron/v3"
 	"go.uber.org/zap"
 )
 

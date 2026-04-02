@@ -399,6 +399,7 @@ type ReplaceVolumeStatus struct {
 	NewResourceName         string                                 `json:"newResourceName,omitempty"`
 	NextVolumeSize          *float32                               `json:"nextVolumeSize,omitempty"`
 	TempStorageClassName    string                                 `json:"tempStorageClassName,omitempty"`
+	LockNames               []string                               `json:"lockNames,omitempty"`
 }
 
 type RestoreVolumeSpec struct {

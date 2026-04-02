@@ -3,8 +3,8 @@ package time_utils
 import (
 	"errors"
 	"fmt"
-	"github.com/controlplane-com/libs-go/pkg/pipeline"
 	mapset "github.com/deckarep/golang-set/v2"
+	"github.com/controlplane-com/libs-go/pkg/pipeline"
 	"golang.org/x/exp/slices"
 	"sort"
 	"time"

@@ -11,6 +11,8 @@ const (
 	EventContextComponentIamBroker     EventContextComponent = "iam-broker"
 	EventContextComponentMetadataProxy EventContextComponent = "metadata-proxy"
 	EventContextComponentDataService   EventContextComponent = "data-service"
+	EventContextComponentMk8S          EventContextComponent = "mk8s"
+	EventContextComponentOther         EventContextComponent = "other"
 )
 
 type EventContext struct {

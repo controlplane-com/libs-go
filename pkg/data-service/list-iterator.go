@@ -1,6 +1,6 @@
 package data_service
 
-import "github.com/controlplane-com/types-go/pkg/base"
+import "github.com/controlplane-com/libs-go/pkg/schema/base"
 
 type ListIterator[T any] struct {
 	client           *DataServiceClient

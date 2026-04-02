@@ -5,15 +5,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"strings"
-	"time"
-
-	"github.com/controlplane-com/libs-go/pkg/logging"
 	"github.com/jackc/pglogrepl"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgproto3"
+	"github.com/controlplane-com/libs-go/pkg/logging"
 	"go.uber.org/zap"
+	"strings"
+	"time"
 )
 
 func StartReplication(c *Config) error {

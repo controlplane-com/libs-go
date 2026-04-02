@@ -3,11 +3,11 @@ package config
 import (
 	"errors"
 	"fmt"
+	"github.com/iancoleman/strcase"
 	dynamic_objects "github.com/controlplane-com/libs-go/pkg/dynamic-objects"
 	"github.com/controlplane-com/libs-go/pkg/metadata"
 	"github.com/controlplane-com/libs-go/pkg/scanner"
 	"github.com/controlplane-com/libs-go/pkg/types"
-	"github.com/iancoleman/strcase"
 	"os"
 	"reflect"
 	"regexp"

@@ -3,9 +3,9 @@ package scanner
 import (
 	"errors"
 	"fmt"
+	"github.com/iancoleman/strcase"
 	"github.com/controlplane-com/libs-go/pkg/metadata"
 	"github.com/controlplane-com/libs-go/pkg/types"
-	"github.com/iancoleman/strcase"
 	"reflect"
 	"strings"
 )

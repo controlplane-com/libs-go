@@ -437,21 +437,6 @@ type RolloutOptions struct {
 	TerminationGracePeriodSeconds *float32                    `json:"terminationGracePeriodSeconds,omitempty"`
 }
 
-type RolloutOptionsStatefulScalingPolicy string
-
-const (
-	RolloutOptionsStatefulScalingPolicyOrderedReady RolloutOptionsStatefulScalingPolicy = "OrderedReady"
-	RolloutOptionsStatefulScalingPolicyParallel     RolloutOptionsStatefulScalingPolicy = "Parallel"
-)
-
-type RolloutOptionsStateful struct {
-	MinReadySeconds               *float32                            `json:"minReadySeconds,omitempty"`
-	MaxSurgeReplicas              string                              `json:"maxSurgeReplicas,omitempty"`
-	ScalingPolicy                 RolloutOptionsStatefulScalingPolicy `json:"scalingPolicy,omitempty"`
-	TerminationGracePeriodSeconds *float32                            `json:"terminationGracePeriodSeconds,omitempty"`
-	MaxUnavailableReplicas        string                              `json:"maxUnavailableReplicas,omitempty"`
-}
-
 type ScheduleType string
 
 type SecurityOptions struct {
@@ -544,6 +529,21 @@ type WorkloadSpecSidecar struct {
 	Envoy WorkloadSpecSidecarEnvoy `json:"envoy,omitempty"`
 }
 
+type WorkloadSpecRolloutOptionsScalingPolicy string
+
+const (
+	WorkloadSpecRolloutOptionsScalingPolicyOrderedReady WorkloadSpecRolloutOptionsScalingPolicy = "OrderedReady"
+	WorkloadSpecRolloutOptionsScalingPolicyParallel     WorkloadSpecRolloutOptionsScalingPolicy = "Parallel"
+)
+
+type WorkloadSpecRolloutOptions struct {
+	MinReadySeconds               *float32                                `json:"minReadySeconds,omitempty"`
+	MaxUnavailableReplicas        string                                  `json:"maxUnavailableReplicas,omitempty"`
+	MaxSurgeReplicas              string                                  `json:"maxSurgeReplicas,omitempty"`
+	ScalingPolicy                 WorkloadSpecRolloutOptionsScalingPolicy `json:"scalingPolicy,omitempty"`
+	TerminationGracePeriodSeconds *float32                                `json:"terminationGracePeriodSeconds,omitempty"`
+}
+
 type WorkloadSpecSecurityOptions struct {
 	FilesystemGroupId *float32 `json:"filesystemGroupId,omitempty"`
 	RunAsUser         *float32 `json:"runAsUser,omitempty"`
@@ -594,7 +594,7 @@ type WorkloadSpec struct {
 	Job                *WorkloadSpecJob                `json:"job,omitempty"`
 	Sidecar            WorkloadSpecSidecar             `json:"sidecar,omitempty"`
 	SupportDynamicTags bool                            `json:"supportDynamicTags,omitempty"`
-	RolloutOptions     *any                            `json:"rolloutOptions,omitempty"`
+	RolloutOptions     *WorkloadSpecRolloutOptions     `json:"rolloutOptions,omitempty"`
 	SecurityOptions    *WorkloadSpecSecurityOptions    `json:"securityOptions,omitempty"`
 	LoadBalancer       *WorkloadSpecLoadBalancer       `json:"loadBalancer,omitempty"`
 	Extras             *WorkloadSpecExtras             `json:"extras,omitempty"`
@@ -648,6 +648,32 @@ type Workload struct {
 	Health       WorkloadHealth `json:"health,omitempty"`
 	Spec         WorkloadSpec   `json:"spec"`
 	Status       WorkloadStatus `json:"status,omitempty"`
+}
+
+type WorkloadConfigScheduling struct {
+	Fingerprint string   `json:"fingerprint,omitempty"`
+	Version     *float32 `json:"version,omitempty"`
+}
+
+type WorkloadConfigPodZoneMap map[string]string
+
+type WorkloadConfigLocationPodZoneMap map[string]PodZoneMap
+
+type WorkloadConfigProxy struct {
+	MinCpu *float32 `json:"minCpu,omitempty"`
+}
+
+type WorkloadConfigSubsets struct {
+	Enabled bool `json:"enabled,omitempty"`
+}
+
+type WorkloadConfig struct {
+	Scheduling         WorkloadConfigScheduling         `json:"scheduling,omitempty"`
+	ThinProvision      *float32                         `json:"thinProvision,omitempty"`
+	PodZoneMap         WorkloadConfigPodZoneMap         `json:"podZoneMap,omitempty"`
+	LocationPodZoneMap WorkloadConfigLocationPodZoneMap `json:"locationPodZoneMap,omitempty"`
+	Proxy              *WorkloadConfigProxy             `json:"proxy,omitempty"`
+	Subsets            *WorkloadConfigSubsets           `json:"subsets,omitempty"`
 }
 
 type WorkloadHealth struct {

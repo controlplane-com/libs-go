@@ -53,8 +53,8 @@ func (p *PerformanceSpan) Stop() *PerformanceSpan {
 		}
 		c.Stop()
 	}
-	if p.parent == nil && outputStream != nil {
-		io.WriteString(outputStream, p.Summarize()+"\n")
+	if p.parent == nil && outputStream != nil{
+		io.WriteString(outputStream, p.Summarize() + "\n")
 	}
 	return p
 }

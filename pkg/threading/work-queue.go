@@ -87,7 +87,7 @@ func NewWorkQueue[T any](handler Handler[T], bufferSize int, workerCount int) *W
 		bufferSize:  bufferSize,
 		workerCount: workerCount,
 		RetryPolicy: RetryPolicyNever,
-		m:           sync.Mutex{},
+		m: &sync.Mutex{},
 	}
 }
 
@@ -105,7 +105,7 @@ type WorkQueue[T any] struct {
 	RetryAfterDuration   time.Duration
 	MaxRetries           int
 	ErrorCallback        ErrorCallback[T]
-	m                    sync.Mutex
+	m                    *sync.Mutex
 
 	// Partitioning support (optional)
 	// PartitionFunc is an optional function to extract partition keys from items.
@@ -121,9 +121,7 @@ type WorkQueue[T any] struct {
 }
 
 func (q *WorkQueue[T]) Start() {
-	q.m.Lock()
 	q.running = true
-	q.m.Unlock()
 	q.ctx = context.Background()
 	q.errorDuringExecution = nil
 	q.wg.Add(q.workerCount)

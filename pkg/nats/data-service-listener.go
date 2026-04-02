@@ -4,9 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-
-	gonats "github.com/nats-io/nats.go"
-
+	"github.com/nats-io/nats.go"
 	"github.com/controlplane-com/libs-go/pkg/events"
 	"github.com/controlplane-com/libs-go/pkg/web/services"
 )
@@ -45,7 +43,7 @@ func (t DataServiceListenerOptions[T]) Validate() error {
 type DataServiceListener[T any] struct {
 	ctx          context.Context
 	cancelFunc   context.CancelFunc
-	subscription gonats.Subscription
+	subscription nats.Subscription
 	startChan    chan error
 	running      bool
 	options      DataServiceListenerOptions[T]
@@ -91,7 +89,7 @@ func (d *DataServiceListener[T]) subscribe() error {
 		Topic:       "controlplane.data.*." + d.options.Kind + ".*",
 		Group:       d.Name(),
 		BufferSize:  d.options.BufferSize,
-		Handler: func(m *Msg) (EventDisposition, error) {
+		Handler: func(m *nats.Msg) (EventDisposition, error) {
 			var event events.DataServiceEvent[T]
 			if err := json.Unmarshal(m.Data, &event); err != nil {
 				return EventDispositionErrored, err

@@ -3,10 +3,10 @@ package metering
 import (
 	"errors"
 
+	mapset "github.com/deckarep/golang-set/v2"
 	dynamic_objects "github.com/controlplane-com/libs-go/pkg/dynamic-objects"
 	"github.com/controlplane-com/libs-go/pkg/math"
 	"github.com/controlplane-com/libs-go/pkg/pipeline"
-	mapset "github.com/deckarep/golang-set/v2"
 )
 
 type WorkloadConsumptionTags struct {
