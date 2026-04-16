@@ -4,10 +4,10 @@ go 1.25.0
 
 require (
 	cloud.google.com/go/pubsub/v2 v2.3.0
+	cloud.google.com/go/secretmanager v1.16.0
 	github.com/aws/aws-sdk-go-v2 v1.41.1
 	github.com/aws/aws-sdk-go-v2/config v1.32.7
 	github.com/aws/aws-sdk-go-v2/service/sqs v1.42.21
-	github.com/controlplane-com/types-go v0.0.1
 	github.com/deckarep/golang-set/v2 v2.8.0
 	github.com/eko/gocache/lib/v4 v4.2.3
 	github.com/eko/gocache/store/go_cache/v4 v4.2.4
@@ -16,10 +16,11 @@ require (
 	github.com/go-http-utils/headers v0.0.0-20181008091004-fed159eddc2a
 	github.com/golang-jwt/jwt/v4 v4.5.2
 	github.com/google/uuid v1.6.0
+	github.com/googleapis/gax-go/v2 v2.16.0
 	github.com/gorilla/mux v1.8.1
 	github.com/iancoleman/strcase v0.3.0
 	github.com/jackc/pglogrepl v0.0.0-20251213150135-2e8d0df862c1
-	github.com/jackc/pgx/v5 v5.8.0
+	github.com/jackc/pgx/v5 v5.9.0
 	github.com/lib/pq v1.11.0
 	github.com/nats-io/nats.go v1.48.0
 	github.com/patrickmn/go-cache v2.1.0+incompatible
@@ -36,6 +37,7 @@ require (
 	gorm.io/gorm v1.31.1
 	k8s.io/apimachinery v0.33.0
 	k8s.io/client-go v0.33.0
+	sigs.k8s.io/yaml v1.4.0
 )
 
 require (
@@ -73,7 +75,6 @@ require (
 	github.com/google/go-cmp v0.7.0 // indirect
 	github.com/google/s2a-go v0.1.9 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.3.11 // indirect
-	github.com/googleapis/gax-go/v2 v2.16.0 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
@@ -127,5 +128,4 @@ require (
 	sigs.k8s.io/json v0.0.0-20241010143419-9aa6b5e7a4b3 // indirect
 	sigs.k8s.io/randfill v1.0.0 // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.6.0 // indirect
-	sigs.k8s.io/yaml v1.4.0 // indirect
 )
