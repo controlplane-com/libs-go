@@ -45,6 +45,16 @@ func (s *OrgService) Get(ctx context.Context, name string) (*org.Org, error) {
 	return &result, nil
 }
 
+// Create creates a new organization. Requires a root token.
+func (s *OrgService) Create(ctx context.Context, o *org.Org) (*org.Org, error) {
+	path := "/org"
+	var result org.Org
+	if err := s.client.post(ctx, path, o, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
 // Update updates an existing organization.
 func (s *OrgService) Update(ctx context.Context, name string, o *org.Org) (*org.Org, error) {
 	path := fmt.Sprintf("/org/%s", name)

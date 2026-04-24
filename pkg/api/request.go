@@ -200,9 +200,71 @@ func (c *Client) doWithBaseURL(ctx context.Context, method, baseURL, path string
 	return nil
 }
 
+// postAndFollow performs a POST request and follows the Location header with a GET
+// to return the created resource. This handles the common pattern where data-service
+// returns 201 Created with a Location header pointing to the new resource.
+func (c *Client) postAndFollow(ctx context.Context, path string, body, result any) error {
+	url := c.baseURL + path
+
+	var bodyReader io.Reader
+	if body != nil {
+		bodyBytes, err := json.Marshal(body)
+		if err != nil {
+			return fmt.Errorf("failed to marshal request body: %w", err)
+		}
+		bodyReader = bytes.NewReader(bodyBytes)
+	}
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bodyReader)
+	if err != nil {
+		return fmt.Errorf("failed to create request: %w", err)
+	}
+
+	c.setRequestHeaders(req)
+
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return fmt.Errorf("request failed: %w", err)
+	}
+	defer resp.Body.Close()
+
+	respBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return fmt.Errorf("failed to read response body: %w", err)
+	}
+
+	if resp.StatusCode >= 400 {
+		return c.parseErrorResponse(resp.StatusCode, respBody)
+	}
+
+	if result == nil {
+		return nil
+	}
+
+	// Try to unmarshal the response body directly first
+	if len(respBody) > 0 {
+		if err := json.Unmarshal(respBody, result); err == nil {
+			return nil
+		}
+	}
+
+	// If the body isn't JSON, follow the Location header
+	location := resp.Header.Get("Location")
+	if location == "" {
+		return fmt.Errorf("POST returned non-JSON response and no Location header")
+	}
+
+	return c.get(ctx, location, result)
+}
+
 // GetRaw allows you to filter an API response to only the fields you care about
 func (c *Client) GetRaw(ctx context.Context, path string, result any) error {
 	return c.do(ctx, http.MethodGet, path, nil, result)
+}
+
+// PostRaw sends a raw POST request with arbitrary JSON body.
+func (c *Client) PostRaw(ctx context.Context, path string, body any) error {
+	return c.do(ctx, http.MethodPost, path, body, nil)
 }
 
 // PatchRaw sends a raw PATCH request with arbitrary JSON body (for $drop, $append operators).

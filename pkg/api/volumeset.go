@@ -135,7 +135,7 @@ func (s *VolumeSetService) CreateCommand(ctx context.Context, org, gvc, volumeSe
 	org = s.client.resolveOrg(org)
 	path := fmt.Sprintf("/org/%s/gvc/%s/volumeset/%s/-command", org, gvc, volumeSetName)
 	var result command.Command
-	if err := s.client.post(ctx, path, cmd, &result); err != nil {
+	if err := s.client.postAndFollow(ctx, path, cmd, &result); err != nil {
 		return nil, err
 	}
 	return &result, nil
