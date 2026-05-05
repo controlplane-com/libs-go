@@ -36,4 +36,5 @@ type JobExecutionStatus struct {
 	Name            string                       `json:"name"`
 	Replica         string                       `json:"replica,omitempty"`
 	Containers      JobExecutionStatusContainers `json:"containers,omitempty"`
+	Message         string                       `json:"message,omitempty"`
 }

@@ -422,6 +422,7 @@ type RunCronWorkloadStatus struct {
 	Replica                string                                   `json:"replica,omitempty"`
 	ClusterIdByLocation    RunCronWorkloadStatusClusterIdByLocation `json:"clusterIdByLocation,omitempty"`
 	MinimumWorkloadVersion *float32                                 `json:"minimumWorkloadVersion,omitempty"`
+	Messages               []string                                 `json:"messages,omitempty"`
 }
 
 type ShrinkVolumeSpec struct {
