@@ -175,6 +175,7 @@ type GvcSpec struct {
 	PullSecretLinks      []string                    `json:"pullSecretLinks,omitempty"`
 	Domain               string                      `json:"domain,omitempty"`
 	EndpointNamingFormat GvcSpecEndpointNamingFormat `json:"endpointNamingFormat,omitempty"`
+	AliasWorkloadLink    string                      `json:"aliasWorkloadLink,omitempty"`
 	Tracing              *GvcSpecTracing             `json:"tracing,omitempty"`
 	Sidecar              *GvcSpecSidecar             `json:"sidecar,omitempty"`
 	Env                  []env.EnvVar                `json:"env,omitempty"`

@@ -25,17 +25,19 @@ type DeploymentStatus struct {
 	Versions                  []DeploymentVersion          `json:"versions,omitempty"`
 	JobExecutions             []cronjob.JobExecutionStatus `json:"jobExecutions,omitempty"`
 	Message                   string                       `json:"message,omitempty"`
+	DesiredScale              *float32                     `json:"desiredScale,omitempty"`
 }
 
 type DeploymentVersionContainers map[string]containerstatus.ContainerStatus
 
 type DeploymentVersion struct {
-	Name       string                      `json:"name,omitempty"`
-	Created    string                      `json:"created,omitempty"`
-	Workload   *float32                    `json:"workload,omitempty"`
-	Gvc        *float32                    `json:"gvc,omitempty"`
-	Containers DeploymentVersionContainers `json:"containers,omitempty"`
-	Ready      bool                        `json:"ready,omitempty"`
-	Message    string                      `json:"message,omitempty"`
-	Zone       string                      `json:"zone,omitempty"`
+	Name         string                      `json:"name,omitempty"`
+	Created      string                      `json:"created,omitempty"`
+	Workload     *float32                    `json:"workload,omitempty"`
+	Gvc          *float32                    `json:"gvc,omitempty"`
+	Containers   DeploymentVersionContainers `json:"containers,omitempty"`
+	Ready        bool                        `json:"ready,omitempty"`
+	Message      string                      `json:"message,omitempty"`
+	Zone         string                      `json:"zone,omitempty"`
+	DesiredScale *float32                    `json:"desiredScale,omitempty"`
 }
