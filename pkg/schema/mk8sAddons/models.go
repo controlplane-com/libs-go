@@ -66,8 +66,9 @@ type ByokAddonConfigConfigJuicefs struct {
 type ByokAddonConfigConfigMiddlebox struct {
 	Enabled            bool     `json:"enabled,omitempty"`
 	BandwidthAlertMbps *float32 `json:"bandwidthAlertMbps,omitempty"`
-	Port               *float32 `json:"port,omitempty"`
 	Ip                 string   `json:"ip,omitempty"`
+	IngressReplicas    *float32 `json:"ingressReplicas,omitempty"`
+	Port               *float32 `json:"port,omitempty"`
 }
 
 type ByokAddonConfigConfigCommonPdb struct {

@@ -120,11 +120,11 @@ type ContainerSpecLivenessProbe struct {
 	Grpc                *ContainerSpecLivenessProbeGrpc      `json:"grpc,omitempty"`
 	TcpSocket           *ContainerSpecLivenessProbeTcpSocket `json:"tcpSocket,omitempty"`
 	HttpGet             *ContainerSpecLivenessProbeHttpGet   `json:"httpGet,omitempty"`
-	InitialDelaySeconds *float32                             `json:"initialDelaySeconds,omitempty"`
 	PeriodSeconds       *float32                             `json:"periodSeconds,omitempty"`
 	TimeoutSeconds      *float32                             `json:"timeoutSeconds,omitempty"`
 	SuccessThreshold    *float32                             `json:"successThreshold,omitempty"`
 	FailureThreshold    *float32                             `json:"failureThreshold,omitempty"`
+	InitialDelaySeconds *float32                             `json:"initialDelaySeconds,omitempty"`
 }
 
 type ContainerSpecGpuNvidia struct {
@@ -338,6 +338,49 @@ type JobSpec struct {
 	ActiveDeadlineSeconds *float32                 `json:"activeDeadlineSeconds,omitempty"`
 }
 
+type LivenessProbeExec struct {
+	Command []string `json:"command,omitempty"`
+}
+
+type LivenessProbeGrpc struct {
+	Port *float32 `json:"port,omitempty"`
+}
+
+type LivenessProbeTcpSocket struct {
+	Port *float32 `json:"port,omitempty"`
+}
+
+type LivenessProbeHttpGetHttpHeaders struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
+}
+
+type LivenessProbeHttpGetScheme string
+
+const (
+	LivenessProbeHttpGetSchemeHttp  LivenessProbeHttpGetScheme = "HTTP"
+	LivenessProbeHttpGetSchemeHttps LivenessProbeHttpGetScheme = "HTTPS"
+)
+
+type LivenessProbeHttpGet struct {
+	Path        string                            `json:"path,omitempty"`
+	Port        *float32                          `json:"port,omitempty"`
+	HttpHeaders []LivenessProbeHttpGetHttpHeaders `json:"httpHeaders,omitempty"`
+	Scheme      LivenessProbeHttpGetScheme        `json:"scheme,omitempty"`
+}
+
+type LivenessProbe struct {
+	Exec                *LivenessProbeExec      `json:"exec,omitempty"`
+	Grpc                *LivenessProbeGrpc      `json:"grpc,omitempty"`
+	TcpSocket           *LivenessProbeTcpSocket `json:"tcpSocket,omitempty"`
+	HttpGet             *LivenessProbeHttpGet   `json:"httpGet,omitempty"`
+	PeriodSeconds       *float32                `json:"periodSeconds,omitempty"`
+	TimeoutSeconds      *float32                `json:"timeoutSeconds,omitempty"`
+	SuccessThreshold    *float32                `json:"successThreshold,omitempty"`
+	FailureThreshold    *float32                `json:"failureThreshold,omitempty"`
+	InitialDelaySeconds *float32                `json:"initialDelaySeconds,omitempty"`
+}
+
 type LoadBalancerPortProtocol string
 
 const (
@@ -394,6 +437,49 @@ type LoadBalancerStatus struct {
 type Memory string
 
 type PodZoneMap map[string]string
+
+type ReadinessProbeExec struct {
+	Command []string `json:"command,omitempty"`
+}
+
+type ReadinessProbeGrpc struct {
+	Port *float32 `json:"port,omitempty"`
+}
+
+type ReadinessProbeTcpSocket struct {
+	Port *float32 `json:"port,omitempty"`
+}
+
+type ReadinessProbeHttpGetHttpHeaders struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
+}
+
+type ReadinessProbeHttpGetScheme string
+
+const (
+	ReadinessProbeHttpGetSchemeHttp  ReadinessProbeHttpGetScheme = "HTTP"
+	ReadinessProbeHttpGetSchemeHttps ReadinessProbeHttpGetScheme = "HTTPS"
+)
+
+type ReadinessProbeHttpGet struct {
+	Path        string                             `json:"path,omitempty"`
+	Port        *float32                           `json:"port,omitempty"`
+	HttpHeaders []ReadinessProbeHttpGetHttpHeaders `json:"httpHeaders,omitempty"`
+	Scheme      ReadinessProbeHttpGetScheme        `json:"scheme,omitempty"`
+}
+
+type ReadinessProbe struct {
+	Exec                *ReadinessProbeExec      `json:"exec,omitempty"`
+	Grpc                *ReadinessProbeGrpc      `json:"grpc,omitempty"`
+	TcpSocket           *ReadinessProbeTcpSocket `json:"tcpSocket,omitempty"`
+	HttpGet             *ReadinessProbeHttpGet   `json:"httpGet,omitempty"`
+	InitialDelaySeconds *float32                 `json:"initialDelaySeconds,omitempty"`
+	PeriodSeconds       *float32                 `json:"periodSeconds,omitempty"`
+	TimeoutSeconds      *float32                 `json:"timeoutSeconds,omitempty"`
+	SuccessThreshold    *float32                 `json:"successThreshold,omitempty"`
+	FailureThreshold    *float32                 `json:"failureThreshold,omitempty"`
+}
 
 type RequestRetryPolicy struct {
 	Attempts *float32 `json:"attempts,omitempty"`
