@@ -72,6 +72,7 @@ type PersistentVolumeStatus struct {
 	Index               float32                          `json:"index"`
 	CurrentSize         float32                          `json:"currentSize"`
 	CurrentBytesUsed    *float32                         `json:"currentBytesUsed,omitempty"`
+	CurrentBytesFree    *float32                         `json:"currentBytesFree,omitempty"`
 	Iops                *float32                         `json:"iops,omitempty"`
 	Throughput          *float32                         `json:"throughput,omitempty"`
 	Driver              string                           `json:"driver"`

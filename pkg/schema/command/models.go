@@ -143,6 +143,7 @@ type DeleteCloudDevicesStatusVolume struct {
 	Index               float32                                  `json:"index"`
 	CurrentSize         float32                                  `json:"currentSize"`
 	CurrentBytesUsed    *float32                                 `json:"currentBytesUsed,omitempty"`
+	CurrentBytesFree    *float32                                 `json:"currentBytesFree,omitempty"`
 	Iops                *float32                                 `json:"iops,omitempty"`
 	Throughput          *float32                                 `json:"throughput,omitempty"`
 	Driver              string                                   `json:"driver"`
@@ -370,12 +371,14 @@ type ReplaceVolumeStatusStage string
 
 const (
 	ReplaceVolumeStatusStageCreateVolume               ReplaceVolumeStatusStage = "create-volume"
+	ReplaceVolumeStatusStageInitializeVolumeData       ReplaceVolumeStatusStage = "initialize-volume-data"
 	ReplaceVolumeStatusStageCleanupAfterVolumeCreation ReplaceVolumeStatusStage = "cleanup-after-volume-creation"
 	ReplaceVolumeStatusStageUpdateVolumeSet            ReplaceVolumeStatusStage = "update-volume-set"
 	ReplaceVolumeStatusStageConfigureStorageResources  ReplaceVolumeStatusStage = "configure-storage-resources"
 	ReplaceVolumeStatusStageRemoveFinalizer            ReplaceVolumeStatusStage = "remove-finalizer"
 	ReplaceVolumeStatusStageShutdownReplica            ReplaceVolumeStatusStage = "shutdown-replica"
 	ReplaceVolumeStatusStageAwaitReplicaTermination    ReplaceVolumeStatusStage = "await-replica-termination"
+	ReplaceVolumeStatusStageAwaitDataReady             ReplaceVolumeStatusStage = "await-data-ready"
 	ReplaceVolumeStatusStageCleanupK8S                 ReplaceVolumeStatusStage = "cleanup-k8s"
 	ReplaceVolumeStatusStageFail                       ReplaceVolumeStatusStage = "fail"
 	ReplaceVolumeStatusStageRevert                     ReplaceVolumeStatusStage = "revert"
@@ -400,6 +403,11 @@ type ReplaceVolumeStatus struct {
 	NextVolumeSize          *float32                               `json:"nextVolumeSize,omitempty"`
 	TempStorageClassName    string                                 `json:"tempStorageClassName,omitempty"`
 	LockNames               []string                               `json:"lockNames,omitempty"`
+	PresyncTargetPodUid     string                                 `json:"presyncTargetPodUid,omitempty"`
+	PresyncAttempt          *float32                               `json:"presyncAttempt,omitempty"`
+	PresyncReceiverName     string                                 `json:"presyncReceiverName,omitempty"`
+	DeltaSourcePodName      string                                 `json:"deltaSourcePodName,omitempty"`
+	FinalSyncCompletedAt    string                                 `json:"finalSyncCompletedAt,omitempty"`
 }
 
 type RestoreVolumeSpec struct {

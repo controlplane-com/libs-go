@@ -9,8 +9,21 @@ const (
 	VolumeSpecRecoveryPolicyRecycle VolumeSpecRecoveryPolicy = "recycle"
 )
 
+type VolumeSpecBus string
+
+const (
+	VolumeSpecBusVirtio VolumeSpecBus = "virtio"
+	VolumeSpecBusSata   VolumeSpecBus = "sata"
+	VolumeSpecBusScsi   VolumeSpecBus = "scsi"
+)
+
 type VolumeSpec struct {
 	Uri            string                   `json:"uri"`
 	RecoveryPolicy VolumeSpecRecoveryPolicy `json:"recoveryPolicy,omitempty"`
-	Path           string                   `json:"path"`
+	Path           string                   `json:"path,omitempty"`
+	Name           string                   `json:"name,omitempty"`
+	Bus            VolumeSpecBus            `json:"bus,omitempty"`
+	BootOrder      *float32                 `json:"bootOrder,omitempty"`
+	Cdrom          bool                     `json:"cdrom,omitempty"`
+	Serial         string                   `json:"serial,omitempty"`
 }

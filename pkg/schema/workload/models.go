@@ -166,7 +166,7 @@ type ContainerSpecLifecycle struct {
 
 type ContainerSpec struct {
 	Name           string                       `json:"name,omitempty"`
-	Image          string                       `json:"image"`
+	Image          string                       `json:"image,omitempty"`
 	WorkingDir     string                       `json:"workingDir,omitempty"`
 	Metrics        *ContainerSpecMetrics        `json:"metrics,omitempty"`
 	Port           *float32                     `json:"port,omitempty"`
@@ -670,6 +670,139 @@ type WorkloadSpecRequestRetryPolicy struct {
 	RetryOn  []string `json:"retryOn,omitempty"`
 }
 
+type WorkloadSpecVmBootDiskSourceOci struct {
+	Image string `json:"image"`
+}
+
+type WorkloadSpecVmBootDiskSourceHttp struct {
+	Url      string `json:"url"`
+	Checksum string `json:"checksum,omitempty"`
+}
+
+type WorkloadSpecVmBootDiskSource struct {
+	Oci  WorkloadSpecVmBootDiskSourceOci  `json:"oci,omitempty"`
+	Http WorkloadSpecVmBootDiskSourceHttp `json:"http,omitempty"`
+}
+
+type WorkloadSpecVmBootDiskPersist struct {
+	VolumeSet string `json:"volumeSet"`
+}
+
+type WorkloadSpecVmBootDiskBus string
+
+const (
+	WorkloadSpecVmBootDiskBusVirtio WorkloadSpecVmBootDiskBus = "virtio"
+	WorkloadSpecVmBootDiskBusSata   WorkloadSpecVmBootDiskBus = "sata"
+	WorkloadSpecVmBootDiskBusScsi   WorkloadSpecVmBootDiskBus = "scsi"
+)
+
+type WorkloadSpecVmBootDisk struct {
+	Source    WorkloadSpecVmBootDiskSource   `json:"source,omitempty"`
+	Persist   *WorkloadSpecVmBootDiskPersist `json:"persist,omitempty"`
+	Bus       WorkloadSpecVmBootDiskBus      `json:"bus,omitempty"`
+	BootOrder *float32                       `json:"bootOrder,omitempty"`
+}
+
+type WorkloadSpecVmCpu struct {
+	Sockets *float32 `json:"sockets,omitempty"`
+	Threads *float32 `json:"threads,omitempty"`
+}
+
+type WorkloadSpecVmFirmwareBootloader string
+
+const (
+	WorkloadSpecVmFirmwareBootloaderBios WorkloadSpecVmFirmwareBootloader = "bios"
+	WorkloadSpecVmFirmwareBootloaderEfi  WorkloadSpecVmFirmwareBootloader = "efi"
+)
+
+type WorkloadSpecVmFirmwareSmbios struct {
+	Manufacturer string `json:"manufacturer,omitempty"`
+	Product      string `json:"product,omitempty"`
+	Version      string `json:"version,omitempty"`
+	Sku          string `json:"sku,omitempty"`
+	Family       string `json:"family,omitempty"`
+}
+
+type WorkloadSpecVmFirmware struct {
+	Bootloader WorkloadSpecVmFirmwareBootloader `json:"bootloader,omitempty"`
+	SecureBoot bool                             `json:"secureBoot,omitempty"`
+	Uuid       string                           `json:"uuid,omitempty"`
+	Serial     string                           `json:"serial,omitempty"`
+	Smbios     WorkloadSpecVmFirmwareSmbios     `json:"smbios,omitempty"`
+}
+
+type WorkloadSpecVmGuestOs string
+
+const (
+	WorkloadSpecVmGuestOsLinux   WorkloadSpecVmGuestOs = "linux"
+	WorkloadSpecVmGuestOsWindows WorkloadSpecVmGuestOs = "windows"
+)
+
+type WorkloadSpecVmNetworks struct {
+	Name string `json:"name,omitempty"`
+}
+
+type WorkloadSpecVmCloudInit struct {
+	UserData            string   `json:"userData,omitempty"`
+	UserDataBase64      string   `json:"userDataBase64,omitempty"`
+	UserDataSecret      string   `json:"userDataSecret,omitempty"`
+	SshPublicKeySecrets []string `json:"sshPublicKeySecrets,omitempty"`
+}
+
+type WorkloadSpecVmAccessCredentialsDeliveryMethod string
+
+const (
+	WorkloadSpecVmAccessCredentialsDeliveryMethodQemuGuestAgent WorkloadSpecVmAccessCredentialsDeliveryMethod = "qemuGuestAgent"
+	WorkloadSpecVmAccessCredentialsDeliveryMethodConfigDrive    WorkloadSpecVmAccessCredentialsDeliveryMethod = "configDrive"
+)
+
+type WorkloadSpecVmAccessCredentials struct {
+	SshPublicKeySecret string                                        `json:"sshPublicKeySecret"`
+	Users              []string                                      `json:"users"`
+	DeliveryMethod     WorkloadSpecVmAccessCredentialsDeliveryMethod `json:"deliveryMethod,omitempty"`
+}
+
+type WorkloadSpecVmRunStrategy string
+
+const (
+	WorkloadSpecVmRunStrategyAlways         WorkloadSpecVmRunStrategy = "Always"
+	WorkloadSpecVmRunStrategyRerunOnFailure WorkloadSpecVmRunStrategy = "RerunOnFailure"
+	WorkloadSpecVmRunStrategyManual         WorkloadSpecVmRunStrategy = "Manual"
+	WorkloadSpecVmRunStrategyHalted         WorkloadSpecVmRunStrategy = "Halted"
+)
+
+type WorkloadSpecVmFeaturesTpm struct {
+	Enabled    bool `json:"enabled,omitempty"`
+	Persistent bool `json:"persistent,omitempty"`
+}
+
+type WorkloadSpecVmFeatures struct {
+	Acpi bool                      `json:"acpi,omitempty"`
+	Apic bool                      `json:"apic,omitempty"`
+	Smm  bool                      `json:"smm,omitempty"`
+	Rng  bool                      `json:"rng,omitempty"`
+	Tpm  WorkloadSpecVmFeaturesTpm `json:"tpm,omitempty"`
+}
+
+type WorkloadSpecVmClock struct {
+	Timezone string `json:"timezone,omitempty"`
+}
+
+type WorkloadSpecVm struct {
+	BootDisk          *WorkloadSpecVmBootDisk           `json:"bootDisk,omitempty"`
+	Cpu               WorkloadSpecVmCpu                 `json:"cpu,omitempty"`
+	Firmware          WorkloadSpecVmFirmware            `json:"firmware,omitempty"`
+	GuestOS           WorkloadSpecVmGuestOs             `json:"guestOS,omitempty"`
+	Networks          []WorkloadSpecVmNetworks          `json:"networks,omitempty"`
+	CloudInit         WorkloadSpecVmCloudInit           `json:"cloudInit,omitempty"`
+	AccessCredentials []WorkloadSpecVmAccessCredentials `json:"accessCredentials,omitempty"`
+	RunStrategy       WorkloadSpecVmRunStrategy         `json:"runStrategy,omitempty"`
+	Features          WorkloadSpecVmFeatures            `json:"features,omitempty"`
+	Clock             WorkloadSpecVmClock               `json:"clock,omitempty"`
+	Hostname          string                            `json:"hostname,omitempty"`
+	Subdomain         string                            `json:"subdomain,omitempty"`
+}
+
 type WorkloadSpec struct {
 	Type               WorkloadType                    `json:"type,omitempty"`
 	IdentityLink       *string                         `json:"identityLink,omitempty"`
@@ -685,6 +818,7 @@ type WorkloadSpec struct {
 	LoadBalancer       *WorkloadSpecLoadBalancer       `json:"loadBalancer,omitempty"`
 	Extras             *WorkloadSpecExtras             `json:"extras,omitempty"`
 	RequestRetryPolicy *WorkloadSpecRequestRetryPolicy `json:"requestRetryPolicy,omitempty"`
+	Vm                 *WorkloadSpecVm                 `json:"vm,omitempty"`
 }
 
 type WorkloadStatusHealthCheck struct {
@@ -752,4 +886,5 @@ const (
 	WorkloadTypeStandard   WorkloadType = "standard"
 	WorkloadTypeCron       WorkloadType = "cron"
 	WorkloadTypeStateful   WorkloadType = "stateful"
+	WorkloadTypeVm         WorkloadType = "vm"
 )

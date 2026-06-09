@@ -95,12 +95,13 @@ type DomainStatusLocations struct {
 }
 
 type DomainStatus struct {
-	Endpoints   []DomainStatusEndpoints `json:"endpoints,omitempty"`
-	Status      DomainStatusStatus      `json:"status,omitempty"`
-	Warning     string                  `json:"warning,omitempty"`
-	Locations   []DomainStatusLocations `json:"locations,omitempty"`
-	Fingerprint string                  `json:"fingerprint,omitempty"`
-	DnsConfig   []DnsConfigRecord       `json:"dnsConfig,omitempty"`
+	Endpoints     []DomainStatusEndpoints `json:"endpoints,omitempty"`
+	Status        DomainStatusStatus      `json:"status,omitempty"`
+	Warning       string                  `json:"warning,omitempty"`
+	StatusUpdated string                  `json:"statusUpdated,omitempty"`
+	Locations     []DomainStatusLocations `json:"locations,omitempty"`
+	Fingerprint   string                  `json:"fingerprint,omitempty"`
+	DnsConfig     []DnsConfigRecord       `json:"dnsConfig,omitempty"`
 }
 
 type EnvoyHeaderValue string

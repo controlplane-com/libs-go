@@ -74,6 +74,8 @@ type Mk8SClusterSpecAddOns struct {
 	AzureACR              mk8sAddons.AzureACRAddonConfig        `json:"azureACR,omitempty"`
 	Sysbox                mk8sAddons.NonCustomizableAddonConfig `json:"sysbox,omitempty"`
 	Byok                  mk8sAddons.ByokAddonConfig            `json:"byok,omitempty"`
+	Kubevirt              mk8sAddons.KubevirtAddonConfig        `json:"kubevirt,omitempty"`
+	NodeLocalDns          mk8sAddons.NodeLocalDnsAddonConfig    `json:"nodeLocalDns,omitempty"`
 }
 
 type Mk8SClusterSpec struct {
@@ -153,6 +155,8 @@ type Mk8SSpecAddOns struct {
 	AzureACR              mk8sAddons.AzureACRAddonConfig        `json:"azureACR,omitempty"`
 	Sysbox                mk8sAddons.NonCustomizableAddonConfig `json:"sysbox,omitempty"`
 	Byok                  mk8sAddons.ByokAddonConfig            `json:"byok,omitempty"`
+	Kubevirt              mk8sAddons.KubevirtAddonConfig        `json:"kubevirt,omitempty"`
+	NodeLocalDns          mk8sAddons.NodeLocalDnsAddonConfig    `json:"nodeLocalDns,omitempty"`
 }
 
 type Mk8sSpec struct {

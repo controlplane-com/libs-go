@@ -280,6 +280,10 @@ type HttpHeaderValue struct {
 	Files   []string `json:"files,omitempty"`
 }
 
+type KubevirtAddonConfig struct {
+	ScratchSpaceStorageClass string `json:"scratchSpaceStorageClass,omitempty"`
+}
+
 type LogsAddonConfig struct {
 	AuditEnabled      bool              `json:"auditEnabled,omitempty"`
 	IncludeNamespaces RegularExpression `json:"includeNamespaces,omitempty"`
@@ -316,6 +320,9 @@ type MetricsAddonStatusRemoteWriteConfig map[string]any
 type MetricsAddonStatus struct {
 	PrometheusEndpoint string                              `json:"prometheusEndpoint,omitempty"`
 	RemoteWriteConfig  MetricsAddonStatusRemoteWriteConfig `json:"remoteWriteConfig,omitempty"`
+}
+
+type NodeLocalDnsAddonConfig struct {
 }
 
 type NonCustomizableAddonConfig struct {
