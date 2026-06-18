@@ -371,14 +371,12 @@ type ReplaceVolumeStatusStage string
 
 const (
 	ReplaceVolumeStatusStageCreateVolume               ReplaceVolumeStatusStage = "create-volume"
-	ReplaceVolumeStatusStageInitializeVolumeData       ReplaceVolumeStatusStage = "initialize-volume-data"
 	ReplaceVolumeStatusStageCleanupAfterVolumeCreation ReplaceVolumeStatusStage = "cleanup-after-volume-creation"
 	ReplaceVolumeStatusStageUpdateVolumeSet            ReplaceVolumeStatusStage = "update-volume-set"
 	ReplaceVolumeStatusStageConfigureStorageResources  ReplaceVolumeStatusStage = "configure-storage-resources"
 	ReplaceVolumeStatusStageRemoveFinalizer            ReplaceVolumeStatusStage = "remove-finalizer"
 	ReplaceVolumeStatusStageShutdownReplica            ReplaceVolumeStatusStage = "shutdown-replica"
 	ReplaceVolumeStatusStageAwaitReplicaTermination    ReplaceVolumeStatusStage = "await-replica-termination"
-	ReplaceVolumeStatusStageAwaitDataReady             ReplaceVolumeStatusStage = "await-data-ready"
 	ReplaceVolumeStatusStageCleanupK8S                 ReplaceVolumeStatusStage = "cleanup-k8s"
 	ReplaceVolumeStatusStageFail                       ReplaceVolumeStatusStage = "fail"
 	ReplaceVolumeStatusStageRevert                     ReplaceVolumeStatusStage = "revert"
@@ -403,11 +401,6 @@ type ReplaceVolumeStatus struct {
 	NextVolumeSize          *float32                               `json:"nextVolumeSize,omitempty"`
 	TempStorageClassName    string                                 `json:"tempStorageClassName,omitempty"`
 	LockNames               []string                               `json:"lockNames,omitempty"`
-	PresyncTargetPodUid     string                                 `json:"presyncTargetPodUid,omitempty"`
-	PresyncAttempt          *float32                               `json:"presyncAttempt,omitempty"`
-	PresyncReceiverName     string                                 `json:"presyncReceiverName,omitempty"`
-	DeltaSourcePodName      string                                 `json:"deltaSourcePodName,omitempty"`
-	FinalSyncCompletedAt    string                                 `json:"finalSyncCompletedAt,omitempty"`
 }
 
 type RestoreVolumeSpec struct {
@@ -443,23 +436,38 @@ type ShrinkVolumeSpec struct {
 type ShrinkVolumeStatusStage string
 
 const (
-	ShrinkVolumeStatusStageUpdateVolumeSet         ShrinkVolumeStatusStage = "update-volume-set"
-	ShrinkVolumeStatusStageDeleteStorageResources  ShrinkVolumeStatusStage = "delete-storage-resources"
+	ShrinkVolumeStatusStageCreateVolume            ShrinkVolumeStatusStage = "create-volume"
+	ShrinkVolumeStatusStageApplyPresyncResources   ShrinkVolumeStatusStage = "apply-presync-resources"
+	ShrinkVolumeStatusStageInjectAndAwaitPresync   ShrinkVolumeStatusStage = "inject-and-await-presync"
+	ShrinkVolumeStatusStageApplyDeltaSource        ShrinkVolumeStatusStage = "apply-delta-source"
+	ShrinkVolumeStatusStageCommitAndPrepareSwap    ShrinkVolumeStatusStage = "commit-and-prepare-swap"
 	ShrinkVolumeStatusStageShutdownReplica         ShrinkVolumeStatusStage = "shutdown-replica"
 	ShrinkVolumeStatusStageAwaitReplicaTermination ShrinkVolumeStatusStage = "await-replica-termination"
-	ShrinkVolumeStatusStageFail                    ShrinkVolumeStatusStage = "fail"
+	ShrinkVolumeStatusStageAwaitDataReady          ShrinkVolumeStatusStage = "await-data-ready"
 	ShrinkVolumeStatusStageCleanupK8S              ShrinkVolumeStatusStage = "cleanup-k8s"
+	ShrinkVolumeStatusStageFail                    ShrinkVolumeStatusStage = "fail"
 )
 
 type ShrinkVolumeStatusClusterIdByLocation map[string]string
 
+type ShrinkVolumeStatusNewVolumeAttributes map[string]string
+
 type ShrinkVolumeStatus struct {
 	Stage                   ShrinkVolumeStatusStage               `json:"stage,omitempty"`
+	Messages                []string                              `json:"messages,omitempty"`
 	ClusterId               string                                `json:"clusterId,omitempty"`
 	ClusterIdByLocation     ShrinkVolumeStatusClusterIdByLocation `json:"clusterIdByLocation,omitempty"`
-	Messages                []string                              `json:"messages,omitempty"`
 	InUseByWorkloadId       string                                `json:"inUseByWorkloadId,omitempty"`
 	StorageDeviceIdToRemove string                                `json:"storageDeviceIdToRemove,omitempty"`
+	NewStorageDeviceId      string                                `json:"newStorageDeviceId,omitempty"`
+	NewVolumeAttributes     ShrinkVolumeStatusNewVolumeAttributes `json:"newVolumeAttributes,omitempty"`
+	NewResourceName         string                                `json:"newResourceName,omitempty"`
+	NextVolumeSize          *float32                              `json:"nextVolumeSize,omitempty"`
+	TempStorageClassName    string                                `json:"tempStorageClassName,omitempty"`
+	LockNames               []string                              `json:"lockNames,omitempty"`
+	PresyncTargetPodUid     string                                `json:"presyncTargetPodUid,omitempty"`
+	PresyncAttempt          *float32                              `json:"presyncAttempt,omitempty"`
+	FinalSyncCompletedAt    string                                `json:"finalSyncCompletedAt,omitempty"`
 }
 
 type SnapshotDeletionStatusStage string

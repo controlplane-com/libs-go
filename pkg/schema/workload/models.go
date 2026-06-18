@@ -771,19 +771,6 @@ const (
 	WorkloadSpecVmRunStrategyHalted         WorkloadSpecVmRunStrategy = "Halted"
 )
 
-type WorkloadSpecVmFeaturesTpm struct {
-	Enabled    bool `json:"enabled,omitempty"`
-	Persistent bool `json:"persistent,omitempty"`
-}
-
-type WorkloadSpecVmFeatures struct {
-	Acpi bool                      `json:"acpi,omitempty"`
-	Apic bool                      `json:"apic,omitempty"`
-	Smm  bool                      `json:"smm,omitempty"`
-	Rng  bool                      `json:"rng,omitempty"`
-	Tpm  WorkloadSpecVmFeaturesTpm `json:"tpm,omitempty"`
-}
-
 type WorkloadSpecVmClock struct {
 	Timezone string `json:"timezone,omitempty"`
 }
@@ -797,7 +784,6 @@ type WorkloadSpecVm struct {
 	CloudInit         WorkloadSpecVmCloudInit           `json:"cloudInit,omitempty"`
 	AccessCredentials []WorkloadSpecVmAccessCredentials `json:"accessCredentials,omitempty"`
 	RunStrategy       WorkloadSpecVmRunStrategy         `json:"runStrategy,omitempty"`
-	Features          WorkloadSpecVmFeatures            `json:"features,omitempty"`
 	Clock             WorkloadSpecVmClock               `json:"clock,omitempty"`
 	Hostname          string                            `json:"hostname,omitempty"`
 	Subdomain         string                            `json:"subdomain,omitempty"`

@@ -103,19 +103,6 @@ const (
 	VmSpecRunStrategyHalted         VmSpecRunStrategy = "Halted"
 )
 
-type VmSpecFeaturesTpm struct {
-	Enabled    bool `json:"enabled,omitempty"`
-	Persistent bool `json:"persistent,omitempty"`
-}
-
-type VmSpecFeatures struct {
-	Acpi bool              `json:"acpi,omitempty"`
-	Apic bool              `json:"apic,omitempty"`
-	Smm  bool              `json:"smm,omitempty"`
-	Rng  bool              `json:"rng,omitempty"`
-	Tpm  VmSpecFeaturesTpm `json:"tpm,omitempty"`
-}
-
 type VmSpecClock struct {
 	Timezone string `json:"timezone,omitempty"`
 }
@@ -129,7 +116,6 @@ type VmSpec struct {
 	CloudInit         VmSpecCloudInit           `json:"cloudInit,omitempty"`
 	AccessCredentials []VmSpecAccessCredentials `json:"accessCredentials,omitempty"`
 	RunStrategy       VmSpecRunStrategy         `json:"runStrategy,omitempty"`
-	Features          VmSpecFeatures            `json:"features,omitempty"`
 	Clock             VmSpecClock               `json:"clock,omitempty"`
 	Hostname          string                    `json:"hostname,omitempty"`
 	Subdomain         string                    `json:"subdomain,omitempty"`

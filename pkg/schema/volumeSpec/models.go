@@ -24,6 +24,4 @@ type VolumeSpec struct {
 	Name           string                   `json:"name,omitempty"`
 	Bus            VolumeSpecBus            `json:"bus,omitempty"`
 	BootOrder      *float32                 `json:"bootOrder,omitempty"`
-	Cdrom          bool                     `json:"cdrom,omitempty"`
-	Serial         string                   `json:"serial,omitempty"`
 }
