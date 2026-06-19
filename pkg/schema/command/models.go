@@ -420,10 +420,14 @@ type RunCronWorkloadSpec struct {
 type RunCronWorkloadStatusClusterIdByLocation map[string]string
 
 type RunCronWorkloadStatus struct {
-	Replica                string                                   `json:"replica,omitempty"`
-	ClusterIdByLocation    RunCronWorkloadStatusClusterIdByLocation `json:"clusterIdByLocation,omitempty"`
-	MinimumWorkloadVersion *float32                                 `json:"minimumWorkloadVersion,omitempty"`
-	Messages               []string                                 `json:"messages,omitempty"`
+	Replica                     string                                   `json:"replica,omitempty"`
+	ClusterIdByLocation         RunCronWorkloadStatusClusterIdByLocation `json:"clusterIdByLocation,omitempty"`
+	MinimumWorkloadVersion      *float32                                 `json:"minimumWorkloadVersion,omitempty"`
+	Messages                    []string                                 `json:"messages,omitempty"`
+	AdmissionRetries            *float32                                 `json:"admissionRetries,omitempty"`
+	FirstAdmissionRejectionTime string                                   `json:"firstAdmissionRejectionTime,omitempty"`
+	LastRejectedReplica         string                                   `json:"lastRejectedReplica,omitempty"`
+	AdmissionRetryRequested     bool                                     `json:"admissionRetryRequested,omitempty"`
 }
 
 type ShrinkVolumeSpec struct {
