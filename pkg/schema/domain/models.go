@@ -220,4 +220,11 @@ type Route struct {
 	Headers       RouteHeaders  `json:"headers,omitempty"`
 	Replica       *float32      `json:"replica,omitempty"`
 	Mirror        []RouteMirror `json:"mirror,omitempty"`
+	Canaries      []RouteCanary `json:"canaries,omitempty"`
+}
+
+type RouteCanary struct {
+	WorkloadLink string   `json:"workloadLink"`
+	Port         *float32 `json:"port,omitempty"`
+	Weight       float32  `json:"weight"`
 }
