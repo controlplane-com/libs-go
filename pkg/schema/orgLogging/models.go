@@ -117,6 +117,12 @@ type LogzioLogging struct {
 	Credentials  string                    `json:"credentials"`
 }
 
+type LokiLogging struct {
+	Endpoint    string `json:"endpoint"`
+	Credentials string `json:"credentials,omitempty"`
+	TenantId    string `json:"tenantId,omitempty"`
+}
+
 type OpenTelemetryLoggingHeaders map[string]string
 
 type OpenTelemetryLogging struct {

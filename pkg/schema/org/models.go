@@ -51,6 +51,7 @@ type OrgSpecLogging struct {
 	Stackdriver   orgLogging.StackdriverLogging   `json:"stackdriver,omitempty"`
 	Syslog        orgLogging.SyslogLogging        `json:"syslog,omitempty"`
 	Opentelemetry orgLogging.OpenTelemetryLogging `json:"opentelemetry,omitempty"`
+	Loki          orgLogging.LokiLogging          `json:"loki,omitempty"`
 }
 
 type OrgSpecExtraLogging struct {
@@ -64,6 +65,7 @@ type OrgSpecExtraLogging struct {
 	Stackdriver   orgLogging.StackdriverLogging   `json:"stackdriver,omitempty"`
 	Syslog        orgLogging.SyslogLogging        `json:"syslog,omitempty"`
 	Opentelemetry orgLogging.OpenTelemetryLogging `json:"opentelemetry,omitempty"`
+	Loki          orgLogging.LokiLogging          `json:"loki,omitempty"`
 }
 
 type OrgSpecObservability struct {
