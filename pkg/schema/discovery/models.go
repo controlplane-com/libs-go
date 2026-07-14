@@ -20,6 +20,7 @@ type DiscoveryEndpoints struct {
 	TerraformExporter string `json:"terraformExporter,omitempty"`
 	K8sCrdExporter    string `json:"k8sCrdExporter,omitempty"`
 	Mcp               string `json:"mcp,omitempty"`
+	Auth              string `json:"auth,omitempty"`
 }
 
 type DiscoveryFirebase struct {
