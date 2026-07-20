@@ -479,6 +479,7 @@ type ShrinkVolumeStatus struct {
 	LockNames               []string                              `json:"lockNames,omitempty"`
 	PresyncTargetPodUid     string                                `json:"presyncTargetPodUid,omitempty"`
 	PresyncAttempt          *float32                              `json:"presyncAttempt,omitempty"`
+	PresyncProgressPercent  *float32                              `json:"presyncProgressPercent,omitempty"`
 	FinalSyncCompletedAt    string                                `json:"finalSyncCompletedAt,omitempty"`
 }
 

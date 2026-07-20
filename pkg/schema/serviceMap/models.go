@@ -19,6 +19,8 @@ type ServiceWorkload struct {
 	Type              ServiceWorkloadType `json:"type,omitempty"`
 	Replicas          []ServiceReplica    `json:"replicas,omitempty"`
 	AgentAccessible   bool                `json:"agentAccessible,omitempty"`
+	Kata              bool                `json:"kata,omitempty"`
+	ScaleToZero       bool                `json:"scaleToZero,omitempty"`
 }
 
 type ServiceGvc struct {
