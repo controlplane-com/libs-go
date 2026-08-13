@@ -47,12 +47,13 @@ type GvcConfigLoadBalancerLivenessProbe struct {
 }
 
 type GvcConfigLoadBalancer struct {
-	MinScale       *float32                             `json:"minScale,omitempty"`
-	MaxScale       *float32                             `json:"maxScale,omitempty"`
-	MinCpu         string                               `json:"minCpu,omitempty"`
-	MinMemory      string                               `json:"minMemory,omitempty"`
-	ReadinessProbe *GvcConfigLoadBalancerReadinessProbe `json:"readinessProbe,omitempty"`
-	LivenessProbe  *GvcConfigLoadBalancerLivenessProbe  `json:"livenessProbe,omitempty"`
+	DistributedIngress bool                                 `json:"distributedIngress,omitempty"`
+	MinScale           *float32                             `json:"minScale,omitempty"`
+	MaxScale           *float32                             `json:"maxScale,omitempty"`
+	MinCpu             string                               `json:"minCpu,omitempty"`
+	MinMemory          string                               `json:"minMemory,omitempty"`
+	ReadinessProbe     *GvcConfigLoadBalancerReadinessProbe `json:"readinessProbe,omitempty"`
+	LivenessProbe      *GvcConfigLoadBalancerLivenessProbe  `json:"livenessProbe,omitempty"`
 }
 
 type GvcConfigCapacityAi struct {
@@ -91,12 +92,13 @@ type GvcLoadBalancerConfigLivenessProbe struct {
 }
 
 type GvcLoadBalancerConfig struct {
-	MinScale       *float32                             `json:"minScale,omitempty"`
-	MaxScale       *float32                             `json:"maxScale,omitempty"`
-	MinCpu         string                               `json:"minCpu,omitempty"`
-	MinMemory      string                               `json:"minMemory,omitempty"`
-	ReadinessProbe *GvcLoadBalancerConfigReadinessProbe `json:"readinessProbe,omitempty"`
-	LivenessProbe  *GvcLoadBalancerConfigLivenessProbe  `json:"livenessProbe,omitempty"`
+	DistributedIngress bool                                 `json:"distributedIngress,omitempty"`
+	MinScale           *float32                             `json:"minScale,omitempty"`
+	MaxScale           *float32                             `json:"maxScale,omitempty"`
+	MinCpu             string                               `json:"minCpu,omitempty"`
+	MinMemory          string                               `json:"minMemory,omitempty"`
+	ReadinessProbe     *GvcLoadBalancerConfigReadinessProbe `json:"readinessProbe,omitempty"`
+	LivenessProbe      *GvcLoadBalancerConfigLivenessProbe  `json:"livenessProbe,omitempty"`
 }
 
 type GvcSpecEndpointNamingFormat string

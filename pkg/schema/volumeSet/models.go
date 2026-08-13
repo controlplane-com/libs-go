@@ -62,6 +62,22 @@ const (
 	PersistentVolumeStatusLifecycleRepairing PersistentVolumeStatusLifecycle = "repairing"
 )
 
+type PersistentVolumeStatusDiskType string
+
+const (
+	PersistentVolumeStatusDiskTypeGp3                PersistentVolumeStatusDiskType = "gp3"
+	PersistentVolumeStatusDiskTypePdBalanced         PersistentVolumeStatusDiskType = "pd-balanced"
+	PersistentVolumeStatusDiskTypePdSsd              PersistentVolumeStatusDiskType = "pd-ssd"
+	PersistentVolumeStatusDiskTypeHyperdiskBalanced  PersistentVolumeStatusDiskType = "hyperdisk-balanced"
+	PersistentVolumeStatusDiskTypePremiumV2Lrs       PersistentVolumeStatusDiskType = "PremiumV2_LRS"
+	PersistentVolumeStatusDiskTypeDoBlockStorage     PersistentVolumeStatusDiskType = "do-block-storage"
+	PersistentVolumeStatusDiskTypeHcloudVolume       PersistentVolumeStatusDiskType = "hcloud-volume"
+	PersistentVolumeStatusDiskTypeLinodeBlockStorage PersistentVolumeStatusDiskType = "linode-block-storage"
+	PersistentVolumeStatusDiskTypeOciBvBalanced      PersistentVolumeStatusDiskType = "oci-bv-balanced"
+	PersistentVolumeStatusDiskTypeJuicefs            PersistentVolumeStatusDiskType = "juicefs"
+	PersistentVolumeStatusDiskTypeHostpath           PersistentVolumeStatusDiskType = "hostpath"
+)
+
 type PersistentVolumeStatusAttributes map[string]string
 
 type PersistentVolumeStatus struct {
@@ -76,9 +92,11 @@ type PersistentVolumeStatus struct {
 	Iops                *float32                         `json:"iops,omitempty"`
 	Throughput          *float32                         `json:"throughput,omitempty"`
 	Driver              string                           `json:"driver"`
+	DiskType            PersistentVolumeStatusDiskType   `json:"diskType,omitempty"`
 	VolumeSnapshots     []VolumeSnapshot                 `json:"volumeSnapshots,omitempty"`
 	Attributes          PersistentVolumeStatusAttributes `json:"attributes,omitempty"`
 	Zone                string                           `json:"zone,omitempty"`
+	Node                string                           `json:"node,omitempty"`
 }
 
 type SnapshotSpec struct {

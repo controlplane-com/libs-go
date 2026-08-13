@@ -133,6 +133,22 @@ const (
 	DeleteCloudDevicesStatusVolumeLifecycleRepairing DeleteCloudDevicesStatusVolumeLifecycle = "repairing"
 )
 
+type DeleteCloudDevicesStatusVolumeDiskType string
+
+const (
+	DeleteCloudDevicesStatusVolumeDiskTypeGp3                DeleteCloudDevicesStatusVolumeDiskType = "gp3"
+	DeleteCloudDevicesStatusVolumeDiskTypePdBalanced         DeleteCloudDevicesStatusVolumeDiskType = "pd-balanced"
+	DeleteCloudDevicesStatusVolumeDiskTypePdSsd              DeleteCloudDevicesStatusVolumeDiskType = "pd-ssd"
+	DeleteCloudDevicesStatusVolumeDiskTypeHyperdiskBalanced  DeleteCloudDevicesStatusVolumeDiskType = "hyperdisk-balanced"
+	DeleteCloudDevicesStatusVolumeDiskTypePremiumV2Lrs       DeleteCloudDevicesStatusVolumeDiskType = "PremiumV2_LRS"
+	DeleteCloudDevicesStatusVolumeDiskTypeDoBlockStorage     DeleteCloudDevicesStatusVolumeDiskType = "do-block-storage"
+	DeleteCloudDevicesStatusVolumeDiskTypeHcloudVolume       DeleteCloudDevicesStatusVolumeDiskType = "hcloud-volume"
+	DeleteCloudDevicesStatusVolumeDiskTypeLinodeBlockStorage DeleteCloudDevicesStatusVolumeDiskType = "linode-block-storage"
+	DeleteCloudDevicesStatusVolumeDiskTypeOciBvBalanced      DeleteCloudDevicesStatusVolumeDiskType = "oci-bv-balanced"
+	DeleteCloudDevicesStatusVolumeDiskTypeJuicefs            DeleteCloudDevicesStatusVolumeDiskType = "juicefs"
+	DeleteCloudDevicesStatusVolumeDiskTypeHostpath           DeleteCloudDevicesStatusVolumeDiskType = "hostpath"
+)
+
 type DeleteCloudDevicesStatusVolumeAttributes map[string]string
 
 type DeleteCloudDevicesStatusVolume struct {
@@ -147,9 +163,11 @@ type DeleteCloudDevicesStatusVolume struct {
 	Iops                *float32                                 `json:"iops,omitempty"`
 	Throughput          *float32                                 `json:"throughput,omitempty"`
 	Driver              string                                   `json:"driver"`
+	DiskType            DeleteCloudDevicesStatusVolumeDiskType   `json:"diskType,omitempty"`
 	VolumeSnapshots     []volumeSet.VolumeSnapshot               `json:"volumeSnapshots,omitempty"`
 	Attributes          DeleteCloudDevicesStatusVolumeAttributes `json:"attributes,omitempty"`
 	Zone                string                                   `json:"zone,omitempty"`
+	Node                string                                   `json:"node,omitempty"`
 }
 
 type DeleteCloudDevicesStatusStage string
@@ -419,6 +437,13 @@ type RunCronWorkloadSpec struct {
 
 type RunCronWorkloadStatusClusterIdByLocation map[string]string
 
+type RunCronWorkloadStatusRetryReason string
+
+const (
+	RunCronWorkloadStatusRetryReasonAdmissionRejection RunCronWorkloadStatusRetryReason = "admission-rejection"
+	RunCronWorkloadStatusRetryReasonNeverStarted       RunCronWorkloadStatusRetryReason = "never-started"
+)
+
 type RunCronWorkloadStatusPendingTerminalStage string
 
 const (
@@ -435,6 +460,8 @@ type RunCronWorkloadStatus struct {
 	FirstAdmissionRejectionTime string                                    `json:"firstAdmissionRejectionTime,omitempty"`
 	LastRejectedReplica         string                                    `json:"lastRejectedReplica,omitempty"`
 	AdmissionRetryRequested     bool                                      `json:"admissionRetryRequested,omitempty"`
+	RetryReason                 RunCronWorkloadStatusRetryReason          `json:"retryReason,omitempty"`
+	InfraRetries                *float32                                  `json:"infraRetries,omitempty"`
 	PendingTerminalStage        RunCronWorkloadStatusPendingTerminalStage `json:"pendingTerminalStage,omitempty"`
 }
 

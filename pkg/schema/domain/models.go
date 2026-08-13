@@ -87,6 +87,7 @@ const (
 	DomainStatusLocationsCertificateStatusPendingDnsConfig   DomainStatusLocationsCertificateStatus = "pendingDnsConfig"
 	DomainStatusLocationsCertificateStatusPendingCertificate DomainStatusLocationsCertificateStatus = "pendingCertificate"
 	DomainStatusLocationsCertificateStatusIgnored            DomainStatusLocationsCertificateStatus = "ignored"
+	DomainStatusLocationsCertificateStatusErrored            DomainStatusLocationsCertificateStatus = "errored"
 )
 
 type DomainStatusLocations struct {
