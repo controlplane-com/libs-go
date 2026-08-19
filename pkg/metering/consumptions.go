@@ -11,7 +11,8 @@ import (
 
 type WorkloadConsumptionTags struct {
 	BaseConsumptionTags
-	Workload string `json:"workload"`
+	Workload     string `json:"workload"`
+	WorkloadType string `json:"workloadType"`
 }
 
 type BaseConsumptionTags struct {
@@ -27,6 +28,7 @@ type BaseConsumptionTags struct {
 type VolumeSetConsumptionTags struct {
 	WorkloadConsumptionTags
 	VolumeIndex      int    `json:"volumeIndex"`
+	VolumeSet        string `json:"volumeSet"`
 	Driver           string `json:"driver"`
 	PerformanceClass string `json:"performanceClass"`
 }
@@ -34,6 +36,28 @@ type VolumeSetConsumptionTags struct {
 type VolumeSetSnapshotConsumptionTags struct {
 	VolumeSetConsumptionTags
 	SnapshotName string `json:"snapshotName"`
+	// The cloud provider's own id for the snapshot. omitempty keeps capacity-metered rows
+	// byte-identical to what they were before cost metering existed, so row identity holds.
+	SnapshotId string `json:"snapshotId,omitempty"`
+}
+
+type Mk8sClusterConsumptionTags struct {
+	BaseConsumptionTags
+	Mk8sCluster string `json:"mk8sCluster"`
+}
+
+type CustomIngressConsumptionTags struct {
+	BaseConsumptionTags
+	CustomIngress string `json:"customIngress"`
+}
+
+// LoadBalancerConsumptionTags identifies one cloud load balancer. LoadBalancerId is what cost
+// data is keyed by, so it is the tag a cost job reads back to see what it has already billed.
+type LoadBalancerConsumptionTags struct {
+	CustomIngressConsumptionTags
+	Workload         string `json:"workload,omitempty"`
+	LoadBalancerKind string `json:"loadBalancerKind,omitempty"`
+	LoadBalancerId   string `json:"loadBalancerId"`
 }
 
 type Charges struct {

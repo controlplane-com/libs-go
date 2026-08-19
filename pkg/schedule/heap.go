@@ -145,6 +145,24 @@ func (h *Heap[T]) PopIfDue() (T, bool) {
 	return item, true
 }
 
+// DueState reports whether an item with the given ID is currently in the heap
+// and, if so, whether it is due (NextExecution <= now). An item that has been
+// popped for execution is not in the heap and so reports present=false.
+//
+// NextExecution is read under the heap lock: indexed items are never mutated in
+// place (updates replace the index entry via Push under the same lock), so this
+// is safe to call concurrently with the scheduler loop.
+func (h *Heap[T]) DueState(id string) (present, due bool) {
+	h.mu.RLock()
+	defer h.mu.RUnlock()
+
+	item, ok := h.index[id]
+	if !ok {
+		return false, false
+	}
+	return true, !item.NextExecution().After(time.Now())
+}
+
 // Len returns the number of items in the heap.
 func (h *Heap[T]) Len() int {
 	h.mu.RLock()
@@ -159,4 +177,16 @@ func (h *Heap[T]) Get(id string) (T, bool) {
 
 	item, ok := h.index[id]
 	return item, ok
+}
+
+// Snapshot returns a copy of all items currently in the heap.
+// The returned slice is in arbitrary heap order; callers should sort if a
+// particular order is needed.
+func (h *Heap[T]) Snapshot() []T {
+	h.mu.RLock()
+	defer h.mu.RUnlock()
+
+	out := make([]T, len(h.inner))
+	copy(out, h.inner)
+	return out
 }

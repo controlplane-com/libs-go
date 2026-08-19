@@ -99,6 +99,12 @@ func (s TimeStep) int() int {
 	}
 }
 
+// IsFinerThan reports whether this step covers a shorter span than the other. An unrecognized
+// step is treated as coarser than every known step.
+func (s TimeStep) IsFinerThan(other TimeStep) bool {
+	return s.int() < other.int()
+}
+
 func (s TimeStep) Advance(t time.Time, steps int) time.Time {
 	aligned := AlignTimeWithStepStart(t, s)
 	stepCount := time.Duration(steps)

@@ -14,5 +14,8 @@ type CheckpointRepository interface {
 
 	ResetAllCheckpoints(newCheckpointTime time.Time) error
 	ResetCheckpoints(request *ResetCheckpointsRequest) error
-	EnforceMinimumCheckpointTime(minimum time.Time) error
+	// EnforceMinimumCheckpointTime advances lingering checkpoints to the minimum, except the rows
+	// named in excludeNames — rows a caller manages itself, where a checkpoint sitting in the past
+	// is a deliberate instruction to re-meter rather than a leftover.
+	EnforceMinimumCheckpointTime(minimum time.Time, excludeNames []string) error
 }

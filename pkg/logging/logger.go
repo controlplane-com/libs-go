@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/controlplane-com/libs-go/pkg/common"
 	"reflect"
+	"sync"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -26,6 +27,7 @@ const (
 
 var (
 	logger          *zap.Logger
+	loggerMu        sync.Mutex // guards logger (lazy init in Logger vs InitializeLogger)
 	stdOutSink      = StdOutSinkName
 	stdErrSink      = StdErrSinkName
 	buildLoggerFunc = buildLoggerConfig
@@ -34,15 +36,17 @@ var (
 func SetOutputSinks(out string, err string) error {
 	stdOutSink = out
 	stdErrSink = err
-	if logger != nil {
-		return InitializeLogger(logger.Level())
+	loggerMu.Lock()
+	l := logger
+	loggerMu.Unlock()
+	if l != nil {
+		return InitializeLogger(l.Level())
 	}
 	return nil
 }
 
 // InitializeLogger func
 func InitializeLogger(logLevel zapcore.Level) error {
-	var err error
 	config := zap.Config{
 		Encoding:         JSONEncoder,
 		OutputPaths:      []string{stdOutSink},
@@ -61,9 +65,13 @@ func InitializeLogger(logLevel zapcore.Level) error {
 			EncodeDuration: zapcore.SecondsDurationEncoder,
 			EncodeCaller:   zapcore.ShortCallerEncoder,
 		}}
-	if logger, err = buildLoggerFunc(&config); err != nil {
+	l, err := buildLoggerFunc(&config)
+	if err != nil {
 		return fmt.Errorf("failed to build logger: %s", err.Error())
 	}
+	loggerMu.Lock()
+	logger = l
+	loggerMu.Unlock()
 	return nil
 }
 
@@ -85,10 +93,16 @@ func LoggerWithContext(ctx context.Context) *zap.SugaredLogger {
 
 // Logger func
 func Logger() *zap.Logger {
-	if logger == nil {
+	loggerMu.Lock()
+	l := logger
+	loggerMu.Unlock()
+	if l == nil {
 		InitializeLogger(zapcore.InfoLevel)
+		loggerMu.Lock()
+		l = logger
+		loggerMu.Unlock()
 	}
-	return logger
+	return l
 }
 
 func ContextWithTraceID(value string) context.Context {

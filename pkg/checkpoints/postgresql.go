@@ -14,11 +14,17 @@ type PostgresqlCheckpointRepository struct {
 	connection database.Connection
 }
 
-// EnforceMinimumCheckpointTime sets all non-default checkpoints to the given minimum time
-func (r *PostgresqlCheckpointRepository) EnforceMinimumCheckpointTime(minimum time.Time) error {
-	return r.connection.Db().Table("checkpoints").
-		Where("last_completed_time < ? AND name != ? AND job != ?", minimum, DefaultCheckpointName, DefaultCheckpointName).
-		Update("last_completed_time", minimum).Error
+// EnforceMinimumCheckpointTime sets all non-default checkpoints to the given minimum time, except
+// the rows named in excludeNames. Excluded rows are the ones the metering engine advances itself:
+// force-advancing one of those would silently cancel a checkpoint reset — the hours between the
+// reset and the minimum would never be metered, with nothing failing.
+func (r *PostgresqlCheckpointRepository) EnforceMinimumCheckpointTime(minimum time.Time, excludeNames []string) error {
+	query := r.connection.Db().Table("checkpoints").
+		Where("last_completed_time < ? AND name != ? AND job != ?", minimum, DefaultCheckpointName, DefaultCheckpointName)
+	if len(excludeNames) > 0 {
+		query = query.Where("name NOT IN ?", excludeNames)
+	}
+	return query.Update("last_completed_time", minimum).Error
 }
 
 func NewPostgresqlCheckpointRepository() CheckpointRepository {

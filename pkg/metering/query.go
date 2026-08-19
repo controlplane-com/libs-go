@@ -2,9 +2,10 @@ package metering
 
 import (
 	"errors"
+	"time"
+
 	"github.com/controlplane-com/libs-go/pkg/math"
 	timeUtils "github.com/controlplane-com/libs-go/pkg/time-utils"
-	"time"
 )
 
 type AggregationType string
@@ -72,6 +73,7 @@ type ConsumptionQuery struct {
 	FilterBy        map[string]string `json:"filterBy"`
 	AggregateBy     []string          `json:"aggregateBy,omitempty"`
 	ChargeableItems []string          `json:"chargeableItems,omitempty"`
+	Jobs            []string          `json:"jobs,omitempty"`
 }
 
 func (q *ConsumptionQuery) AggregatesByTimeStep() bool {
@@ -116,9 +118,11 @@ func (q *ConsumptionQuery) Clone() *ConsumptionQuery {
 		FilterBy:        map[string]string{},
 		AggregateBy:     make([]string, len(q.AggregateBy)),
 		ChargeableItems: make([]string, len(q.ChargeableItems)),
+		Jobs:            make([]string, len(q.Jobs)),
 	}
 	copy(cloned.AggregateBy, q.AggregateBy)
 	copy(cloned.ChargeableItems, q.ChargeableItems)
+	copy(cloned.Jobs, q.Jobs)
 	for k, v := range q.FilterBy {
 		cloned.FilterBy[k] = v
 	}

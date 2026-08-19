@@ -160,6 +160,11 @@ spec:
                                     type: string
                                 type: object
                             type: object
+                          juicefs:
+                            properties:
+                              enabled:
+                                type: boolean
+                            type: object
                           logSplitter:
                             properties:
                               maxCpu:
@@ -190,6 +195,8 @@ spec:
                                 type: number
                               enabled:
                                 type: boolean
+                              ingressReplicas:
+                                type: number
                               ip:
                                 type: string
                               port:
@@ -377,6 +384,11 @@ spec:
                     type: object
                   headlamp:
                     type: object
+                  kubevirt:
+                    properties:
+                      scratchSpaceStorageClass:
+                        type: string
+                    type: object
                   localPathStorage:
                     type: object
                   logs:
@@ -421,6 +433,8 @@ spec:
                           retainLabels:
                             type: string
                         type: object
+                    type: object
+                  nodeLocalDns:
                     type: object
                   nvidia:
                     properties:

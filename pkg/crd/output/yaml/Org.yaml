@@ -148,6 +148,15 @@ spec:
                         listenerHost:
                           type: string
                       type: object
+                    loki:
+                      properties:
+                        credentials:
+                          type: string
+                        endpoint:
+                          type: string
+                        tenantId:
+                          type: string
+                      type: object
                     opentelemetry:
                       properties:
                         credentials:
@@ -289,6 +298,15 @@ spec:
                       credentials:
                         type: string
                       listenerHost:
+                        type: string
+                    type: object
+                  loki:
+                    properties:
+                      credentials:
+                        type: string
+                      endpoint:
+                        type: string
+                      tenantId:
                         type: string
                     type: object
                   opentelemetry:

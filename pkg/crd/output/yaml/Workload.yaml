@@ -251,6 +251,12 @@ spec:
                     volumes:
                       items:
                         properties:
+                          bootOrder:
+                            type: number
+                          bus:
+                            type: string
+                          name:
+                            type: string
                           path:
                             type: string
                           recoveryPolicy:
@@ -366,6 +372,15 @@ spec:
               extras:
                 properties:
                   affinity:
+                    type: string
+                  metadata:
+                    properties:
+                      labels:
+                        additionalProperties:
+                          type: string
+                        type: object
+                    type: object
+                  schedulerName:
                     type: string
                   tolerations:
                     items:
@@ -1369,6 +1384,12 @@ spec:
                       volumes:
                         items:
                           properties:
+                            bootOrder:
+                              type: number
+                            bus:
+                              type: string
+                            name:
+                              type: string
                             path:
                               type: string
                             recoveryPolicy:
@@ -1383,6 +1404,113 @@ spec:
                 type: boolean
               type:
                 type: string
+              vm:
+                properties:
+                  accessCredentials:
+                    items:
+                      properties:
+                        deliveryMethod:
+                          type: string
+                        sshPublicKeySecret:
+                          type: string
+                        users:
+                          items:
+                            type: string
+                          type: array
+                      type: object
+                    type: array
+                  bootDisk:
+                    properties:
+                      bootOrder:
+                        type: number
+                      bus:
+                        type: string
+                      persist:
+                        properties:
+                          volumeSet:
+                            type: string
+                        type: object
+                      source:
+                        properties:
+                          http:
+                            properties:
+                              checksum:
+                                type: string
+                              url:
+                                type: string
+                            type: object
+                          oci:
+                            properties:
+                              image:
+                                type: string
+                            type: object
+                        type: object
+                    type: object
+                  clock:
+                    properties:
+                      timezone:
+                        type: string
+                    type: object
+                  cloudInit:
+                    properties:
+                      sshPublicKeySecrets:
+                        items:
+                          type: string
+                        type: array
+                      userData:
+                        type: string
+                      userDataBase64:
+                        type: string
+                      userDataSecret:
+                        type: string
+                    type: object
+                  cpu:
+                    properties:
+                      sockets:
+                        type: number
+                      threads:
+                        type: number
+                    type: object
+                  firmware:
+                    properties:
+                      bootloader:
+                        type: string
+                      secureBoot:
+                        type: boolean
+                      serial:
+                        type: string
+                      smbios:
+                        properties:
+                          family:
+                            type: string
+                          manufacturer:
+                            type: string
+                          product:
+                            type: string
+                          sku:
+                            type: string
+                          version:
+                            type: string
+                        type: object
+                      uuid:
+                        type: string
+                    type: object
+                  guestOS:
+                    type: string
+                  hostname:
+                    type: string
+                  networks:
+                    items:
+                      properties:
+                        name:
+                          type: string
+                      type: object
+                    type: array
+                  runStrategy:
+                    type: string
+                  subdomain:
+                    type: string
+                type: object
             type: object
           status:
             properties:

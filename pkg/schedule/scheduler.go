@@ -88,6 +88,19 @@ func (s *Scheduler[T]) SetItemResolver(fn func(T) T) {
 	s.itemResolver = fn
 }
 
+// parse converts a cron expression into a robfig cron.Schedule. It first checks
+// for the `L` (last-day-of-month) extension handled by parseLastDaySchedule, and
+// otherwise falls back to the standard 5-field parser. This is the single point
+// through which all schedule strings in this package are parsed.
+func (s *Scheduler[T]) parse(spec string) (cron.Schedule, error) {
+	if sched, ok, err := parseLastDaySchedule(spec); err != nil {
+		return nil, err
+	} else if ok {
+		return sched, nil
+	}
+	return s.cronParser.Parse(spec)
+}
+
 // validateNextExecution checks if the schedule can produce a valid next execution time.
 // robfig/cron returns zero time if no valid time exists within its search window (~5 years).
 func validateNextExecution(next time.Time, schedule string) error {
@@ -106,7 +119,7 @@ func (s *Scheduler[T]) ValidateSchedule(schedule string) error {
 		return fmt.Errorf("schedule '%s' will never fire (e.g., February 31st)", schedule)
 	}
 
-	sched, err := s.cronParser.Parse(schedule)
+	sched, err := s.parse(schedule)
 	if err != nil {
 		return fmt.Errorf("failed to parse cron expression '%s': %w", schedule, err)
 	}
@@ -129,7 +142,7 @@ func (s *Scheduler[T]) Add(item T) error {
 		return fmt.Errorf("schedule '%s' will never fire (e.g., February 31st)", schedule)
 	}
 
-	sched, err := s.cronParser.Parse(schedule)
+	sched, err := s.parse(schedule)
 	if err != nil {
 		return fmt.Errorf("failed to parse cron expression '%s': %w", schedule, err)
 	}
@@ -148,6 +161,13 @@ func (s *Scheduler[T]) Add(item T) error {
 // Remove removes an item by ID.
 func (s *Scheduler[T]) Remove(id string) {
 	s.heap.Remove(id)
+}
+
+// DueState reports whether an item is currently scheduled (present in the heap)
+// and, if so, whether its execution time has arrived. An item that has been
+// popped for execution reports present=false. See Heap.DueState.
+func (s *Scheduler[T]) DueState(id string) (present, due bool) {
+	return s.heap.DueState(id)
 }
 
 // Get returns an item by ID, or nil and false if not found.
@@ -225,7 +245,7 @@ func (s *Scheduler[T]) executeAndReschedule(ctx context.Context, item T, now tim
 			return
 		}
 
-		sched, err := s.cronParser.Parse(schedule)
+		sched, err := s.parse(schedule)
 		if err != nil {
 			logger.Errorf("Failed to reschedule item %s: failed to parse cron expression '%s': %v",
 				itemToReschedule.ID(), schedule, err)
@@ -273,4 +293,18 @@ func (s *Scheduler[T]) tryWakeup() {
 // Count returns the number of scheduled items.
 func (s *Scheduler[T]) Count() int {
 	return s.heap.Len()
+}
+
+// Snapshot returns a copy of all items currently in the heap.
+// Items are returned in arbitrary heap order.
+func (s *Scheduler[T]) Snapshot() []T {
+	return s.heap.Snapshot()
+}
+
+// IsLeader reports whether this instance is currently the leader.
+func (s *Scheduler[T]) IsLeader() bool {
+	if s.isLeader == nil {
+		return false
+	}
+	return s.isLeader()
 }

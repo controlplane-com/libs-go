@@ -41,6 +41,8 @@ spec:
             type: string
           spec:
             properties:
+              aliasWorkloadLink:
+                type: string
               domain:
                 type: string
               endpointNamingFormat:
@@ -835,6 +837,12 @@ spec:
                       volumes:
                         items:
                           properties:
+                            bootOrder:
+                              type: number
+                            bus:
+                              type: string
+                            name:
+                              type: string
                             path:
                               type: string
                             recoveryPolicy:

@@ -43,6 +43,9 @@ type CollectionCache[T any] interface {
 
 	// MarkValid marks the cache as valid with TTL
 	MarkValid(ctx context.Context, ttl time.Duration) error
+
+	// Close releases the underlying client and its background goroutines
+	Close() error
 }
 
 // RedisCollectionCache implements CollectionCache using Redis.
@@ -245,4 +248,8 @@ func (c *RedisCollectionCache[T]) IsValid(ctx context.Context) (bool, error) {
 
 func (c *RedisCollectionCache[T]) MarkValid(ctx context.Context, ttl time.Duration) error {
 	return c.redis.SetEx(ctx, c.toKey(c.indexKey), true, ttl).Err()
+}
+
+func (c *RedisCollectionCache[T]) Close() error {
+	return c.redis.Close()
 }

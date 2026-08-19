@@ -7,10 +7,18 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
 	errors2 "github.com/controlplane-com/libs-go/pkg/errors"
+	"github.com/controlplane-com/libs-go/pkg/logging"
+)
+
+const (
+	rateLimitMaxAttempts    = 5
+	rateLimitInitialBackoff = time.Second
+	rateLimitMaxBackoff     = 30 * time.Second
 )
 
 type DataServiceClient struct {
@@ -130,27 +138,67 @@ func (c *DataServiceClient) Do(request *http.Request, responseBodyOut any) (*htt
 	if !strings.HasPrefix(request.URL.String(), c.url) {
 		return nil, errors.New("invalid url")
 	}
-	response, err := c.httpClient.Do(request)
-	if err != nil {
-		return nil, err
-	}
-	body, err := io.ReadAll(response.Body)
-	if err != nil {
-		return nil, err
+	requestInfo := fmt.Sprintf("%s %s", request.Method, request.URL)
+	var response *http.Response
+	var body []byte
+	for attempt := 1; ; attempt++ {
+		var err error
+		response, err = c.httpClient.Do(request)
+		if err != nil {
+			return nil, fmt.Errorf("%s: %w", requestInfo, err)
+		}
+		body, err = io.ReadAll(response.Body)
+		_ = response.Body.Close()
+		if err != nil {
+			return nil, fmt.Errorf("%s: %w", requestInfo, err)
+		}
+		if response.StatusCode != http.StatusTooManyRequests || attempt >= rateLimitMaxAttempts {
+			break
+		}
+		backoff := rateLimitBackoff(attempt, response.Header.Get("Retry-After"))
+		logging.Logger().Sugar().Warnf("rate limited (429) on %s, retrying in %s (attempt %d/%d)", requestInfo, backoff, attempt, rateLimitMaxAttempts)
+		select {
+		case <-request.Context().Done():
+			return nil, fmt.Errorf("%s: %w", requestInfo, request.Context().Err())
+		case <-time.After(backoff):
+		}
+		if request.GetBody != nil {
+			if request.Body, err = request.GetBody(); err != nil {
+				return nil, fmt.Errorf("%s: %w", requestInfo, err)
+			}
+		}
 	}
 	if response.StatusCode > 299 {
 		if response.StatusCode == 401 || response.StatusCode == 403 {
 			return response, errors2.UnauthorizedError
 		}
-		return response, errors.New(fmt.Sprintf("invalid HTTP response code (%d). Details: %s", response.StatusCode, string(body)))
+		return response, errors2.NewErrorCode(fmt.Sprintf("invalid HTTP response code (%d) from %s. Details: %s", response.StatusCode, requestInfo, string(body)), response.StatusCode)
 	}
 	if responseBodyOut != nil {
-		err = json.Unmarshal(body, responseBodyOut)
+		err := json.Unmarshal(body, responseBodyOut)
 		if err != nil {
 			return response, err
 		}
 	}
 	return response, nil
+}
+
+// rateLimitBackoff honors Retry-After seconds when present, else backs off exponentially.
+func rateLimitBackoff(attempt int, retryAfter string) time.Duration {
+	if retryAfter != "" {
+		if secs, err := strconv.Atoi(retryAfter); err == nil && secs >= 0 {
+			d := time.Duration(secs) * time.Second
+			if d > rateLimitMaxBackoff {
+				return rateLimitMaxBackoff
+			}
+			return d
+		}
+	}
+	backoff := rateLimitInitialBackoff << (attempt - 1)
+	if backoff > rateLimitMaxBackoff {
+		return rateLimitMaxBackoff
+	}
+	return backoff
 }
 
 // RequestWithContext creates a request with context support.

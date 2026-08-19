@@ -3,13 +3,15 @@ package nats
 import (
 	"context"
 	"fmt"
+	"strings"
+	"sync"
+	"sync/atomic"
+	"time"
+
 	"github.com/nats-io/nats.go"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/controlplane-com/libs-go/pkg/threading"
 	"go.uber.org/zap"
-	"strings"
-	"sync"
-	"time"
 )
 
 type EventDisposition string
@@ -33,6 +35,8 @@ type Connection struct {
 	eventHistogram          *prometheus.HistogramVec
 	versionConflictsCounter prometheus.Counter
 	queueDepth              *prometheus.GaugeVec
+	connected               prometheus.Gauge
+	closing                 atomic.Bool
 	m                       *sync.Mutex
 }
 
@@ -86,6 +90,11 @@ func (c *Connection) initializeMetrics() error {
 		Name: c.Name + "_queue_depth",
 		Help: "Number of pending events received on each topic",
 	}, []string{"topic"})
+
+	c.connected = prometheus.NewGauge(prometheus.GaugeOpts{
+		Name: c.Name + "_nats_connected",
+		Help: "1 while the NATS connection is established, 0 while disconnected",
+	})
 	if err := c.Registerer.Register(c.eventDispositions); err != nil {
 		return err
 	}
@@ -93,6 +102,9 @@ func (c *Connection) initializeMetrics() error {
 		return err
 	}
 	if err := c.Registerer.Register(c.queueDepth); err != nil {
+		return err
+	}
+	if err := c.Registerer.Register(c.connected); err != nil {
 		return err
 	}
 	return nil
@@ -110,12 +122,54 @@ func (c *Connection) connect() error {
 		return nil
 	}
 
-	nc, err := nats.Connect(c.Endpoint, nats.UserCredentials(c.CredentialsFilePath))
+	// Default reconnect (~2 min) leaves ChanSubscription loops blocked forever (nats.go
+	// does not close the message channel on disconnect). MaxReconnects(-1) retries and
+	// resubscribes indefinitely.
+	opts := []nats.Option{
+		nats.MaxReconnects(-1),
+		nats.ReconnectWait(5 * time.Second),
+		nats.DisconnectErrHandler(func(_ *nats.Conn, err error) {
+			c.connected.Set(0)
+			c.Logger.Warnw("NATS disconnected", "endpoint", c.Endpoint, "err", err)
+		}),
+		// Fires on every failed reconnect attempt so an extended outage stays visible
+		// in the logs instead of going silent after the single disconnect warning.
+		nats.ReconnectErrHandler(func(_ *nats.Conn, err error) {
+			c.Logger.Warnw("NATS reconnect attempt failed", "endpoint", c.Endpoint, "err", err)
+		}),
+		nats.ReconnectHandler(func(nc *nats.Conn) {
+			c.connected.Set(1)
+			c.Logger.Infow("NATS reconnected", "url", nc.ConnectedUrl())
+		}),
+		nats.ErrorHandler(func(_ *nats.Conn, sub *nats.Subscription, err error) {
+			subj := ""
+			if sub != nil {
+				subj = sub.Subject
+			}
+			c.Logger.Warnw("NATS async error", "subject", subj, "err", err)
+		}),
+		nats.ClosedHandler(func(nc *nats.Conn) {
+			c.connected.Set(0)
+			if c.closing.Load() {
+				c.Logger.Infow("NATS connection closed", "endpoint", c.Endpoint)
+				return
+			}
+			// Fatalw exits; with MaxReconnects(-1) this only runs on terminal close.
+			// Let Kubernetes restart the pod to recover.
+			c.Logger.Fatalw("NATS connection closed terminally",
+				"endpoint", c.Endpoint, "lastErr", nc.LastError())
+		}),
+	}
+	if c.CredentialsFilePath != "" {
+		opts = append(opts, nats.UserCredentials(c.CredentialsFilePath))
+	}
+	nc, err := nats.Connect(c.Endpoint, opts...)
 	if err != nil {
 		return err
 	}
 	c.Logger.Infof("Connected to NATS on %s", c.Endpoint)
 	c.conn = nc
+	c.connected.Set(1)
 	return nil
 }
 
@@ -150,6 +204,9 @@ func (c *Connection) Subscribe(ctx context.Context, options SubscriptionOptions)
 
 func (c *Connection) Close() {
 	if c != nil && c.conn != nil {
+		// Mark the close as intentional so the ClosedHandler doesn't treat a
+		// graceful shutdown (Drain/SIGTERM) as a terminal failure and Fatal-exit.
+		c.closing.Store(true)
 		c.conn.Close()
 	}
 }

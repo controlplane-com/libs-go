@@ -40,6 +40,8 @@ type Client interface {
 
 	GetBucket(token string, request *GetBucketRequest) (*Bucket, error)
 	ListBuckets(token string) ([]*Bucket, error)
+
+	InjectConsumption(token string, org string, req *InjectConsumptionRequest) (*InjectConsumptionResponse, error)
 }
 
 func NewClient(url string) Client {

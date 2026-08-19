@@ -1,6 +1,10 @@
 package data_service
 
-import "github.com/controlplane-com/libs-go/pkg/schema/base"
+import (
+	"fmt"
+
+	"github.com/controlplane-com/libs-go/pkg/schema/base"
+)
 
 type ListIterator[T any] struct {
 	client           *DataServiceClient
@@ -25,22 +29,28 @@ func (i *ListIterator[T]) Next() bool {
 		return true
 	}
 
-	//We need a new collection...
-	if i.nextUrl == "" {
-		return false
+	//We need a new collection. An empty page is not the end of the list as long
+	//as the server hands out a next link — stopping there would silently
+	//truncate the listing.
+	for i.nextUrl != "" {
+		fetched := i.nextUrl
+		_, err := i.client.Get(i.nextUrl, &list)
+		if err != nil {
+			i.err = err
+			return false
+		}
+		i.items = list.Items
+		i.nextUrl = GetLinkByRel("next", list.Links)
+		if i.nextUrl == fetched {
+			i.err = fmt.Errorf("pagination is not advancing at %s", fetched)
+			return false
+		}
+		if len(i.items) > 0 {
+			i.currentItemIndex = 0
+			return true
+		}
 	}
-	_, err := i.client.Get(i.nextUrl, &list)
-	if err != nil {
-		i.err = err
-		return false
-	}
-	i.items = list.Items
-	i.nextUrl = GetLinkByRel("next", list.Links)
-	if len(i.items) == 0 {
-		return false
-	}
-	i.currentItemIndex = 0
-	return true
+	return false
 }
 
 func (i *ListIterator[T]) Item() T {

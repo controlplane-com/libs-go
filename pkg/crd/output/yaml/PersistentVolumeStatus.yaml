@@ -17,10 +17,14 @@ spec:
             additionalProperties:
               type: string
             type: object
+          currentBytesFree:
+            type: number
           currentBytesUsed:
             type: number
           currentSize:
             type: number
+          diskType:
+            type: string
           driver:
             type: string
           index:
@@ -28,6 +32,8 @@ spec:
           iops:
             type: number
           lifecycle:
+            type: string
+          node:
             type: string
           oldStorageDeviceIds:
             items:

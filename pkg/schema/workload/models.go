@@ -188,10 +188,18 @@ type ContainerSpec struct {
 
 type Cpu string
 
+type ExtrasMetadataLabels map[string]string
+
+type ExtrasMetadata struct {
+	Labels ExtrasMetadataLabels `json:"labels,omitempty"`
+}
+
 type Extras struct {
-	Affinity                  *any  `json:"affinity,omitempty"`
-	Tolerations               []any `json:"tolerations,omitempty"`
-	TopologySpreadConstraints []any `json:"topologySpreadConstraints,omitempty"`
+	Affinity                  *any            `json:"affinity,omitempty"`
+	Tolerations               []any           `json:"tolerations,omitempty"`
+	TopologySpreadConstraints []any           `json:"topologySpreadConstraints,omitempty"`
+	SchedulerName             string          `json:"schedulerName,omitempty"`
+	Metadata                  *ExtrasMetadata `json:"metadata,omitempty"`
 }
 
 type FirewallSpecExternalOutboundAllowPortProtocol string
@@ -659,10 +667,18 @@ type WorkloadSpecLoadBalancer struct {
 	ReplicaDirect bool                                `json:"replicaDirect,omitempty"`
 }
 
+type WorkloadSpecExtrasMetadataLabels map[string]string
+
+type WorkloadSpecExtrasMetadata struct {
+	Labels WorkloadSpecExtrasMetadataLabels `json:"labels,omitempty"`
+}
+
 type WorkloadSpecExtras struct {
-	Affinity                  *any  `json:"affinity,omitempty"`
-	Tolerations               []any `json:"tolerations,omitempty"`
-	TopologySpreadConstraints []any `json:"topologySpreadConstraints,omitempty"`
+	Affinity                  *any                        `json:"affinity,omitempty"`
+	Tolerations               []any                       `json:"tolerations,omitempty"`
+	TopologySpreadConstraints []any                       `json:"topologySpreadConstraints,omitempty"`
+	SchedulerName             string                      `json:"schedulerName,omitempty"`
+	Metadata                  *WorkloadSpecExtrasMetadata `json:"metadata,omitempty"`
 }
 
 type WorkloadSpecRequestRetryPolicy struct {
@@ -854,6 +870,32 @@ type Workload struct {
 	Health       WorkloadHealth `json:"health,omitempty"`
 	Spec         WorkloadSpec   `json:"spec"`
 	Status       WorkloadStatus `json:"status,omitempty"`
+}
+
+type WorkloadConfigScheduling struct {
+	Fingerprint string   `json:"fingerprint,omitempty"`
+	Version     *float32 `json:"version,omitempty"`
+}
+
+type WorkloadConfigPodZoneMap map[string]string
+
+type WorkloadConfigLocationPodZoneMap map[string]PodZoneMap
+
+type WorkloadConfigProxy struct {
+	MinCpu *float32 `json:"minCpu,omitempty"`
+}
+
+type WorkloadConfigSubsets struct {
+	Enabled bool `json:"enabled,omitempty"`
+}
+
+type WorkloadConfig struct {
+	Scheduling         WorkloadConfigScheduling         `json:"scheduling,omitempty"`
+	ThinProvision      *float32                         `json:"thinProvision,omitempty"`
+	PodZoneMap         WorkloadConfigPodZoneMap         `json:"podZoneMap,omitempty"`
+	LocationPodZoneMap WorkloadConfigLocationPodZoneMap `json:"locationPodZoneMap,omitempty"`
+	Proxy              *WorkloadConfigProxy             `json:"proxy,omitempty"`
+	Subsets            *WorkloadConfigSubsets           `json:"subsets,omitempty"`
 }
 
 type WorkloadHealth struct {
