@@ -6,6 +6,8 @@ import "github.com/controlplane-com/libs-go/pkg/schema/base"
 import "github.com/controlplane-com/libs-go/pkg/schema/query"
 import "github.com/controlplane-com/libs-go/pkg/schema/volumeSet"
 import "github.com/controlplane-com/libs-go/pkg/schema/workload"
+import "github.com/controlplane-com/libs-go/pkg/schema/cronjob"
+import "github.com/controlplane-com/libs-go/pkg/schema/containerstatus"
 
 type Cluster struct {
 	ClusterId string `json:"clusterId,omitempty"`
@@ -451,6 +453,15 @@ const (
 	RunCronWorkloadStatusPendingTerminalStageFailed    RunCronWorkloadStatusPendingTerminalStage = "failed"
 )
 
+type RunCronWorkloadStatusContainers map[string]containerstatus.ContainerStatus
+
+type RunCronWorkloadStatusDetails string
+
+const (
+	RunCronWorkloadStatusDetailsInvalid RunCronWorkloadStatusDetails = "invalid"
+	RunCronWorkloadStatusDetailsRemoved RunCronWorkloadStatusDetails = "removed"
+)
+
 type RunCronWorkloadStatus struct {
 	Replica                     string                                    `json:"replica,omitempty"`
 	ClusterIdByLocation         RunCronWorkloadStatusClusterIdByLocation  `json:"clusterIdByLocation,omitempty"`
@@ -463,6 +474,14 @@ type RunCronWorkloadStatus struct {
 	RetryReason                 RunCronWorkloadStatusRetryReason          `json:"retryReason,omitempty"`
 	InfraRetries                *float32                                  `json:"infraRetries,omitempty"`
 	PendingTerminalStage        RunCronWorkloadStatusPendingTerminalStage `json:"pendingTerminalStage,omitempty"`
+	JobName                     string                                    `json:"jobName,omitempty"`
+	WorkloadVersion             *float32                                  `json:"workloadVersion,omitempty"`
+	StartTime                   string                                    `json:"startTime,omitempty"`
+	CompletionTime              string                                    `json:"completionTime,omitempty"`
+	Conditions                  []cronjob.JobExecutionCondition           `json:"conditions,omitempty"`
+	Containers                  RunCronWorkloadStatusContainers           `json:"containers,omitempty"`
+	FirstImagePullBackOffTime   string                                    `json:"firstImagePullBackOffTime,omitempty"`
+	Details                     RunCronWorkloadStatusDetails              `json:"details,omitempty"`
 }
 
 type ShrinkVolumeSpec struct {

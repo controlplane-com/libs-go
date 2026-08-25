@@ -117,3 +117,30 @@ func TestRateLimitBackoff(t *testing.T) {
 		t.Fatalf("exponential backoff should be capped, got %s", got)
 	}
 }
+
+func TestSetRatelimitBypassSendsHeader(t *testing.T) {
+	var got string
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		got = r.Header.Get(RatelimitBypassHeader)
+		_, _ = w.Write([]byte(`{}`))
+	}))
+	defer server.Close()
+
+	client := NewClient(server.URL, "token", "test")
+	client.SetRatelimitBypass("bypass-token")
+	var out map[string]any
+	if _, err := client.Get("/thing", &out); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if got != "bypass-token" {
+		t.Fatalf("expected bypass header, got %q", got)
+	}
+}
+
+func TestSetRatelimitBypassEmptyTokenIsNoOp(t *testing.T) {
+	client := NewClient("http://example.com", "token", "test")
+	client.SetRatelimitBypass("")
+	if client.GetHeader(RatelimitBypassHeader) != "" {
+		t.Fatalf("expected no bypass header, got %q", client.GetHeader(RatelimitBypassHeader))
+	}
+}

@@ -61,3 +61,18 @@ func WithBillingURL(url string) Option {
 		c.billingURL = strings.TrimSuffix(url, "/")
 	}
 }
+
+// RatelimitBypassHeader carries the token that exempts a request from
+// data-service rate limiting.
+const RatelimitBypassHeader = "x-ratelimit-bypass"
+
+// WithRatelimitBypass presents the bypass token so the client's calls skip
+// data-service rate limiting. An empty token is a no-op.
+func WithRatelimitBypass(token string) Option {
+	return func(c *Client) {
+		if token == "" {
+			return
+		}
+		WithHeader(RatelimitBypassHeader, token)(c)
+	}
+}

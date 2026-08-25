@@ -19,6 +19,10 @@ const (
 	rateLimitMaxAttempts    = 5
 	rateLimitInitialBackoff = time.Second
 	rateLimitMaxBackoff     = 30 * time.Second
+
+	// RatelimitBypassHeader carries the token that exempts a request from
+	// data-service rate limiting.
+	RatelimitBypassHeader = "x-ratelimit-bypass"
 )
 
 type DataServiceClient struct {
@@ -37,6 +41,7 @@ func NewClient(url string, token string, serviceName string) *DataServiceClient 
 			Timeout: time.Second * 10,
 		},
 		serviceName: serviceName,
+		headers:     http.Header{},
 	}
 }
 
@@ -49,7 +54,17 @@ func NewCustomClient(url string, token string, serviceName string, httpClient *h
 		url:         url,
 		httpClient:  httpClient,
 		serviceName: serviceName,
+		headers:     http.Header{},
 	}
+}
+
+// SetRatelimitBypass presents the bypass token so this client's calls skip
+// data-service rate limiting. An empty token is a no-op.
+func (c *DataServiceClient) SetRatelimitBypass(token string) {
+	if token == "" {
+		return
+	}
+	c.SetHeader(RatelimitBypassHeader, token)
 }
 
 func (c *DataServiceClient) SetHeader(key string, value string) {

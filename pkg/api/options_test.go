@@ -237,3 +237,19 @@ func TestClient_resolveOrg(t *testing.T) {
 		t.Errorf("resolveOrg(empty) = %q, want %q", got, "default-org")
 	}
 }
+
+func TestWithRatelimitBypass(t *testing.T) {
+	c := &Client{}
+	WithRatelimitBypass("bypass-token")(c)
+	if c.headers.Get(RatelimitBypassHeader) != "bypass-token" {
+		t.Errorf("header = %q, want %q", c.headers.Get(RatelimitBypassHeader), "bypass-token")
+	}
+}
+
+func TestWithRatelimitBypass_EmptyTokenIsNoOp(t *testing.T) {
+	c := &Client{}
+	WithRatelimitBypass("")(c)
+	if c.headers.Get(RatelimitBypassHeader) != "" {
+		t.Errorf("header = %q, want empty", c.headers.Get(RatelimitBypassHeader))
+	}
+}
