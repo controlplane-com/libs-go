@@ -473,8 +473,6 @@ type RunCronWorkloadStatus struct {
 	AdmissionRetryRequested     bool                                      `json:"admissionRetryRequested,omitempty"`
 	RetryReason                 RunCronWorkloadStatusRetryReason          `json:"retryReason,omitempty"`
 	InfraRetries                *float32                                  `json:"infraRetries,omitempty"`
-	Disruptions                 *float32                                  `json:"disruptions,omitempty"`
-	LastDisruptedReplica        string                                    `json:"lastDisruptedReplica,omitempty"`
 	PendingTerminalStage        RunCronWorkloadStatusPendingTerminalStage `json:"pendingTerminalStage,omitempty"`
 	JobName                     string                                    `json:"jobName,omitempty"`
 	WorkloadVersion             *float32                                  `json:"workloadVersion,omitempty"`
@@ -482,7 +480,6 @@ type RunCronWorkloadStatus struct {
 	CompletionTime              string                                    `json:"completionTime,omitempty"`
 	Conditions                  []cronjob.JobExecutionCondition           `json:"conditions,omitempty"`
 	Containers                  RunCronWorkloadStatusContainers           `json:"containers,omitempty"`
-	FirstImagePullBackOffTime   string                                    `json:"firstImagePullBackOffTime,omitempty"`
 	Details                     RunCronWorkloadStatusDetails              `json:"details,omitempty"`
 }
 
