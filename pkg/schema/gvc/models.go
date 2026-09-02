@@ -68,6 +68,7 @@ type GvcConfig struct {
 	ThinProvision     *float32                   `json:"thinProvision,omitempty"`
 	LargeDiskSize     workload.Memory            `json:"largeDiskSize,omitempty"`
 	CapacityAI        *GvcConfigCapacityAi       `json:"capacityAI,omitempty"`
+	Spire             bool                       `json:"spire,omitempty"`
 }
 
 type GvcConfigClusterEntry struct {

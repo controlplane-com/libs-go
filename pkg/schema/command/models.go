@@ -91,6 +91,121 @@ const (
 	CommandLifecycleStageFailed                CommandLifecycleStage = "failed"
 )
 
+type CopyVolumeSideStatusStage string
+
+const (
+	CopyVolumeSideStatusStageCaptureSource                 CopyVolumeSideStatusStage = "capture-source"
+	CopyVolumeSideStatusStageAwaitReceiver                 CopyVolumeSideStatusStage = "await-receiver"
+	CopyVolumeSideStatusStageApplySourceEgress             CopyVolumeSideStatusStage = "apply-source-egress"
+	CopyVolumeSideStatusStageRunBulkSync                   CopyVolumeSideStatusStage = "run-bulk-sync"
+	CopyVolumeSideStatusStagePrepareDestination            CopyVolumeSideStatusStage = "prepare-destination"
+	CopyVolumeSideStatusStageApplyReceiver                 CopyVolumeSideStatusStage = "apply-receiver"
+	CopyVolumeSideStatusStageAwaitBulkSync                 CopyVolumeSideStatusStage = "await-bulk-sync"
+	CopyVolumeSideStatusStageCommitAndPrepareSwap          CopyVolumeSideStatusStage = "commit-and-prepare-swap"
+	CopyVolumeSideStatusStageShutdownTargetReplica         CopyVolumeSideStatusStage = "shutdown-target-replica"
+	CopyVolumeSideStatusStageAwaitTargetReplicaTermination CopyVolumeSideStatusStage = "await-target-replica-termination"
+	CopyVolumeSideStatusStageCleanupK8S                    CopyVolumeSideStatusStage = "cleanup-k8s"
+	CopyVolumeSideStatusStageFail                          CopyVolumeSideStatusStage = "fail"
+)
+
+type CopyVolumeSideStatus struct {
+	Stage                CopyVolumeSideStatusStage `json:"stage,omitempty"`
+	Messages             []string                  `json:"messages,omitempty"`
+	LockNames            []string                  `json:"lockNames,omitempty"`
+	TempStorageClassName string                    `json:"tempStorageClassName,omitempty"`
+	Complete             bool                      `json:"complete,omitempty"`
+	CleanedUp            bool                      `json:"cleanedUp,omitempty"`
+}
+
+type CopyVolumeSpec struct {
+	Location                             string   `json:"location"`
+	TargetLocation                       string   `json:"targetLocation"`
+	VolumeIndex                          float32  `json:"volumeIndex"`
+	AcknowledgeDestinationVolumeDeletion bool     `json:"acknowledgeDestinationVolumeDeletion,omitempty"`
+	TimeoutSeconds                       *float32 `json:"timeoutSeconds,omitempty"`
+	Locations                            []string `json:"locations,omitempty"`
+}
+
+type CopyVolumeStatusClusterIdByLocation map[string]string
+
+type CopyVolumeStatusSourceStage string
+
+const (
+	CopyVolumeStatusSourceStageCaptureSource                 CopyVolumeStatusSourceStage = "capture-source"
+	CopyVolumeStatusSourceStageAwaitReceiver                 CopyVolumeStatusSourceStage = "await-receiver"
+	CopyVolumeStatusSourceStageApplySourceEgress             CopyVolumeStatusSourceStage = "apply-source-egress"
+	CopyVolumeStatusSourceStageRunBulkSync                   CopyVolumeStatusSourceStage = "run-bulk-sync"
+	CopyVolumeStatusSourceStagePrepareDestination            CopyVolumeStatusSourceStage = "prepare-destination"
+	CopyVolumeStatusSourceStageApplyReceiver                 CopyVolumeStatusSourceStage = "apply-receiver"
+	CopyVolumeStatusSourceStageAwaitBulkSync                 CopyVolumeStatusSourceStage = "await-bulk-sync"
+	CopyVolumeStatusSourceStageCommitAndPrepareSwap          CopyVolumeStatusSourceStage = "commit-and-prepare-swap"
+	CopyVolumeStatusSourceStageShutdownTargetReplica         CopyVolumeStatusSourceStage = "shutdown-target-replica"
+	CopyVolumeStatusSourceStageAwaitTargetReplicaTermination CopyVolumeStatusSourceStage = "await-target-replica-termination"
+	CopyVolumeStatusSourceStageCleanupK8S                    CopyVolumeStatusSourceStage = "cleanup-k8s"
+	CopyVolumeStatusSourceStageFail                          CopyVolumeStatusSourceStage = "fail"
+)
+
+type CopyVolumeStatusSource struct {
+	Stage                CopyVolumeStatusSourceStage `json:"stage,omitempty"`
+	Messages             []string                    `json:"messages,omitempty"`
+	LockNames            []string                    `json:"lockNames,omitempty"`
+	TempStorageClassName string                      `json:"tempStorageClassName,omitempty"`
+	Complete             bool                        `json:"complete,omitempty"`
+	CleanedUp            bool                        `json:"cleanedUp,omitempty"`
+}
+
+type CopyVolumeStatusTargetStage string
+
+const (
+	CopyVolumeStatusTargetStageCaptureSource                 CopyVolumeStatusTargetStage = "capture-source"
+	CopyVolumeStatusTargetStageAwaitReceiver                 CopyVolumeStatusTargetStage = "await-receiver"
+	CopyVolumeStatusTargetStageApplySourceEgress             CopyVolumeStatusTargetStage = "apply-source-egress"
+	CopyVolumeStatusTargetStageRunBulkSync                   CopyVolumeStatusTargetStage = "run-bulk-sync"
+	CopyVolumeStatusTargetStagePrepareDestination            CopyVolumeStatusTargetStage = "prepare-destination"
+	CopyVolumeStatusTargetStageApplyReceiver                 CopyVolumeStatusTargetStage = "apply-receiver"
+	CopyVolumeStatusTargetStageAwaitBulkSync                 CopyVolumeStatusTargetStage = "await-bulk-sync"
+	CopyVolumeStatusTargetStageCommitAndPrepareSwap          CopyVolumeStatusTargetStage = "commit-and-prepare-swap"
+	CopyVolumeStatusTargetStageShutdownTargetReplica         CopyVolumeStatusTargetStage = "shutdown-target-replica"
+	CopyVolumeStatusTargetStageAwaitTargetReplicaTermination CopyVolumeStatusTargetStage = "await-target-replica-termination"
+	CopyVolumeStatusTargetStageCleanupK8S                    CopyVolumeStatusTargetStage = "cleanup-k8s"
+	CopyVolumeStatusTargetStageFail                          CopyVolumeStatusTargetStage = "fail"
+)
+
+type CopyVolumeStatusTarget struct {
+	Stage                CopyVolumeStatusTargetStage `json:"stage,omitempty"`
+	Messages             []string                    `json:"messages,omitempty"`
+	LockNames            []string                    `json:"lockNames,omitempty"`
+	TempStorageClassName string                      `json:"tempStorageClassName,omitempty"`
+	Complete             bool                        `json:"complete,omitempty"`
+	CleanedUp            bool                        `json:"cleanedUp,omitempty"`
+}
+
+type CopyVolumeStatusNewVolumeAttributes map[string]string
+
+type CopyVolumeStatus struct {
+	ClusterId                   string                              `json:"clusterId,omitempty"`
+	ClusterIdByLocation         CopyVolumeStatusClusterIdByLocation `json:"clusterIdByLocation,omitempty"`
+	Messages                    []string                            `json:"messages,omitempty"`
+	Source                      CopyVolumeStatusSource              `json:"source,omitempty"`
+	Target                      CopyVolumeStatusTarget              `json:"target,omitempty"`
+	ReceiverHost                string                              `json:"receiverHost,omitempty"`
+	ReceiverSniService          string                              `json:"receiverSniService,omitempty"`
+	TargetGatewayAddress        string                              `json:"targetGatewayAddress,omitempty"`
+	NewStorageDeviceId          string                              `json:"newStorageDeviceId,omitempty"`
+	NewResourceName             string                              `json:"newResourceName,omitempty"`
+	NewVolumeAttributes         CopyVolumeStatusNewVolumeAttributes `json:"newVolumeAttributes,omitempty"`
+	NewVolumeSize               *float32                            `json:"newVolumeSize,omitempty"`
+	DestinationDeviceIdToRemove string                              `json:"destinationDeviceIdToRemove,omitempty"`
+	TargetHasWorkloadPod        bool                                `json:"targetHasWorkloadPod,omitempty"`
+	SourceDeviceId              string                              `json:"sourceDeviceId,omitempty"`
+	BulkSyncAttempt             *float32                            `json:"bulkSyncAttempt,omitempty"`
+	BulkSyncCompletedAt         string                              `json:"bulkSyncCompletedAt,omitempty"`
+	BulkSyncProgressPercent     *float32                            `json:"bulkSyncProgressPercent,omitempty"`
+	BulkSyncTransferredBytes    *float32                            `json:"bulkSyncTransferredBytes,omitempty"`
+	BulkSyncRate                string                              `json:"bulkSyncRate,omitempty"`
+	BulkSyncEta                 string                              `json:"bulkSyncEta,omitempty"`
+}
+
 type CreateVolumeSnapshotSpecSnapshotTags map[string]string
 
 type CreateVolumeSnapshotSpec struct {
@@ -473,6 +588,8 @@ type RunCronWorkloadStatus struct {
 	AdmissionRetryRequested     bool                                      `json:"admissionRetryRequested,omitempty"`
 	RetryReason                 RunCronWorkloadStatusRetryReason          `json:"retryReason,omitempty"`
 	InfraRetries                *float32                                  `json:"infraRetries,omitempty"`
+	Disruptions                 *float32                                  `json:"disruptions,omitempty"`
+	LastDisruptedReplica        string                                    `json:"lastDisruptedReplica,omitempty"`
 	PendingTerminalStage        RunCronWorkloadStatusPendingTerminalStage `json:"pendingTerminalStage,omitempty"`
 	JobName                     string                                    `json:"jobName,omitempty"`
 	WorkloadVersion             *float32                                  `json:"workloadVersion,omitempty"`
@@ -480,6 +597,7 @@ type RunCronWorkloadStatus struct {
 	CompletionTime              string                                    `json:"completionTime,omitempty"`
 	Conditions                  []cronjob.JobExecutionCondition           `json:"conditions,omitempty"`
 	Containers                  RunCronWorkloadStatusContainers           `json:"containers,omitempty"`
+	FirstImagePullBackOffTime   string                                    `json:"firstImagePullBackOffTime,omitempty"`
 	Details                     RunCronWorkloadStatusDetails              `json:"details,omitempty"`
 }
 
