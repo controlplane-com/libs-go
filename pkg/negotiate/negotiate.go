@@ -24,7 +24,12 @@ type SyncJob[T any] struct {
 	cancelFunc context.CancelFunc
 	errChan    chan error
 	runCount   int
+	// Cycles that actually executed as leader; drives the FirstRunImmediately retry.
+	leaderRunCount int
 }
+
+// How soon a FirstRunImmediately job re-checks leadership while it has never run as leader.
+var firstRunRetryInterval = 30 * time.Second
 
 type SyncJobOptions[T any] struct {
 	NumWorkers          int
@@ -128,6 +133,7 @@ func (s *SyncJob[T]) negotiate() {
 				continue
 			}
 		}
+		s.leaderRunCount++
 
 		input, err := s.InputDelegate()
 		if err != nil && (*[2]uintptr)(unsafe.Pointer(&err))[1] != 0 {
@@ -168,15 +174,24 @@ func (s *SyncJob[T]) negotiate() {
 }
 
 func (s *SyncJob[T]) awaitNextRun(ctx context.Context, logger *zap.SugaredLogger, lastStartTime time.Time, role leaderElection.Type) bool {
-	if s.FirstRunImmediately && s.runCount == 0 {
-		return true
-	}
 	var timeToWait time.Duration
-	if s.NextRunDelegate != nil {
-		timeToWait = s.NextRunDelegate().Sub(time.Now())
-	}
-	if timeToWait <= 0 {
-		timeToWait = s.SyncInterval - time.Now().Sub(lastStartTime)
+	if s.FirstRunImmediately && s.leaderRunCount == 0 {
+		if s.runCount == 0 {
+			return true
+		}
+		//A fresh replica is not Ready yet, so the elector cannot see it as leader: re-check soon
+		//rather than deferring the first run by a whole interval.
+		timeToWait = firstRunRetryInterval
+		if s.SyncInterval > 0 && s.SyncInterval < timeToWait {
+			timeToWait = s.SyncInterval
+		}
+	} else {
+		if s.NextRunDelegate != nil {
+			timeToWait = s.NextRunDelegate().Sub(time.Now())
+		}
+		if timeToWait <= 0 {
+			timeToWait = s.SyncInterval - time.Now().Sub(lastStartTime)
+		}
 	}
 	keepRunning := true
 	if timeToWait > 0 {
