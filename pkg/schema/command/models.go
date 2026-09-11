@@ -198,6 +198,8 @@ type CopyVolumeStatus struct {
 	DestinationDeviceIdToRemove string                              `json:"destinationDeviceIdToRemove,omitempty"`
 	TargetHasWorkloadPod        bool                                `json:"targetHasWorkloadPod,omitempty"`
 	SourceDeviceId              string                              `json:"sourceDeviceId,omitempty"`
+	SourceInUse                 bool                                `json:"sourceInUse,omitempty"`
+	BulkSyncTargetPodUid        string                              `json:"bulkSyncTargetPodUid,omitempty"`
 	BulkSyncAttempt             *float32                            `json:"bulkSyncAttempt,omitempty"`
 	BulkSyncCompletedAt         string                              `json:"bulkSyncCompletedAt,omitempty"`
 	BulkSyncProgressPercent     *float32                            `json:"bulkSyncProgressPercent,omitempty"`

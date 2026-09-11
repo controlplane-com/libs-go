@@ -872,6 +872,32 @@ type Workload struct {
 	Status       WorkloadStatus `json:"status,omitempty"`
 }
 
+type WorkloadConfigScheduling struct {
+	Fingerprint string   `json:"fingerprint,omitempty"`
+	Version     *float32 `json:"version,omitempty"`
+}
+
+type WorkloadConfigPodZoneMap map[string]string
+
+type WorkloadConfigLocationPodZoneMap map[string]PodZoneMap
+
+type WorkloadConfigProxy struct {
+	MinCpu *float32 `json:"minCpu,omitempty"`
+}
+
+type WorkloadConfigSubsets struct {
+	Enabled bool `json:"enabled,omitempty"`
+}
+
+type WorkloadConfig struct {
+	Scheduling         WorkloadConfigScheduling         `json:"scheduling,omitempty"`
+	ThinProvision      *float32                         `json:"thinProvision,omitempty"`
+	PodZoneMap         WorkloadConfigPodZoneMap         `json:"podZoneMap,omitempty"`
+	LocationPodZoneMap WorkloadConfigLocationPodZoneMap `json:"locationPodZoneMap,omitempty"`
+	Proxy              *WorkloadConfigProxy             `json:"proxy,omitempty"`
+	Subsets            *WorkloadConfigSubsets           `json:"subsets,omitempty"`
+}
+
 type WorkloadHealth struct {
 	Readiness      string   `json:"readiness,omitempty"`
 	SyncFailed     bool     `json:"syncFailed,omitempty"`
