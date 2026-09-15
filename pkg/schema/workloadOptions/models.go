@@ -98,8 +98,72 @@ type OptionsAutoscalingKedaAdvancedScalingModifiers struct {
 	Formula          string                                                   `json:"formula,omitempty"`
 }
 
+type OptionsAutoscalingKedaAdvancedHorizontalPodAutoscalerConfigBehaviorScaleUpSelectPolicy string
+
+const (
+	OptionsAutoscalingKedaAdvancedHorizontalPodAutoscalerConfigBehaviorScaleUpSelectPolicyMax      OptionsAutoscalingKedaAdvancedHorizontalPodAutoscalerConfigBehaviorScaleUpSelectPolicy = "Max"
+	OptionsAutoscalingKedaAdvancedHorizontalPodAutoscalerConfigBehaviorScaleUpSelectPolicyMin      OptionsAutoscalingKedaAdvancedHorizontalPodAutoscalerConfigBehaviorScaleUpSelectPolicy = "Min"
+	OptionsAutoscalingKedaAdvancedHorizontalPodAutoscalerConfigBehaviorScaleUpSelectPolicyDisabled OptionsAutoscalingKedaAdvancedHorizontalPodAutoscalerConfigBehaviorScaleUpSelectPolicy = "Disabled"
+)
+
+type OptionsAutoscalingKedaAdvancedHorizontalPodAutoscalerConfigBehaviorScaleUpPoliciesType string
+
+const (
+	OptionsAutoscalingKedaAdvancedHorizontalPodAutoscalerConfigBehaviorScaleUpPoliciesTypePods    OptionsAutoscalingKedaAdvancedHorizontalPodAutoscalerConfigBehaviorScaleUpPoliciesType = "Pods"
+	OptionsAutoscalingKedaAdvancedHorizontalPodAutoscalerConfigBehaviorScaleUpPoliciesTypePercent OptionsAutoscalingKedaAdvancedHorizontalPodAutoscalerConfigBehaviorScaleUpPoliciesType = "Percent"
+)
+
+type OptionsAutoscalingKedaAdvancedHorizontalPodAutoscalerConfigBehaviorScaleUpPolicies struct {
+	Type          OptionsAutoscalingKedaAdvancedHorizontalPodAutoscalerConfigBehaviorScaleUpPoliciesType `json:"type,omitempty"`
+	Value         float32                                                                                `json:"value"`
+	PeriodSeconds float32                                                                                `json:"periodSeconds"`
+}
+
+type OptionsAutoscalingKedaAdvancedHorizontalPodAutoscalerConfigBehaviorScaleUp struct {
+	StabilizationWindowSeconds *float32                                                                               `json:"stabilizationWindowSeconds,omitempty"`
+	SelectPolicy               OptionsAutoscalingKedaAdvancedHorizontalPodAutoscalerConfigBehaviorScaleUpSelectPolicy `json:"selectPolicy,omitempty"`
+	Policies                   []OptionsAutoscalingKedaAdvancedHorizontalPodAutoscalerConfigBehaviorScaleUpPolicies   `json:"policies,omitempty"`
+}
+
+type OptionsAutoscalingKedaAdvancedHorizontalPodAutoscalerConfigBehaviorScaleDownSelectPolicy string
+
+const (
+	OptionsAutoscalingKedaAdvancedHorizontalPodAutoscalerConfigBehaviorScaleDownSelectPolicyMax      OptionsAutoscalingKedaAdvancedHorizontalPodAutoscalerConfigBehaviorScaleDownSelectPolicy = "Max"
+	OptionsAutoscalingKedaAdvancedHorizontalPodAutoscalerConfigBehaviorScaleDownSelectPolicyMin      OptionsAutoscalingKedaAdvancedHorizontalPodAutoscalerConfigBehaviorScaleDownSelectPolicy = "Min"
+	OptionsAutoscalingKedaAdvancedHorizontalPodAutoscalerConfigBehaviorScaleDownSelectPolicyDisabled OptionsAutoscalingKedaAdvancedHorizontalPodAutoscalerConfigBehaviorScaleDownSelectPolicy = "Disabled"
+)
+
+type OptionsAutoscalingKedaAdvancedHorizontalPodAutoscalerConfigBehaviorScaleDownPoliciesType string
+
+const (
+	OptionsAutoscalingKedaAdvancedHorizontalPodAutoscalerConfigBehaviorScaleDownPoliciesTypePods    OptionsAutoscalingKedaAdvancedHorizontalPodAutoscalerConfigBehaviorScaleDownPoliciesType = "Pods"
+	OptionsAutoscalingKedaAdvancedHorizontalPodAutoscalerConfigBehaviorScaleDownPoliciesTypePercent OptionsAutoscalingKedaAdvancedHorizontalPodAutoscalerConfigBehaviorScaleDownPoliciesType = "Percent"
+)
+
+type OptionsAutoscalingKedaAdvancedHorizontalPodAutoscalerConfigBehaviorScaleDownPolicies struct {
+	Type          OptionsAutoscalingKedaAdvancedHorizontalPodAutoscalerConfigBehaviorScaleDownPoliciesType `json:"type,omitempty"`
+	Value         float32                                                                                  `json:"value"`
+	PeriodSeconds float32                                                                                  `json:"periodSeconds"`
+}
+
+type OptionsAutoscalingKedaAdvancedHorizontalPodAutoscalerConfigBehaviorScaleDown struct {
+	StabilizationWindowSeconds *float32                                                                                 `json:"stabilizationWindowSeconds,omitempty"`
+	SelectPolicy               OptionsAutoscalingKedaAdvancedHorizontalPodAutoscalerConfigBehaviorScaleDownSelectPolicy `json:"selectPolicy,omitempty"`
+	Policies                   []OptionsAutoscalingKedaAdvancedHorizontalPodAutoscalerConfigBehaviorScaleDownPolicies   `json:"policies,omitempty"`
+}
+
+type OptionsAutoscalingKedaAdvancedHorizontalPodAutoscalerConfigBehavior struct {
+	ScaleUp   *OptionsAutoscalingKedaAdvancedHorizontalPodAutoscalerConfigBehaviorScaleUp   `json:"scaleUp,omitempty"`
+	ScaleDown *OptionsAutoscalingKedaAdvancedHorizontalPodAutoscalerConfigBehaviorScaleDown `json:"scaleDown,omitempty"`
+}
+
+type OptionsAutoscalingKedaAdvancedHorizontalPodAutoscalerConfig struct {
+	Behavior *OptionsAutoscalingKedaAdvancedHorizontalPodAutoscalerConfigBehavior `json:"behavior,omitempty"`
+}
+
 type OptionsAutoscalingKedaAdvanced struct {
-	ScalingModifiers *OptionsAutoscalingKedaAdvancedScalingModifiers `json:"scalingModifiers,omitempty"`
+	ScalingModifiers              *OptionsAutoscalingKedaAdvancedScalingModifiers              `json:"scalingModifiers,omitempty"`
+	HorizontalPodAutoscalerConfig *OptionsAutoscalingKedaAdvancedHorizontalPodAutoscalerConfig `json:"horizontalPodAutoscalerConfig,omitempty"`
 }
 
 type OptionsAutoscalingKedaFallbackBehavior string
