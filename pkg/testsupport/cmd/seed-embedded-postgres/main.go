@@ -30,12 +30,18 @@ import (
 	"time"
 )
 
-const repository = "https://repo1.maven.org/maven2"
+// repositories all serve Maven Central's artifacts byte for byte. repo1 rate-limits busy CI
+// runners (HTTP 429), so attempts rotate through the mirrors instead of hammering one host.
+var repositories = []string{
+	"https://repo1.maven.org/maven2",
+	"https://maven-central.storage-download.googleapis.com/maven2",
+	"https://repo.maven.apache.org/maven2",
+}
 
 // Retries cover the transient failures that made this worth doing at all. Cheap: on the happy path
 // the first attempt succeeds.
 const (
-	attempts = 5
+	attempts = 6
 	backoff  = 3 * time.Second
 )
 
@@ -66,10 +72,10 @@ func seed(cacheDir, version string) error {
 		return nil
 	}
 
-	url := fmt.Sprintf("%s/io/zonky/test/postgres/embedded-postgres-binaries-%s-%s/%s/embedded-postgres-binaries-%s-%s-%s.jar",
-		repository, goos, arch, version, goos, arch, version)
+	path := fmt.Sprintf("io/zonky/test/postgres/embedded-postgres-binaries-%s-%s/%s/embedded-postgres-binaries-%s-%s-%s.jar",
+		goos, arch, version, goos, arch, version)
 
-	jar, err := download(url)
+	jar, url, err := download(path)
 	if err != nil {
 		return err
 	}
@@ -101,20 +107,23 @@ func seed(cacheDir, version string) error {
 	return nil
 }
 
-func download(url string) ([]byte, error) {
+// download fetches path from the repositories in turn, returning the body and the URL it came
+// from. Each attempt uses the next mirror, so one rate-limited host is skipped rather than retried.
+func download(path string) ([]byte, string, error) {
 	var last error
 	for attempt := 1; attempt <= attempts; attempt++ {
+		url := repositories[(attempt-1)%len(repositories)] + "/" + path
 		body, err := get(url)
 		if err == nil {
-			return body, nil
+			return body, url, nil
 		}
 		last = err
 		if attempt < attempts {
 			fmt.Fprintf(os.Stderr, "seed-embedded-postgres: attempt %d/%d failed: %v\n", attempt, attempts, err)
-			time.Sleep(time.Duration(attempt) * backoff)
+			time.Sleep(time.Duration((attempt+1)/2) * backoff)
 		}
 	}
-	return nil, fmt.Errorf("giving up on %s after %d attempts: %w", url, attempts, last)
+	return nil, "", fmt.Errorf("giving up on %s after %d attempts: %w", path, attempts, last)
 }
 
 func get(url string) ([]byte, error) {

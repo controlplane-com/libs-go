@@ -14,8 +14,8 @@ type AwsIdentity struct {
 type AwsPolicyDocumentStatement map[string]any
 
 type AwsPolicyDocument struct {
-	Version   string                       `json:"version,omitempty"`
-	Statement []AwsPolicyDocumentStatement `json:"statement,omitempty"`
+	Version   string                       `json:"Version,omitempty"`
+	Statement []AwsPolicyDocumentStatement `json:"Statement,omitempty"`
 }
 
 type AwsRoleName string
@@ -89,7 +89,7 @@ type NativeNetworkResourceGcpServiceConnect struct {
 
 type NativeNetworkResource struct {
 	Name              any/* TODO: [object Object]*/ `json:"name"`
-	FQDN              string                                 `json:"fQDN,omitempty"`
+	FQDN              string                                 `json:"FQDN,omitempty"`
 	Ports             []float32                              `json:"ports"`
 	AwsPrivateLink    NativeNetworkResourceAwsPrivateLink    `json:"awsPrivateLink,omitempty"`
 	GcpServiceConnect NativeNetworkResourceGcpServiceConnect `json:"gcpServiceConnect,omitempty"`
@@ -98,8 +98,8 @@ type NativeNetworkResource struct {
 type NetworkResource struct {
 	Name       any/* TODO: [object Object]*/ `json:"name"`
 	AgentLink  string    `json:"agentLink,omitempty"`
-	IPs        []string  `json:"iPs,omitempty"`
-	FQDN       string    `json:"fQDN,omitempty"`
+	IPs        []string  `json:"IPs,omitempty"`
+	FQDN       string    `json:"FQDN,omitempty"`
 	ResolverIP string    `json:"resolverIP,omitempty"`
 	Ports      []float32 `json:"ports"`
 }

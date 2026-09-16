@@ -123,6 +123,9 @@ type CopyVolumeSpec struct {
 	VolumeIndex                          float32  `json:"volumeIndex"`
 	AcknowledgeDestinationVolumeDeletion bool     `json:"acknowledgeDestinationVolumeDeletion,omitempty"`
 	TimeoutSeconds                       *float32 `json:"timeoutSeconds,omitempty"`
+	TargetVolumeSet                      string   `json:"targetVolumeSet,omitempty"`
+	TargetVolumeSetId                    string   `json:"targetVolumeSetId,omitempty"`
+	TargetGvc                            string   `json:"targetGvc,omitempty"`
 	Locations                            []string `json:"locations,omitempty"`
 }
 

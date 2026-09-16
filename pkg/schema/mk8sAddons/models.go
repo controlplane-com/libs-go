@@ -9,7 +9,7 @@ type AwsECRAddonConfig struct {
 }
 
 type AwsEFSAddonConfig struct {
-	RoleArn string `json:"roleArn"`
+	RoleArn string `json:"roleArn,omitempty"`
 }
 
 type AwsELBAddonConfig struct {

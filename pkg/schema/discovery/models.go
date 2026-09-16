@@ -11,14 +11,14 @@ type DiscoveryEndpoints struct {
 	Audit             string `json:"audit,omitempty"`
 	Logs              string `json:"logs,omitempty"`
 	Metrics           string `json:"metrics,omitempty"`
-	MetricsNg         string `json:"metricsNg,omitempty"`
+	MetricsNg         string `json:"metrics-ng,omitempty"`
 	Tracing           string `json:"tracing,omitempty"`
 	Byok              string `json:"byok,omitempty"`
 	Metering          string `json:"metering,omitempty"`
-	BillingNg         string `json:"billingNg,omitempty"`
+	BillingNg         string `json:"billing-ng,omitempty"`
 	Grafana           string `json:"grafana,omitempty"`
-	TerraformExporter string `json:"terraformExporter,omitempty"`
-	K8sCrdExporter    string `json:"k8sCrdExporter,omitempty"`
+	TerraformExporter string `json:"terraform-exporter,omitempty"`
+	K8sCrdExporter    string `json:"k8s-crd-exporter,omitempty"`
 	Mcp               string `json:"mcp,omitempty"`
 	Auth              string `json:"auth,omitempty"`
 }
