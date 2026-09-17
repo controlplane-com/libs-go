@@ -48,6 +48,7 @@ type GvcConfigLoadBalancerLivenessProbe struct {
 
 type GvcConfigLoadBalancer struct {
 	DistributedIngress bool                                 `json:"distributedIngress,omitempty"`
+	DeploymentCount    *float32                             `json:"deploymentCount,omitempty"`
 	MinScale           *float32                             `json:"minScale,omitempty"`
 	MaxScale           *float32                             `json:"maxScale,omitempty"`
 	MinCpu             string                               `json:"minCpu,omitempty"`
@@ -94,6 +95,7 @@ type GvcLoadBalancerConfigLivenessProbe struct {
 
 type GvcLoadBalancerConfig struct {
 	DistributedIngress bool                                 `json:"distributedIngress,omitempty"`
+	DeploymentCount    *float32                             `json:"deploymentCount,omitempty"`
 	MinScale           *float32                             `json:"minScale,omitempty"`
 	MaxScale           *float32                             `json:"maxScale,omitempty"`
 	MinCpu             string                               `json:"minCpu,omitempty"`
