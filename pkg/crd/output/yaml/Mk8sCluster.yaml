@@ -384,6 +384,8 @@ spec:
                     type: object
                   headlamp:
                     type: object
+                  kata:
+                    type: object
                   kubevirt:
                     properties:
                       scratchSpaceStorageClass:
