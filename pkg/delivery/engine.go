@@ -208,28 +208,19 @@ func (e *Engine[D]) handleMessage(ctx context.Context, msg *TaskMessage) error {
 }
 
 // Process drives a single delivery through claim -> send -> finalize. Idempotent:
-// a record already delivered or permanently failed is skipped, and the claim
-// (status=in_progress) guards against concurrent processing.
+// only one consumer can win the atomic claim, and terminal records are never claimed.
 func (e *Engine[D]) Process(ctx context.Context, id string) error {
-	d, err := e.store.GetByID(ctx, id)
+	now := time.Now().UTC()
+	// The claim expires after claimTimeout so a crash mid-send is re-picked, never raced.
+	d, claimed, err := e.store.Claim(ctx, id, now, now.Add(claimTimeout))
 	if err != nil {
-		logging.LoggerWithContext(ctx).Errorf("delivery[%s]: failed to load %s: %v", e.Name(), id, err)
+		logging.LoggerWithContext(ctx).Errorf("delivery[%s]: failed to claim %s: %v", e.Name(), id, err)
 		return err
 	}
-	st := d.DeliveryState()
-	if st.Status == StatusDelivered || st.Status == StatusPermanentlyFailed {
+	if !claimed {
 		return nil
 	}
-
-	now := time.Now().UTC()
-	fallback := now.Add(10 * time.Minute) // stuck-recovery: re-picked-up if a crash interrupts the send
-	st.Status = StatusInProgress
-	st.AttemptCount++
-	st.LastAttemptAt = &now
-	st.NextRetryAt = &fallback
-	if err := e.store.Save(ctx, d); err != nil {
-		return err
-	}
+	st := d.DeliveryState()
 
 	if sendErr := e.sender.Send(ctx, d); sendErr != nil {
 		retried := e.strategy.ApplyRetry(st, sendErr)

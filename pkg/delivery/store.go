@@ -17,11 +17,19 @@ type Store[D Delivery] interface {
 	// full Save, so it never clobbers a concurrent consumer's status write; and
 	// it only sets the column when still null, so retry re-pushes are no-ops.
 	MarkPushed(ctx context.Context, id string) error
+	// Claim atomically moves a claimable record (pending, failed, or in_progress whose
+	// claim has expired) to in_progress and returns it; false means another consumer
+	// holds it or it is terminal.
+	Claim(ctx context.Context, id string, now, claimUntil time.Time) (D, bool, error)
 	// ListDue returns records that need pushing or (re)processing as of now:
 	// unpushed outbox rows, due retries, pushed-but-never-consumed rows, and
 	// stuck in_progress rows.
 	ListDue(ctx context.Context, now time.Time) ([]D, error)
 }
+
+// claimTimeout is how long a claimed record stays in_progress before it may be re-claimed;
+// it must exceed the longest send, including Pub/Sub ack deadlines.
+const claimTimeout = 10 * time.Minute
 
 // GormStore is a generic gorm-backed Store over any model embedding State. A new
 // pipeline gets persistence for free by passing a newRecord factory:
@@ -59,6 +67,35 @@ func (g *GormStore[D]) MarkPushed(ctx context.Context, id string) error {
 		Updates(map[string]any{"pushed_at": now, "updated_at": now}).Error
 }
 
+func (g *GormStore[D]) Claim(ctx context.Context, id string, now, claimUntil time.Time) (D, bool, error) {
+	var zero D
+	res := g.dbRw.WithContext(ctx).
+		Model(g.newRecord()).
+		Where("id = ?", id).
+		Where(`(
+			status IN ?
+			OR (status = ? AND (next_retry_at <= ? OR (next_retry_at IS NULL AND COALESCE(last_attempt_at, created_at) <= ?)))
+		)`, []string{StatusPending, StatusFailed}, StatusInProgress, now, now.Add(-claimTimeout)).
+		Updates(map[string]any{
+			"status":          StatusInProgress,
+			"attempt_count":   gorm.Expr("attempt_count + 1"),
+			"last_attempt_at": now,
+			"next_retry_at":   claimUntil,
+			"updated_at":      now,
+		})
+	if res.Error != nil {
+		return zero, false, res.Error
+	}
+	if res.RowsAffected == 0 {
+		return zero, false, nil
+	}
+	rec := g.newRecord()
+	if err := g.dbRw.WithContext(ctx).First(rec, "id = ?", id).Error; err != nil {
+		return zero, false, err
+	}
+	return rec, true, nil
+}
+
 func (g *GormStore[D]) ListDue(ctx context.Context, now time.Time) ([]D, error) {
 	stuckThreshold := now.Add(-1 * time.Minute)
 	var out []D
@@ -69,9 +106,9 @@ func (g *GormStore[D]) ListDue(ctx context.Context, now time.Time) ([]D, error) 
 			pushed_at IS NULL
 			OR (next_retry_at IS NOT NULL AND next_retry_at <= ?)
 			OR (status = ? AND next_retry_at IS NULL AND pushed_at <= ?)
-			OR (status = ? AND COALESCE(last_attempt_at, created_at) <= ?)
+			OR (status = ? AND next_retry_at IS NULL AND COALESCE(last_attempt_at, created_at) <= ?)
 		)`,
-			now, StatusPending, stuckThreshold, StatusInProgress, stuckThreshold).
+			now, StatusPending, stuckThreshold, StatusInProgress, now.Add(-claimTimeout)).
 		Find(&out).Error
 	return out, err
 }

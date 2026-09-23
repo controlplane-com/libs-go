@@ -39,6 +39,21 @@ func (s *fakeStore) MarkPushed(_ context.Context, id string) error {
 	}
 	return nil
 }
+func (s *fakeStore) Claim(_ context.Context, id string, now, claimUntil time.Time) (*fakeRecord, bool, error) {
+	r, ok := s.recs[id]
+	if !ok {
+		return nil, false, nil
+	}
+	expired := r.Status == StatusInProgress && r.NextRetryAt != nil && !r.NextRetryAt.After(now)
+	if r.Status != StatusPending && r.Status != StatusFailed && !expired {
+		return nil, false, nil
+	}
+	r.Status = StatusInProgress
+	r.AttemptCount++
+	r.LastAttemptAt = &now
+	r.NextRetryAt = &claimUntil
+	return r, true, nil
+}
 func (s *fakeStore) ListDue(_ context.Context, _ time.Time) ([]*fakeRecord, error) {
 	return nil, nil
 }
@@ -115,5 +130,33 @@ func TestProcess_SkipsTerminal(t *testing.T) {
 	}
 	if sender.calls != 0 {
 		t.Fatalf("expected no send for an already-delivered record, got %d", sender.calls)
+	}
+}
+
+func TestProcess_SkipsRecordClaimedByAnotherConsumer(t *testing.T) {
+	future := time.Now().Add(5 * time.Minute)
+	rec := &fakeRecord{id: "d1", State: State{Status: StatusInProgress, NextRetryAt: &future}}
+	sender := &fakeSender{}
+	e := engineFor(rec, sender, Config{Name: "test", MaxRetries: 3})
+
+	if err := e.Process(context.Background(), "d1"); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if sender.calls != 0 || rec.Status != StatusInProgress {
+		t.Fatalf("a live claim must not be sent again: calls=%d status=%q", sender.calls, rec.Status)
+	}
+}
+
+func TestProcess_ReclaimsExpiredClaim(t *testing.T) {
+	past := time.Now().Add(-time.Minute)
+	rec := &fakeRecord{id: "d1", State: State{Status: StatusInProgress, NextRetryAt: &past, AttemptCount: 1}}
+	sender := &fakeSender{}
+	e := engineFor(rec, sender, Config{Name: "test", MaxRetries: 3})
+
+	if err := e.Process(context.Background(), "d1"); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if sender.calls != 1 || rec.Status != StatusDelivered || rec.AttemptCount != 2 {
+		t.Fatalf("an expired claim must be re-sent: calls=%d status=%q attempts=%d", sender.calls, rec.Status, rec.AttemptCount)
 	}
 }
