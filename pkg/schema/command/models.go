@@ -630,6 +630,24 @@ const (
 
 type ShrinkVolumeStatusClusterIdByLocation map[string]string
 
+type ShrinkVolumeStatusOldVolumeAttributes map[string]string
+
+type ShrinkVolumeStatusOldDiskType string
+
+const (
+	ShrinkVolumeStatusOldDiskTypeGp3                ShrinkVolumeStatusOldDiskType = "gp3"
+	ShrinkVolumeStatusOldDiskTypePdBalanced         ShrinkVolumeStatusOldDiskType = "pd-balanced"
+	ShrinkVolumeStatusOldDiskTypePdSsd              ShrinkVolumeStatusOldDiskType = "pd-ssd"
+	ShrinkVolumeStatusOldDiskTypeHyperdiskBalanced  ShrinkVolumeStatusOldDiskType = "hyperdisk-balanced"
+	ShrinkVolumeStatusOldDiskTypePremiumV2Lrs       ShrinkVolumeStatusOldDiskType = "PremiumV2_LRS"
+	ShrinkVolumeStatusOldDiskTypeDoBlockStorage     ShrinkVolumeStatusOldDiskType = "do-block-storage"
+	ShrinkVolumeStatusOldDiskTypeHcloudVolume       ShrinkVolumeStatusOldDiskType = "hcloud-volume"
+	ShrinkVolumeStatusOldDiskTypeLinodeBlockStorage ShrinkVolumeStatusOldDiskType = "linode-block-storage"
+	ShrinkVolumeStatusOldDiskTypeOciBvBalanced      ShrinkVolumeStatusOldDiskType = "oci-bv-balanced"
+	ShrinkVolumeStatusOldDiskTypeJuicefs            ShrinkVolumeStatusOldDiskType = "juicefs"
+	ShrinkVolumeStatusOldDiskTypeHostpath           ShrinkVolumeStatusOldDiskType = "hostpath"
+)
+
 type ShrinkVolumeStatusNewVolumeAttributes map[string]string
 
 type ShrinkVolumeStatus struct {
@@ -639,6 +657,9 @@ type ShrinkVolumeStatus struct {
 	ClusterIdByLocation     ShrinkVolumeStatusClusterIdByLocation `json:"clusterIdByLocation,omitempty"`
 	InUseByWorkloadId       string                                `json:"inUseByWorkloadId,omitempty"`
 	StorageDeviceIdToRemove string                                `json:"storageDeviceIdToRemove,omitempty"`
+	OldVolumeAttributes     ShrinkVolumeStatusOldVolumeAttributes `json:"oldVolumeAttributes,omitempty"`
+	OldVolumeSize           *float32                              `json:"oldVolumeSize,omitempty"`
+	OldDiskType             ShrinkVolumeStatusOldDiskType         `json:"oldDiskType,omitempty"`
 	NewStorageDeviceId      string                                `json:"newStorageDeviceId,omitempty"`
 	NewVolumeAttributes     ShrinkVolumeStatusNewVolumeAttributes `json:"newVolumeAttributes,omitempty"`
 	NewResourceName         string                                `json:"newResourceName,omitempty"`
@@ -649,6 +670,7 @@ type ShrinkVolumeStatus struct {
 	PresyncAttempt          *float32                              `json:"presyncAttempt,omitempty"`
 	PresyncProgressPercent  *float32                              `json:"presyncProgressPercent,omitempty"`
 	FinalSyncCompletedAt    string                                `json:"finalSyncCompletedAt,omitempty"`
+	AwaitDataReadySince     string                                `json:"awaitDataReadySince,omitempty"`
 }
 
 type SnapshotDeletionStatusStage string
