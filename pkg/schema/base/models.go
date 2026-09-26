@@ -71,6 +71,7 @@ const (
 	KindCommand          Kind = "command"
 	KindImagesummary     Kind = "imagesummary"
 	KindVolumeset        Kind = "volumeset"
+	KindSandboximage     Kind = "sandboximage"
 )
 
 type Link struct {
@@ -126,6 +127,7 @@ const (
 	ListItemKindLink             ListItemKind = "link"
 	ListItemKindImagesummary     ListItemKind = "imagesummary"
 	ListItemKindVolumeset        ListItemKind = "volumeset"
+	ListItemKindSandboximage     ListItemKind = "sandboximage"
 )
 
 type List struct {

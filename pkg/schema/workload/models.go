@@ -10,6 +10,7 @@ import "github.com/controlplane-com/libs-go/pkg/schema/envoyAccessLog"
 import "github.com/controlplane-com/libs-go/pkg/schema/envoyCluster"
 import "github.com/controlplane-com/libs-go/pkg/schema/envoyExcExtAuth"
 import "github.com/controlplane-com/libs-go/pkg/schema/envoyHttp"
+import "github.com/controlplane-com/libs-go/pkg/schema/sandbox"
 
 type ContainerOverride struct {
 	Name    string       `json:"name"`
@@ -805,6 +806,26 @@ type WorkloadSpecVm struct {
 	Subdomain         string                            `json:"subdomain,omitempty"`
 }
 
+type WorkloadSpecSandboxVolumePerformanceClass string
+
+const (
+	WorkloadSpecSandboxVolumePerformanceClassGeneralPurposeSsd WorkloadSpecSandboxVolumePerformanceClass = "general-purpose-ssd"
+	WorkloadSpecSandboxVolumePerformanceClassHighThroughputSsd WorkloadSpecSandboxVolumePerformanceClass = "high-throughput-ssd"
+)
+
+type WorkloadSpecSandboxVolume struct {
+	Size             *float32                                  `json:"size,omitempty"`
+	PerformanceClass WorkloadSpecSandboxVolumePerformanceClass `json:"performanceClass,omitempty"`
+}
+
+type WorkloadSpecSandbox struct {
+	Ide              sandbox.SandboxIde         `json:"ide,omitempty"`
+	AppPort          *float32                   `json:"appPort,omitempty"`
+	Volume           *WorkloadSpecSandboxVolume `json:"volume,omitempty"`
+	ScaleToZeroDelay *float32                   `json:"scaleToZeroDelay,omitempty"`
+	Ttl              string                     `json:"ttl,omitempty"`
+}
+
 type WorkloadSpec struct {
 	Type               WorkloadType                    `json:"type,omitempty"`
 	IdentityLink       *string                         `json:"identityLink,omitempty"`
@@ -821,6 +842,7 @@ type WorkloadSpec struct {
 	Extras             *WorkloadSpecExtras             `json:"extras,omitempty"`
 	RequestRetryPolicy *WorkloadSpecRequestRetryPolicy `json:"requestRetryPolicy,omitempty"`
 	Vm                 *WorkloadSpecVm                 `json:"vm,omitempty"`
+	Sandbox            *WorkloadSpecSandbox            `json:"sandbox,omitempty"`
 }
 
 type WorkloadStatusHealthCheck struct {

@@ -51,6 +51,7 @@ const (
 	PermissionsTargetKindCommand          PermissionsTargetKind = "command"
 	PermissionsTargetKindImagesummary     PermissionsTargetKind = "imagesummary"
 	PermissionsTargetKindVolumeset        PermissionsTargetKind = "volumeset"
+	PermissionsTargetKindSandboximage     PermissionsTargetKind = "sandboximage"
 )
 
 type PermissionsImplied map[string]any

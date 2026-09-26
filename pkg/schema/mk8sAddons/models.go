@@ -59,6 +59,10 @@ type ByokAddonConfigConfigActuator struct {
 	Env       FlexibleAddonConfig                   `json:"env,omitempty"`
 }
 
+type ByokAddonConfigConfigMaintainer struct {
+	Env FlexibleAddonConfig `json:"env,omitempty"`
+}
+
 type ByokAddonConfigConfigJuicefs struct {
 	Enabled bool `json:"enabled,omitempty"`
 }
@@ -246,6 +250,7 @@ type ByokAddonConfigConfigInternalDns struct {
 
 type ByokAddonConfigConfig struct {
 	Actuator      ByokAddonConfigConfigActuator      `json:"actuator,omitempty"`
+	Maintainer    ByokAddonConfigConfigMaintainer    `json:"maintainer,omitempty"`
 	Juicefs       ByokAddonConfigConfigJuicefs       `json:"juicefs,omitempty"`
 	Middlebox     ByokAddonConfigConfigMiddlebox     `json:"middlebox,omitempty"`
 	Common        ByokAddonConfigConfigCommon        `json:"common,omitempty"`

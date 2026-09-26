@@ -31,6 +31,7 @@ import (
 	"github.com/controlplane-com/libs-go/pkg/schema/org"
 	"github.com/controlplane-com/libs-go/pkg/schema/policy"
 	"github.com/controlplane-com/libs-go/pkg/schema/quota"
+	"github.com/controlplane-com/libs-go/pkg/schema/sandboxImage"
 	"github.com/controlplane-com/libs-go/pkg/schema/secret"
 	"github.com/controlplane-com/libs-go/pkg/schema/serviceaccount"
 	"github.com/controlplane-com/libs-go/pkg/schema/spicedb"
@@ -485,6 +486,26 @@ func main() {
 		panic(err)
 	}
 	fmt.Printf("Wrote CRD YAML for Quota to ./output/yaml/Quota.yaml\n")
+	
+	c, err = crd.ConvertStructToCRD(
+		&sandboxImage.SandboxImage{}, 
+		"cpln.io", 
+		"v1", 
+		"SandboxImage", 
+		"sandboximages",
+	)
+	if err != nil {
+		panic(err)
+	}
+	yaml, err = crd.CRDToYAML(c)
+	if err != nil{
+		panic(err)
+	}
+	err = os.WriteFile("./output/yaml/SandboxImage.yaml", []byte(yaml + "\n"), 0644)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("Wrote CRD YAML for SandboxImage to ./output/yaml/SandboxImage.yaml\n")
 	
 	c, err = crd.ConvertStructToCRD(
 		&secret.Secret{}, 

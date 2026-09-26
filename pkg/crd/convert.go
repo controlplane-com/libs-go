@@ -172,6 +172,8 @@ func isGvcScoped(kind string) bool {
 		return true
 	case "identity":
 		return true
+	case "sandbox":
+		return true
 	default:
 		return false
 	}
