@@ -49,13 +49,14 @@ const (
 )
 
 type DomainSpec struct {
-	DnsMode             DomainSpecDnsMode           `json:"dnsMode,omitempty"`
-	GvcLink             string                      `json:"gvcLink,omitempty"`
-	CertChallengeType   DomainSpecCertChallengeType `json:"certChallengeType,omitempty"`
-	WorkloadLink        string                      `json:"workloadLink,omitempty"`
-	AcceptAllHosts      bool                        `json:"acceptAllHosts,omitempty"`
-	AcceptAllSubdomains bool                        `json:"acceptAllSubdomains,omitempty"`
-	Ports               []ExternalPort              `json:"ports,omitempty"`
+	DnsMode                  DomainSpecDnsMode           `json:"dnsMode,omitempty"`
+	GvcLink                  string                      `json:"gvcLink,omitempty"`
+	CertChallengeType        DomainSpecCertChallengeType `json:"certChallengeType,omitempty"`
+	CertificateGeneratorLink string                      `json:"certificateGeneratorLink,omitempty"`
+	WorkloadLink             string                      `json:"workloadLink,omitempty"`
+	AcceptAllHosts           bool                        `json:"acceptAllHosts,omitempty"`
+	AcceptAllSubdomains      bool                        `json:"acceptAllSubdomains,omitempty"`
+	Ports                    []ExternalPort              `json:"ports,omitempty"`
 }
 
 type DomainStatusEndpoints struct {

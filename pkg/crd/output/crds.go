@@ -13,6 +13,7 @@ import (
 	"github.com/controlplane-com/libs-go/pkg/schema/agent"
 	"github.com/controlplane-com/libs-go/pkg/schema/auditctx"
 	"github.com/controlplane-com/libs-go/pkg/schema/base"
+	"github.com/controlplane-com/libs-go/pkg/schema/certificateGenerator"
 	"github.com/controlplane-com/libs-go/pkg/schema/cloudaccount"
 	"github.com/controlplane-com/libs-go/pkg/schema/command"
 	"github.com/controlplane-com/libs-go/pkg/schema/containerstatus"
@@ -106,6 +107,26 @@ func main() {
 		panic(err)
 	}
 	fmt.Printf("Wrote CRD YAML for Base to ./output/yaml/Base.yaml\n")
+	
+	c, err = crd.ConvertStructToCRD(
+		&certificateGenerator.CertificateGenerator{}, 
+		"cpln.io", 
+		"v1", 
+		"CertificateGenerator", 
+		"certificategenerators",
+	)
+	if err != nil {
+		panic(err)
+	}
+	yaml, err = crd.CRDToYAML(c)
+	if err != nil{
+		panic(err)
+	}
+	err = os.WriteFile("./output/yaml/CertificateGenerator.yaml", []byte(yaml + "\n"), 0644)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("Wrote CRD YAML for CertificateGenerator to ./output/yaml/CertificateGenerator.yaml\n")
 	
 	c, err = crd.ConvertStructToCRD(
 		&cloudaccount.CloudAccount{}, 
