@@ -731,8 +731,6 @@ spec:
                     type: string
                   volume:
                     properties:
-                      performanceClass:
-                        type: string
                       size:
                         type: number
                     type: object

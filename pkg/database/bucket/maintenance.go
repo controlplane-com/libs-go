@@ -16,7 +16,7 @@ type BucketMaintenanceOptions struct {
 	PartitionPreparationThreshold time.Duration
 }
 
-// RunBucketMaintenanceLoop continuously ensures bucket partitions are prepared ahead of time.
+// RunBucketMaintenanceLoop continuously ensures bucket partitions are prepared ahead of time and drops expired ones.
 // This function runs indefinitely and should be called in a goroutine.
 // Only the leader replica will perform maintenance work; followers will sleep and check periodically.
 func RunBucketMaintenanceLoop(opts BucketMaintenanceOptions) {
@@ -30,12 +30,12 @@ func RunBucketMaintenanceLoop(opts BucketMaintenanceOptions) {
 			continue
 		}
 
-		ensureBucketPartitions(opts.Repository, opts.PartitionPreparationThreshold, logger)
+		maintainBuckets(opts.Repository, opts.PartitionPreparationThreshold, time.Now(), logger)
 		time.Sleep(opts.MaintenanceFrequency)
 	}
 }
 
-func ensureBucketPartitions(repository PartitionedRepository, threshold time.Duration, logger interface{ Errorf(string, ...interface{}) }) {
+func maintainBuckets(repository PartitionedRepository, threshold time.Duration, now time.Time, logger interface{ Errorf(string, ...interface{}) }) {
 	buckets, err := repository.ListBuckets()
 	if err != nil {
 		logger.Errorf("Error listing the buckets: %v", err)
@@ -43,14 +43,20 @@ func ensureBucketPartitions(repository PartitionedRepository, threshold time.Dur
 	}
 
 	for _, b := range buckets {
-		if timeUtils.IsZero(&b.PartitionsEnding) {
-			b.PartitionsEnding = time.Date(time.Now().Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
-		} else if b.PartitionsEnding.Sub(time.Now()) > threshold {
-			continue
-		}
-		if err := repository.EnsureBucketPartitions(b, b.PartitionsEnding, 1); err != nil {
+		if err := ensureBucketPartitions(repository, b, threshold, now); err != nil {
 			logger.Errorf("Error ensuring bucket partitions: %v", err)
-			continue
+		}
+		if err := repository.DropExpiredPartitions(b, now); err != nil {
+			logger.Errorf("Error dropping expired partitions of bucket %d: %v", b.Id, err)
 		}
 	}
+}
+
+func ensureBucketPartitions(repository PartitionedRepository, b *Bucket, threshold time.Duration, now time.Time) error {
+	if timeUtils.IsZero(&b.PartitionsEnding) {
+		b.PartitionsEnding = time.Date(now.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
+	} else if b.PartitionsEnding.Sub(now) > threshold {
+		return nil
+	}
+	return repository.EnsureBucketPartitions(b, b.PartitionsEnding, 1)
 }

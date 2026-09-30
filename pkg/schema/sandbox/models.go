@@ -11,16 +11,8 @@ const (
 	SandboxIdeBrowser SandboxIde = "browser"
 )
 
-type SandboxSpecVolumePerformanceClass string
-
-const (
-	SandboxSpecVolumePerformanceClassGeneralPurposeSsd SandboxSpecVolumePerformanceClass = "general-purpose-ssd"
-	SandboxSpecVolumePerformanceClassHighThroughputSsd SandboxSpecVolumePerformanceClass = "high-throughput-ssd"
-)
-
 type SandboxSpecVolume struct {
-	Size             *float32                          `json:"size,omitempty"`
-	PerformanceClass SandboxSpecVolumePerformanceClass `json:"performanceClass,omitempty"`
+	Size *float32 `json:"size,omitempty"`
 }
 
 type SandboxSpec struct {
@@ -31,14 +23,6 @@ type SandboxSpec struct {
 	Ttl              string             `json:"ttl,omitempty"`
 }
 
-type SandboxVolumePerformanceClass string
-
-const (
-	SandboxVolumePerformanceClassGeneralPurposeSsd SandboxVolumePerformanceClass = "general-purpose-ssd"
-	SandboxVolumePerformanceClassHighThroughputSsd SandboxVolumePerformanceClass = "high-throughput-ssd"
-)
-
 type SandboxVolume struct {
-	Size             *float32                      `json:"size,omitempty"`
-	PerformanceClass SandboxVolumePerformanceClass `json:"performanceClass,omitempty"`
+	Size *float32 `json:"size,omitempty"`
 }

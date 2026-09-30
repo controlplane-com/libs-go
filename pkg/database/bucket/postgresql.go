@@ -33,6 +33,11 @@ type SchemaHandler interface {
 	AuditBuckets(db *gorm.DB, oldBucket *Bucket, newBucket *Bucket, startTime time.Time, endTime time.Time, orgNames []string) ([]any, error)
 }
 
+// RetentionHandler is implemented by schema handlers whose data expires; handlers without it keep everything.
+type RetentionHandler interface {
+	DropExpiredPartitions(db *gorm.DB, bucket *Bucket, now time.Time) error
+}
+
 // PostgresqlPartitionedRepository is a generic repository for managing bucket-partitioned data
 type PostgresqlPartitionedRepository struct {
 	checkpoints.CheckpointRepository
@@ -256,6 +261,15 @@ func (r *PostgresqlPartitionedRepository) ListBuckets() ([]*Bucket, error) {
 // EnsureBucketPartitions ensures that partitions exist for a bucket
 func (r *PostgresqlPartitionedRepository) EnsureBucketPartitions(b *Bucket, startTime time.Time, years int) error {
 	return r.ensureBucketPartitions(r.connection.Db(), b, startTime, years)
+}
+
+// DropExpiredPartitions delegates to the SchemaHandler when it implements RetentionHandler
+func (r *PostgresqlPartitionedRepository) DropExpiredPartitions(b *Bucket, now time.Time) error {
+	handler, ok := r.schemaHandler.(RetentionHandler)
+	if !ok {
+		return nil
+	}
+	return handler.DropExpiredPartitions(r.connection.Db(), b, now)
 }
 
 // MoveOrgToBucket moves an organization to a different bucket

@@ -806,16 +806,8 @@ type WorkloadSpecVm struct {
 	Subdomain         string                            `json:"subdomain,omitempty"`
 }
 
-type WorkloadSpecSandboxVolumePerformanceClass string
-
-const (
-	WorkloadSpecSandboxVolumePerformanceClassGeneralPurposeSsd WorkloadSpecSandboxVolumePerformanceClass = "general-purpose-ssd"
-	WorkloadSpecSandboxVolumePerformanceClassHighThroughputSsd WorkloadSpecSandboxVolumePerformanceClass = "high-throughput-ssd"
-)
-
 type WorkloadSpecSandboxVolume struct {
-	Size             *float32                                  `json:"size,omitempty"`
-	PerformanceClass WorkloadSpecSandboxVolumePerformanceClass `json:"performanceClass,omitempty"`
+	Size *float32 `json:"size,omitempty"`
 }
 
 type WorkloadSpecSandbox struct {

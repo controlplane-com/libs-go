@@ -29,6 +29,7 @@ type PartitionedRepository interface {
 	GetBucket(id int) (*Bucket, error)
 	ListBuckets() ([]*Bucket, error)
 	EnsureBucketPartitions(b *Bucket, startTime time.Time, years int) error
+	DropExpiredPartitions(b *Bucket, now time.Time) error
 	MoveOrgToBucket(org *Org, bucket *Bucket) error
 
 	// Data Operations
