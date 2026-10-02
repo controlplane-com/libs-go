@@ -14,6 +14,7 @@ type LocationDnsMessage struct {
 	Gvc                string                      `json:"gvc"`
 	GvcAlias           string                      `json:"gvcAlias"`
 	Workload           string                      `json:"workload"`
+	WorkloadId         string                      `json:"workloadId,omitempty"`
 	Operation          LocationDnsMessageOperation `json:"operation,omitempty"`
 	DeleteReason       string                      `json:"deleteReason,omitempty"`
 	Name               string                      `json:"name"`

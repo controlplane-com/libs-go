@@ -212,17 +212,18 @@ type RouteMirror struct {
 }
 
 type Route struct {
-	ReplacePrefix string        `json:"replacePrefix,omitempty"`
-	Regex         string        `json:"regex,omitempty"`
-	Prefix        string        `json:"prefix,omitempty"`
-	WorkloadLink  string        `json:"workloadLink"`
-	Port          *float32      `json:"port,omitempty"`
-	HostPrefix    string        `json:"hostPrefix,omitempty"`
-	HostRegex     string        `json:"hostRegex,omitempty"`
-	Headers       RouteHeaders  `json:"headers,omitempty"`
-	Replica       *float32      `json:"replica,omitempty"`
-	Mirror        []RouteMirror `json:"mirror,omitempty"`
-	Canaries      []RouteCanary `json:"canaries,omitempty"`
+	ReplacePrefix   string        `json:"replacePrefix,omitempty"`
+	Regex           string        `json:"regex,omitempty"`
+	Prefix          string        `json:"prefix,omitempty"`
+	CaseInsensitive bool          `json:"caseInsensitive,omitempty"`
+	WorkloadLink    string        `json:"workloadLink"`
+	Port            *float32      `json:"port,omitempty"`
+	HostPrefix      string        `json:"hostPrefix,omitempty"`
+	HostRegex       string        `json:"hostRegex,omitempty"`
+	Headers         RouteHeaders  `json:"headers,omitempty"`
+	Replica         *float32      `json:"replica,omitempty"`
+	Mirror          []RouteMirror `json:"mirror,omitempty"`
+	Canaries        []RouteCanary `json:"canaries,omitempty"`
 }
 
 type RouteCanary struct {
