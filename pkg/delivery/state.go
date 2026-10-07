@@ -69,6 +69,22 @@ type Delivery interface {
 	DeliveryState() *State
 }
 
+// Ordering opts a record model into ordered delivery: records sharing Key are sent
+// one at a time in Seq order, and a record waits until every earlier one is
+// delivered or permanently failed. Embed it anonymously beside State; the
+// ordering_seq column must be a bigserial so the database assigns Seq. Inserts
+// for one key must commit in Seq order (e.g. serialised by a row lock on the key).
+type Ordering struct {
+	Key string `gorm:"not null;column:ordering_key" json:"orderingKey"`
+	Seq int64  `gorm:"->;column:ordering_seq" json:"orderingSeq"`
+}
+
+// OrderedDelivery is a Delivery whose model embeds Ordering.
+type OrderedDelivery interface {
+	Delivery
+	DeliveryOrdering() *Ordering
+}
+
 // appendError appends an entry to the structured error history. detail is the
 // underlying error text and may be empty.
 func (s *State) appendError(errorType, message, detail string) {

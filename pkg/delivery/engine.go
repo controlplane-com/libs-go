@@ -59,7 +59,7 @@ type Config struct {
 	// Elector gates the discovery loop to a single leader.
 	Elector leaderElection.Elector
 	// Queue, when non-nil, distributes processing via Pub/Sub. Nil = poll-only
-	// (the leader processes inline).
+	// (rows are processed inline by the leader's poll and by Enqueue).
 	Queue QueueClient
 	// OnPermanentFailure, when set, is called after a record exhausts retries
 	// (e.g. to raise an alert). Optional.
@@ -121,12 +121,16 @@ func (e *Engine[D]) enqueueOrProcess(d D) error {
 	if e.queue != nil {
 		return e.pushToQueue(d.GetID())
 	}
-	// Poll-only: the leader is the delivery system. Stamp pushed_at for
-	// observability/consistency (best-effort — processing is what matters here).
-	if err := e.store.MarkPushed(e.ctx, d.GetID()); err != nil {
-		logging.Logger().Sugar().Warnf("delivery[%s]: failed to mark %s pushed: %v", e.Name(), d.GetID(), err)
+	return e.processInline(d.GetID())
+}
+
+// processInline is the poll-only delivery path. pushed_at is stamped for
+// observability/consistency (best-effort — processing is what matters here).
+func (e *Engine[D]) processInline(id string) error {
+	if err := e.store.MarkPushed(e.ctx, id); err != nil {
+		logging.Logger().Sugar().Warnf("delivery[%s]: failed to mark %s pushed: %v", e.Name(), id, err)
 	}
-	return e.Process(e.ctx, d.GetID())
+	return e.Process(e.ctx, id)
 }
 
 // pushToQueue publishes an id to the queue and, on success, stamps pushed_at.
@@ -143,11 +147,16 @@ func (e *Engine[D]) pushToQueue(id string) error {
 // outbox rows into the delivery system immediately, rather than waiting for the
 // leader's discovery loop to find them. It is NOT the durability guarantee — the
 // leader's discovery loop re-pushes any row still lacking pushed_at — so callers
-// may ignore its error. No-op when the queue is disabled, since processing on a
-// non-leader pod could duplicate sends (the leader poll picks the rows up).
+// may ignore its error. Without a queue the rows are processed inline: Claim is
+// atomic, so this can't double-send with the leader, and a failed send stays on
+// the row for the poll to retry rather than failing the caller.
 func (e *Engine[D]) Enqueue(ids ...string) error {
 	if e.queue == nil {
-		logging.Logger().Sugar().Debugf("delivery[%s]: enqueue signal for %d delivery(ies) (poll path)", e.Name(), len(ids))
+		for _, id := range ids {
+			if err := e.processInline(id); err != nil {
+				logging.Logger().Sugar().Warnf("delivery[%s]: inline delivery of %s failed; the poll retries it: %v", e.Name(), id, err)
+			}
+		}
 		return nil
 	}
 	for _, id := range ids {
@@ -227,8 +236,11 @@ func (e *Engine[D]) Process(ctx context.Context, id string) error {
 		if err := e.store.Save(ctx, d); err != nil {
 			return err
 		}
-		if !retried && e.onPermFail != nil {
-			e.onPermFail(d, sendErr)
+		if !retried {
+			e.handOff(ctx, d)
+			if e.onPermFail != nil {
+				e.onPermFail(d, sendErr)
+			}
 		}
 		logging.LoggerWithContext(ctx).Warnf("delivery[%s]: %s attempt %d failed (status=%s): %v", e.Name(), id, st.AttemptCount, st.Status, sendErr)
 		return sendErr
@@ -244,5 +256,31 @@ func (e *Engine[D]) Process(ctx context.Context, id string) error {
 		return err
 	}
 	logging.LoggerWithContext(ctx).Infof("delivery[%s]: delivered %s", e.Name(), id)
+	e.handOff(ctx, d)
 	return nil
+}
+
+// orderedStore is implemented by stores that support ordered delivery (see Ordering).
+type orderedStore[D Delivery] interface {
+	NextInOrder(ctx context.Context, d D) (string, error)
+}
+
+// handOff submits the record after d in its order once d is finished, since that record's
+// own submission was refused while d was unfinished. The poll backstops a failed handoff.
+func (e *Engine[D]) handOff(ctx context.Context, d D) {
+	s, ok := e.store.(orderedStore[D])
+	if !ok {
+		return
+	}
+	next, err := s.NextInOrder(ctx, d)
+	if err != nil {
+		logging.LoggerWithContext(ctx).Warnf("delivery[%s]: failed to find the record after %s: %v", e.Name(), d.GetID(), err)
+		return
+	}
+	if next == "" {
+		return
+	}
+	if err := e.Enqueue(next); err != nil {
+		logging.LoggerWithContext(ctx).Warnf("delivery[%s]: failed to hand off to %s: %v", e.Name(), next, err)
+	}
 }

@@ -36,6 +36,7 @@ const (
 	Mk8SClusterSpecVersion1335  Mk8SClusterSpecVersion = "1.33.5"
 	Mk8SClusterSpecVersion1342  Mk8SClusterSpecVersion = "1.34.2"
 	Mk8SClusterSpecVersion1353  Mk8SClusterSpecVersion = "1.35.3"
+	Mk8SClusterSpecVersion1365  Mk8SClusterSpecVersion = "1.36.5"
 )
 
 type Mk8SClusterSpecFirewall struct {
@@ -118,6 +119,7 @@ const (
 	Mk8SSpecVersion1335  Mk8SSpecVersion = "1.33.5"
 	Mk8SSpecVersion1342  Mk8SSpecVersion = "1.34.2"
 	Mk8SSpecVersion1353  Mk8SSpecVersion = "1.35.3"
+	Mk8SSpecVersion1365  Mk8SSpecVersion = "1.36.5"
 )
 
 type Mk8SSpecFirewall struct {

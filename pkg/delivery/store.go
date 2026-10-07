@@ -2,6 +2,7 @@ package delivery
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"gorm.io/gorm"
@@ -19,7 +20,7 @@ type Store[D Delivery] interface {
 	MarkPushed(ctx context.Context, id string) error
 	// Claim atomically moves a claimable record (pending, failed, or in_progress whose
 	// claim has expired) to in_progress and returns it; false means another consumer
-	// holds it or it is terminal.
+	// holds it, it is terminal, or (ordered records) an earlier record in its order is unfinished.
 	Claim(ctx context.Context, id string, now, claimUntil time.Time) (D, bool, error)
 	// ListDue returns records that need pushing or (re)processing as of now:
 	// unpushed outbox rows, due retries, pushed-but-never-consumed rows, and
@@ -39,10 +40,55 @@ type GormStore[D Delivery] struct {
 	dbRw      *gorm.DB
 	dbRo      *gorm.DB
 	newRecord func() D
+	// firstInOrder is set for OrderedDelivery models: it holds a record back while
+	// an earlier record with the same ordering key is unfinished.
+	firstInOrder string
 }
 
 func NewGormStore[D Delivery](dbRw, dbRo *gorm.DB, newRecord func() D) *GormStore[D] {
-	return &GormStore[D]{dbRw: dbRw, dbRo: dbRo, newRecord: newRecord}
+	g := &GormStore[D]{dbRw: dbRw, dbRo: dbRo, newRecord: newRecord}
+	if _, ordered := any(newRecord()).(OrderedDelivery); ordered {
+		stmt := &gorm.Statement{DB: dbRw}
+		if err := stmt.Parse(newRecord()); err != nil {
+			panic(fmt.Sprintf("delivery: cannot parse ordered record model: %v", err))
+		}
+		table := stmt.Quote(stmt.Schema.Table)
+		g.firstInOrder = fmt.Sprintf(`NOT EXISTS (
+			SELECT 1 FROM %[1]s prev
+			WHERE prev.ordering_key = %[1]s.ordering_key
+			AND prev.ordering_seq < %[1]s.ordering_seq
+			AND prev.status NOT IN ('%[2]s', '%[3]s'))`, table, StatusDelivered, StatusPermanentlyFailed)
+	}
+	return g
+}
+
+// inOrder restricts q to records with no unfinished earlier record in their order; a no-op when unordered.
+func (g *GormStore[D]) inOrder(q *gorm.DB) *gorm.DB {
+	if g.firstInOrder == "" {
+		return q
+	}
+	return q.Where(g.firstInOrder)
+}
+
+// NextInOrder returns the id of the next unfinished record after d in d's order,
+// or "" when there is none or d is unordered.
+func (g *GormStore[D]) NextInOrder(ctx context.Context, d D) (string, error) {
+	o, ok := any(d).(OrderedDelivery)
+	if !ok {
+		return "", nil
+	}
+	ord := o.DeliveryOrdering()
+	var ids []string
+	err := g.dbRw.WithContext(ctx).
+		Model(g.newRecord()).
+		Where("ordering_key = ? AND ordering_seq > ? AND status NOT IN ?", ord.Key, ord.Seq, []string{StatusDelivered, StatusPermanentlyFailed}).
+		Order("ordering_seq").
+		Limit(1).
+		Pluck("id", &ids).Error
+	if err != nil || len(ids) == 0 {
+		return "", err
+	}
+	return ids[0], nil
 }
 
 func (g *GormStore[D]) GetByID(ctx context.Context, id string) (D, error) {
@@ -69,8 +115,7 @@ func (g *GormStore[D]) MarkPushed(ctx context.Context, id string) error {
 
 func (g *GormStore[D]) Claim(ctx context.Context, id string, now, claimUntil time.Time) (D, bool, error) {
 	var zero D
-	res := g.dbRw.WithContext(ctx).
-		Model(g.newRecord()).
+	res := g.inOrder(g.dbRw.WithContext(ctx).Model(g.newRecord())).
 		Where("id = ?", id).
 		Where(`(
 			status IN ?
@@ -99,8 +144,7 @@ func (g *GormStore[D]) Claim(ctx context.Context, id string, now, claimUntil tim
 func (g *GormStore[D]) ListDue(ctx context.Context, now time.Time) ([]D, error) {
 	stuckThreshold := now.Add(-1 * time.Minute)
 	var out []D
-	err := g.dbRo.WithContext(ctx).
-		Model(g.newRecord()).
+	err := g.inOrder(g.dbRo.WithContext(ctx).Model(g.newRecord())).
 		Where("status NOT IN ?", []string{StatusDelivered, StatusPermanentlyFailed}).
 		Where(`(
 			pushed_at IS NULL

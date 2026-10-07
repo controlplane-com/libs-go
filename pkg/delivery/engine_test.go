@@ -160,3 +160,36 @@ func TestProcess_ReclaimsExpiredClaim(t *testing.T) {
 		t.Fatalf("an expired claim must be re-sent: calls=%d status=%q attempts=%d", sender.calls, rec.Status, rec.AttemptCount)
 	}
 }
+
+func TestEnqueue_PollOnlyDeliversImmediately(t *testing.T) {
+	rec := &fakeRecord{id: "d1", State: State{Status: StatusPending}}
+	sender := &fakeSender{}
+	e := engineFor(rec, sender, Config{Name: "test", MaxRetries: 3})
+
+	if err := e.Enqueue("d1"); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if sender.calls != 1 || rec.Status != StatusDelivered || rec.PushedAt == nil {
+		t.Fatalf("expected an inline send: calls=%d status=%q pushedAt=%v", sender.calls, rec.Status, rec.PushedAt)
+	}
+
+	if err := e.Enqueue("d1"); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if sender.calls != 1 {
+		t.Fatalf("a delivered record must not be re-sent, calls=%d", sender.calls)
+	}
+}
+
+func TestEnqueue_PollOnlyFailureIsLeftForThePoll(t *testing.T) {
+	rec := &fakeRecord{id: "d1", State: State{Status: StatusPending}}
+	sender := &fakeSender{err: errors.New("connection timeout")}
+	e := engineFor(rec, sender, Config{Name: "test", MaxRetries: 3})
+
+	if err := e.Enqueue("d1"); err != nil {
+		t.Fatalf("a failed send must not fail the caller: %v", err)
+	}
+	if sender.calls != 1 || rec.Status != StatusFailed || rec.NextRetryAt == nil {
+		t.Fatalf("expected a scheduled retry: calls=%d status=%q nextRetryAt=%v", sender.calls, rec.Status, rec.NextRetryAt)
+	}
+}
