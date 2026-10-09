@@ -21,6 +21,7 @@ type ServiceWorkload struct {
 	AgentAccessible   bool                `json:"agentAccessible,omitempty"`
 	Kata              bool                `json:"kata,omitempty"`
 	ScaleToZero       bool                `json:"scaleToZero,omitempty"`
+	InterGvcFailover  bool                `json:"interGvcFailover,omitempty"`
 }
 
 type ServiceGvc struct {

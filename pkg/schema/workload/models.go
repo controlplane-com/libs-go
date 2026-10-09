@@ -668,6 +668,10 @@ type WorkloadSpecLoadBalancer struct {
 	ReplicaDirect bool                                `json:"replicaDirect,omitempty"`
 }
 
+type WorkloadSpecNetworking struct {
+	InterGvcFailover bool `json:"interGvcFailover,omitempty"`
+}
+
 type WorkloadSpecExtrasMetadataLabels map[string]string
 
 type WorkloadSpecExtrasMetadata struct {
@@ -831,6 +835,7 @@ type WorkloadSpec struct {
 	RolloutOptions     *WorkloadSpecRolloutOptions     `json:"rolloutOptions,omitempty"`
 	SecurityOptions    *WorkloadSpecSecurityOptions    `json:"securityOptions,omitempty"`
 	LoadBalancer       *WorkloadSpecLoadBalancer       `json:"loadBalancer,omitempty"`
+	Networking         *WorkloadSpecNetworking         `json:"networking,omitempty"`
 	Extras             *WorkloadSpecExtras             `json:"extras,omitempty"`
 	RequestRetryPolicy *WorkloadSpecRequestRetryPolicy `json:"requestRetryPolicy,omitempty"`
 	Vm                 *WorkloadSpecVm                 `json:"vm,omitempty"`
