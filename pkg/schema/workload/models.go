@@ -811,15 +811,18 @@ type WorkloadSpecVm struct {
 }
 
 type WorkloadSpecSandboxVolume struct {
-	Size *float32 `json:"size,omitempty"`
+	InitialCapacity *float32 `json:"initialCapacity,omitempty"`
 }
 
 type WorkloadSpecSandbox struct {
-	Ide              sandbox.SandboxIde         `json:"ide,omitempty"`
-	AppPort          *float32                   `json:"appPort,omitempty"`
-	Volume           *WorkloadSpecSandboxVolume `json:"volume,omitempty"`
-	ScaleToZeroDelay *float32                   `json:"scaleToZeroDelay,omitempty"`
-	Ttl              string                     `json:"ttl,omitempty"`
+	Ide              sandbox.SandboxIde        `json:"ide,omitempty"`
+	Type             sandbox.SandboxType       `json:"type,omitempty"`
+	Password         string                    `json:"password,omitempty"`
+	Token            string                    `json:"token,omitempty"`
+	Volume           WorkloadSpecSandboxVolume `json:"volume,omitempty"`
+	AppPort          *float32                  `json:"appPort,omitempty"`
+	ScaleToZeroDelay *float32                  `json:"scaleToZeroDelay,omitempty"`
+	Ttl              string                    `json:"ttl,omitempty"`
 }
 
 type WorkloadSpec struct {

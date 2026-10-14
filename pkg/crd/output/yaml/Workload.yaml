@@ -730,13 +730,19 @@ spec:
                     type: number
                   ide:
                     type: string
+                  password:
+                    type: string
                   scaleToZeroDelay:
                     type: number
+                  token:
+                    type: string
                   ttl:
+                    type: string
+                  type:
                     type: string
                   volume:
                     properties:
-                      size:
+                      initialCapacity:
                         type: number
                     type: object
                 type: object
