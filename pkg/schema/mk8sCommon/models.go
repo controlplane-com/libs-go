@@ -45,6 +45,8 @@ type KubeConfigRes struct {
 
 type Labels map[string]string
 
+type MaxPods float32
+
 type NodePoolName string
 
 type PreInstallScript string

@@ -5,16 +5,17 @@ package mk8sAzure
 import "github.com/controlplane-com/libs-go/pkg/schema/mk8sCommon"
 
 type AzurePool struct {
-	Name          string            `json:"name"`
-	Labels        mk8sCommon.Labels `json:"labels,omitempty"`
-	Taints        mk8sCommon.Taints `json:"taints,omitempty"`
-	Size          string            `json:"size"`
-	SubnetId      string            `json:"subnetId"`
-	Zones         []float32         `json:"zones"`
-	OverrideImage Image             `json:"overrideImage,omitempty"`
-	BootDiskSize  float32           `json:"bootDiskSize"`
-	MinSize       float32           `json:"minSize"`
-	MaxSize       float32           `json:"maxSize"`
+	Name          string             `json:"name"`
+	Labels        mk8sCommon.Labels  `json:"labels,omitempty"`
+	Taints        mk8sCommon.Taints  `json:"taints,omitempty"`
+	MaxPods       mk8sCommon.MaxPods `json:"maxPods,omitempty"`
+	Size          string             `json:"size"`
+	SubnetId      string             `json:"subnetId"`
+	Zones         []float32          `json:"zones"`
+	OverrideImage Image              `json:"overrideImage,omitempty"`
+	BootDiskSize  float32            `json:"bootDiskSize"`
+	MinSize       float32            `json:"minSize"`
+	MaxSize       float32            `json:"maxSize"`
 }
 
 type AzureProviderNetworkingServiceNetwork string

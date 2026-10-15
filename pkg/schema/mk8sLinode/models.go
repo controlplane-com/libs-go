@@ -12,14 +12,15 @@ type LinodeJoinParams struct {
 }
 
 type LinodePool struct {
-	Name          string            `json:"name"`
-	Labels        mk8sCommon.Labels `json:"labels,omitempty"`
-	Taints        mk8sCommon.Taints `json:"taints,omitempty"`
-	ServerType    string            `json:"serverType"`
-	OverrideImage string            `json:"overrideImage,omitempty"`
-	SubnetId      string            `json:"subnetId"`
-	MinSize       float32           `json:"minSize"`
-	MaxSize       float32           `json:"maxSize"`
+	Name          string             `json:"name"`
+	Labels        mk8sCommon.Labels  `json:"labels,omitempty"`
+	Taints        mk8sCommon.Taints  `json:"taints,omitempty"`
+	MaxPods       mk8sCommon.MaxPods `json:"maxPods,omitempty"`
+	ServerType    string             `json:"serverType"`
+	OverrideImage string             `json:"overrideImage,omitempty"`
+	SubnetId      string             `json:"subnetId"`
+	MinSize       float32            `json:"minSize"`
+	MaxSize       float32            `json:"maxSize"`
 }
 
 type LinodeProviderNetworkingServiceNetwork string

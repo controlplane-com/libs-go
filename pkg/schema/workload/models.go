@@ -530,6 +530,7 @@ type RolloutOptions struct {
 	MaxSurgeReplicas              string                      `json:"maxSurgeReplicas,omitempty"`
 	ScalingPolicy                 RolloutOptionsScalingPolicy `json:"scalingPolicy,omitempty"`
 	TerminationGracePeriodSeconds *float32                    `json:"terminationGracePeriodSeconds,omitempty"`
+	RolloutOnReferenceChange      bool                        `json:"rolloutOnReferenceChange,omitempty"`
 }
 
 type ScheduleType string
@@ -637,6 +638,7 @@ type WorkloadSpecRolloutOptions struct {
 	MaxSurgeReplicas              string                                  `json:"maxSurgeReplicas,omitempty"`
 	ScalingPolicy                 WorkloadSpecRolloutOptionsScalingPolicy `json:"scalingPolicy,omitempty"`
 	TerminationGracePeriodSeconds *float32                                `json:"terminationGracePeriodSeconds,omitempty"`
+	RolloutOnReferenceChange      bool                                    `json:"rolloutOnReferenceChange,omitempty"`
 }
 
 type WorkloadSpecSecurityOptions struct {

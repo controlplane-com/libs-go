@@ -5,9 +5,10 @@ package mk8sHetzner
 import "github.com/controlplane-com/libs-go/pkg/schema/mk8sCommon"
 
 type DedicatedServerHetznerPool struct {
-	Name   string            `json:"name"`
-	Labels mk8sCommon.Labels `json:"labels,omitempty"`
-	Taints mk8sCommon.Taints `json:"taints,omitempty"`
+	Name    string             `json:"name"`
+	Labels  mk8sCommon.Labels  `json:"labels,omitempty"`
+	Taints  mk8sCommon.Taints  `json:"taints,omitempty"`
+	MaxPods mk8sCommon.MaxPods `json:"maxPods,omitempty"`
 }
 
 type HetznerJoinParams struct {
@@ -18,13 +19,14 @@ type HetznerJoinParams struct {
 }
 
 type HetznerPool struct {
-	Name          string            `json:"name"`
-	Labels        mk8sCommon.Labels `json:"labels,omitempty"`
-	Taints        mk8sCommon.Taints `json:"taints,omitempty"`
-	ServerType    string            `json:"serverType"`
-	OverrideImage string            `json:"overrideImage,omitempty"`
-	MinSize       float32           `json:"minSize"`
-	MaxSize       float32           `json:"maxSize"`
+	Name          string             `json:"name"`
+	Labels        mk8sCommon.Labels  `json:"labels,omitempty"`
+	Taints        mk8sCommon.Taints  `json:"taints,omitempty"`
+	MaxPods       mk8sCommon.MaxPods `json:"maxPods,omitempty"`
+	ServerType    string             `json:"serverType"`
+	OverrideImage string             `json:"overrideImage,omitempty"`
+	MinSize       float32            `json:"minSize"`
+	MaxSize       float32            `json:"maxSize"`
 }
 
 type HetznerProviderRegion string

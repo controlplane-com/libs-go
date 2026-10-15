@@ -57,6 +57,7 @@ type TritonPool struct {
 	Name              string               `json:"name"`
 	Labels            mk8sCommon.Labels    `json:"labels,omitempty"`
 	Taints            mk8sCommon.Taints    `json:"taints,omitempty"`
+	MaxPods           mk8sCommon.MaxPods   `json:"maxPods,omitempty"`
 	PackageId         string               `json:"packageId"`
 	OverrideImageId   string               `json:"overrideImageId,omitempty"`
 	PublicNetworkId   string               `json:"publicNetworkId,omitempty"`

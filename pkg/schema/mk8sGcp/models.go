@@ -5,19 +5,20 @@ package mk8sGcp
 import "github.com/controlplane-com/libs-go/pkg/schema/mk8sCommon"
 
 type GcpPool struct {
-	Name                 string            `json:"name"`
-	Labels               mk8sCommon.Labels `json:"labels,omitempty"`
-	Taints               mk8sCommon.Taints `json:"taints,omitempty"`
-	MachineType          string            `json:"machineType"`
-	AssignPublicIP       bool              `json:"assignPublicIP,omitempty"`
-	Zone                 string            `json:"zone"`
-	OverrideImage        Image             `json:"overrideImage,omitempty"`
-	BootDiskSize         float32           `json:"bootDiskSize"`
-	MinSize              float32           `json:"minSize"`
-	MaxSize              float32           `json:"maxSize"`
-	Preemptible          bool              `json:"preemptible,omitempty"`
-	Subnet               string            `json:"subnet"`
-	LocalPersistentDisks *float32          `json:"localPersistentDisks,omitempty"`
+	Name                 string             `json:"name"`
+	Labels               mk8sCommon.Labels  `json:"labels,omitempty"`
+	Taints               mk8sCommon.Taints  `json:"taints,omitempty"`
+	MaxPods              mk8sCommon.MaxPods `json:"maxPods,omitempty"`
+	MachineType          string             `json:"machineType"`
+	AssignPublicIP       bool               `json:"assignPublicIP,omitempty"`
+	Zone                 string             `json:"zone"`
+	OverrideImage        Image              `json:"overrideImage,omitempty"`
+	BootDiskSize         float32            `json:"bootDiskSize"`
+	MinSize              float32            `json:"minSize"`
+	MaxSize              float32            `json:"maxSize"`
+	Preemptible          bool               `json:"preemptible,omitempty"`
+	Subnet               string             `json:"subnet"`
+	LocalPersistentDisks *float32           `json:"localPersistentDisks,omitempty"`
 }
 
 type GcpProviderLabels map[string]string

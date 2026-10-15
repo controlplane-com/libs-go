@@ -5,13 +5,14 @@ package mk8sDigitalOcean
 import "github.com/controlplane-com/libs-go/pkg/schema/mk8sCommon"
 
 type DigitalOceanPool struct {
-	Name          string            `json:"name"`
-	Labels        mk8sCommon.Labels `json:"labels,omitempty"`
-	Taints        mk8sCommon.Taints `json:"taints,omitempty"`
-	DropletSize   string            `json:"dropletSize"`
-	OverrideImage string            `json:"overrideImage,omitempty"`
-	MinSize       float32           `json:"minSize"`
-	MaxSize       float32           `json:"maxSize"`
+	Name          string             `json:"name"`
+	Labels        mk8sCommon.Labels  `json:"labels,omitempty"`
+	Taints        mk8sCommon.Taints  `json:"taints,omitempty"`
+	MaxPods       mk8sCommon.MaxPods `json:"maxPods,omitempty"`
+	DropletSize   string             `json:"dropletSize"`
+	OverrideImage string             `json:"overrideImage,omitempty"`
+	MinSize       float32            `json:"minSize"`
+	MaxSize       float32            `json:"maxSize"`
 }
 
 type DigitalOceanProviderRegion string

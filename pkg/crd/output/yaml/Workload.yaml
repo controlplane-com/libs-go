@@ -719,6 +719,8 @@ spec:
                     type: string
                   minReadySeconds:
                     type: number
+                  rolloutOnReferenceChange:
+                    type: boolean
                   scalingPolicy:
                     type: string
                   terminationGracePeriodSeconds:
