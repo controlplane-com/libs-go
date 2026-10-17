@@ -699,8 +699,11 @@ spec:
                 type: array
               networking:
                 properties:
-                  interGvcFailover:
-                    type: boolean
+                  internal:
+                    properties:
+                      routing:
+                        type: string
+                    type: object
                 type: object
               requestRetryPolicy:
                 properties:

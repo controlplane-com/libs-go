@@ -670,8 +670,19 @@ type WorkloadSpecLoadBalancer struct {
 	ReplicaDirect bool                                `json:"replicaDirect,omitempty"`
 }
 
+type WorkloadSpecNetworkingInternalRouting string
+
+const (
+	WorkloadSpecNetworkingInternalRoutingLocationEndpoint WorkloadSpecNetworkingInternalRouting = "locationEndpoint"
+	WorkloadSpecNetworkingInternalRoutingGvcEndpoint      WorkloadSpecNetworkingInternalRouting = "gvcEndpoint"
+)
+
+type WorkloadSpecNetworkingInternal struct {
+	Routing WorkloadSpecNetworkingInternalRouting `json:"routing,omitempty"`
+}
+
 type WorkloadSpecNetworking struct {
-	InterGvcFailover bool `json:"interGvcFailover,omitempty"`
+	Internal *WorkloadSpecNetworkingInternal `json:"internal,omitempty"`
 }
 
 type WorkloadSpecExtrasMetadataLabels map[string]string

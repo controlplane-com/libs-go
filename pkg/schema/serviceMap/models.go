@@ -12,16 +12,22 @@ const (
 	ServiceWorkloadTypeVm         ServiceWorkloadType = "vm"
 )
 
+type ServiceWorkloadRouting string
+
+const (
+	ServiceWorkloadRoutingGvcEndpoint ServiceWorkloadRouting = "gvcEndpoint"
+)
+
 type ServiceWorkload struct {
-	Name              string              `json:"name"`
-	CanonicalEndpoint string              `json:"canonicalEndpoint"`
-	PortMap           []ServicePortMap    `json:"portMap"`
-	Type              ServiceWorkloadType `json:"type,omitempty"`
-	Replicas          []ServiceReplica    `json:"replicas,omitempty"`
-	AgentAccessible   bool                `json:"agentAccessible,omitempty"`
-	Kata              bool                `json:"kata,omitempty"`
-	ScaleToZero       bool                `json:"scaleToZero,omitempty"`
-	InterGvcFailover  bool                `json:"interGvcFailover,omitempty"`
+	Name              string                 `json:"name"`
+	CanonicalEndpoint string                 `json:"canonicalEndpoint"`
+	PortMap           []ServicePortMap       `json:"portMap"`
+	Type              ServiceWorkloadType    `json:"type,omitempty"`
+	Replicas          []ServiceReplica       `json:"replicas,omitempty"`
+	AgentAccessible   bool                   `json:"agentAccessible,omitempty"`
+	Kata              bool                   `json:"kata,omitempty"`
+	ScaleToZero       bool                   `json:"scaleToZero,omitempty"`
+	Routing           ServiceWorkloadRouting `json:"routing,omitempty"`
 }
 
 type ServiceGvc struct {
