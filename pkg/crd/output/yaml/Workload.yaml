@@ -76,6 +76,16 @@ spec:
                             type: string
                         type: object
                       type: array
+                    envFrom:
+                      items:
+                        properties:
+                          secretRef:
+                            properties:
+                              name:
+                                type: string
+                            type: object
+                        type: object
+                      type: array
                     gpu:
                       properties:
                         custom:

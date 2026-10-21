@@ -13,13 +13,14 @@ import "github.com/controlplane-com/libs-go/pkg/schema/envoyHttp"
 import "github.com/controlplane-com/libs-go/pkg/schema/sandbox"
 
 type ContainerOverride struct {
-	Name    string       `json:"name"`
-	Env     []env.EnvVar `json:"env,omitempty"`
-	Command string       `json:"command,omitempty"`
-	Args    []string     `json:"args,omitempty"`
-	Memory  string       `json:"memory,omitempty"`
-	Cpu     string       `json:"cpu,omitempty"`
-	Image   string       `json:"image,omitempty"`
+	Name    string              `json:"name"`
+	Env     []env.EnvVar        `json:"env,omitempty"`
+	EnvFrom []env.EnvFromSource `json:"envFrom,omitempty"`
+	Command string              `json:"command,omitempty"`
+	Args    []string            `json:"args,omitempty"`
+	Memory  string              `json:"memory,omitempty"`
+	Cpu     string              `json:"cpu,omitempty"`
+	Image   string              `json:"image,omitempty"`
 }
 
 type ContainerSpecMetrics struct {
@@ -179,6 +180,7 @@ type ContainerSpec struct {
 	MinCpu         string                       `json:"minCpu,omitempty"`
 	MinMemory      string                       `json:"minMemory,omitempty"`
 	Env            []env.EnvVar                 `json:"env,omitempty"`
+	EnvFrom        []env.EnvFromSource          `json:"envFrom,omitempty"`
 	Gpu            *ContainerSpecGpu            `json:"gpu,omitempty"`
 	InheritEnv     bool                         `json:"inheritEnv,omitempty"`
 	Command        string                       `json:"command,omitempty"`

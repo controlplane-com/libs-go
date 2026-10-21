@@ -175,6 +175,7 @@ func (s *LocationTestSuite) TestLocation_VerifyProviders() {
 		"vultr":   true,
 		"equinix": true,
 		"oci":     true,
+		"cpln":    true,
 	}
 
 	for _, loc := range locations {

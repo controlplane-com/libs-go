@@ -25,6 +25,7 @@ const (
 	LocationProviderVultr   LocationProvider = "vultr"
 	LocationProviderEquinix LocationProvider = "equinix"
 	LocationProviderOci     LocationProvider = "oci"
+	LocationProviderCpln    LocationProvider = "cpln"
 )
 
 type Location struct {
