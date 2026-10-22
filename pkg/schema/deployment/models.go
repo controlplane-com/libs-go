@@ -14,11 +14,18 @@ type Deployment struct {
 	Status       DeploymentStatus `json:"status,omitempty"`
 }
 
+type DeploymentIdentity struct {
+	Link      string   `json:"link,omitempty"`
+	Version   *float32 `json:"version,omitempty"`
+	AppliedAt string   `json:"appliedAt,omitempty"`
+}
+
 type DeploymentStatus struct {
 	Endpoint                  string                       `json:"endpoint,omitempty"`
 	Remote                    string                       `json:"remote,omitempty"`
 	LastProcessedVersion      *float32                     `json:"lastProcessedVersion,omitempty"`
 	ExpectedDeploymentVersion *float32                     `json:"expectedDeploymentVersion,omitempty"`
+	Identity                  DeploymentIdentity           `json:"identity,omitempty"`
 	Internal                  any                          `json:"internal,omitempty"`
 	Ready                     bool                         `json:"ready,omitempty"`
 	Deploying                 bool                         `json:"deploying,omitempty"`
