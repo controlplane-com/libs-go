@@ -643,6 +643,11 @@ type WorkloadSpecRolloutOptions struct {
 	RolloutOnReferenceChange      bool                                    `json:"rolloutOnReferenceChange,omitempty"`
 }
 
+type WorkloadSpecDisruptionBudget struct {
+	MinAvailable   string `json:"minAvailable,omitempty"`
+	MaxUnavailable string `json:"maxUnavailable,omitempty"`
+}
+
 type WorkloadSpecSecurityOptions struct {
 	FilesystemGroupId *float32 `json:"filesystemGroupId,omitempty"`
 	RunAsUser         *float32 `json:"runAsUser,omitempty"`
@@ -851,6 +856,7 @@ type WorkloadSpec struct {
 	Sidecar            WorkloadSpecSidecar             `json:"sidecar,omitempty"`
 	SupportDynamicTags bool                            `json:"supportDynamicTags,omitempty"`
 	RolloutOptions     *WorkloadSpecRolloutOptions     `json:"rolloutOptions,omitempty"`
+	DisruptionBudget   *WorkloadSpecDisruptionBudget   `json:"disruptionBudget,omitempty"`
 	SecurityOptions    *WorkloadSpecSecurityOptions    `json:"securityOptions,omitempty"`
 	LoadBalancer       *WorkloadSpecLoadBalancer       `json:"loadBalancer,omitempty"`
 	Networking         *WorkloadSpecNetworking         `json:"networking,omitempty"`
@@ -926,6 +932,107 @@ type WorkloadConfigSubsets struct {
 	Enabled bool `json:"enabled,omitempty"`
 }
 
+type WorkloadConfigCapabilitiesDrop string
+
+const (
+	WorkloadConfigCapabilitiesDropAuditControl      WorkloadConfigCapabilitiesDrop = "AUDIT_CONTROL"
+	WorkloadConfigCapabilitiesDropAuditRead         WorkloadConfigCapabilitiesDrop = "AUDIT_READ"
+	WorkloadConfigCapabilitiesDropAuditWrite        WorkloadConfigCapabilitiesDrop = "AUDIT_WRITE"
+	WorkloadConfigCapabilitiesDropBlockSuspend      WorkloadConfigCapabilitiesDrop = "BLOCK_SUSPEND"
+	WorkloadConfigCapabilitiesDropBpf               WorkloadConfigCapabilitiesDrop = "BPF"
+	WorkloadConfigCapabilitiesDropCheckpointRestore WorkloadConfigCapabilitiesDrop = "CHECKPOINT_RESTORE"
+	WorkloadConfigCapabilitiesDropChown             WorkloadConfigCapabilitiesDrop = "CHOWN"
+	WorkloadConfigCapabilitiesDropDacOverride       WorkloadConfigCapabilitiesDrop = "DAC_OVERRIDE"
+	WorkloadConfigCapabilitiesDropDacReadSearch     WorkloadConfigCapabilitiesDrop = "DAC_READ_SEARCH"
+	WorkloadConfigCapabilitiesDropFowner            WorkloadConfigCapabilitiesDrop = "FOWNER"
+	WorkloadConfigCapabilitiesDropFsetid            WorkloadConfigCapabilitiesDrop = "FSETID"
+	WorkloadConfigCapabilitiesDropIpcLock           WorkloadConfigCapabilitiesDrop = "IPC_LOCK"
+	WorkloadConfigCapabilitiesDropIpcOwner          WorkloadConfigCapabilitiesDrop = "IPC_OWNER"
+	WorkloadConfigCapabilitiesDropKill              WorkloadConfigCapabilitiesDrop = "KILL"
+	WorkloadConfigCapabilitiesDropLease             WorkloadConfigCapabilitiesDrop = "LEASE"
+	WorkloadConfigCapabilitiesDropLinuxImmutable    WorkloadConfigCapabilitiesDrop = "LINUX_IMMUTABLE"
+	WorkloadConfigCapabilitiesDropMacAdmin          WorkloadConfigCapabilitiesDrop = "MAC_ADMIN"
+	WorkloadConfigCapabilitiesDropMacOverride       WorkloadConfigCapabilitiesDrop = "MAC_OVERRIDE"
+	WorkloadConfigCapabilitiesDropMknod             WorkloadConfigCapabilitiesDrop = "MKNOD"
+	WorkloadConfigCapabilitiesDropNetAdmin          WorkloadConfigCapabilitiesDrop = "NET_ADMIN"
+	WorkloadConfigCapabilitiesDropNetBindService    WorkloadConfigCapabilitiesDrop = "NET_BIND_SERVICE"
+	WorkloadConfigCapabilitiesDropNetBroadcast      WorkloadConfigCapabilitiesDrop = "NET_BROADCAST"
+	WorkloadConfigCapabilitiesDropNetRaw            WorkloadConfigCapabilitiesDrop = "NET_RAW"
+	WorkloadConfigCapabilitiesDropPerfmon           WorkloadConfigCapabilitiesDrop = "PERFMON"
+	WorkloadConfigCapabilitiesDropSetfcap           WorkloadConfigCapabilitiesDrop = "SETFCAP"
+	WorkloadConfigCapabilitiesDropSetgid            WorkloadConfigCapabilitiesDrop = "SETGID"
+	WorkloadConfigCapabilitiesDropSetpcap           WorkloadConfigCapabilitiesDrop = "SETPCAP"
+	WorkloadConfigCapabilitiesDropSetuid            WorkloadConfigCapabilitiesDrop = "SETUID"
+	WorkloadConfigCapabilitiesDropSysAdmin          WorkloadConfigCapabilitiesDrop = "SYS_ADMIN"
+	WorkloadConfigCapabilitiesDropSysBoot           WorkloadConfigCapabilitiesDrop = "SYS_BOOT"
+	WorkloadConfigCapabilitiesDropSysChroot         WorkloadConfigCapabilitiesDrop = "SYS_CHROOT"
+	WorkloadConfigCapabilitiesDropSysModule         WorkloadConfigCapabilitiesDrop = "SYS_MODULE"
+	WorkloadConfigCapabilitiesDropSysNice           WorkloadConfigCapabilitiesDrop = "SYS_NICE"
+	WorkloadConfigCapabilitiesDropSysPacct          WorkloadConfigCapabilitiesDrop = "SYS_PACCT"
+	WorkloadConfigCapabilitiesDropSysPtrace         WorkloadConfigCapabilitiesDrop = "SYS_PTRACE"
+	WorkloadConfigCapabilitiesDropSysRawio          WorkloadConfigCapabilitiesDrop = "SYS_RAWIO"
+	WorkloadConfigCapabilitiesDropSysResource       WorkloadConfigCapabilitiesDrop = "SYS_RESOURCE"
+	WorkloadConfigCapabilitiesDropSysTime           WorkloadConfigCapabilitiesDrop = "SYS_TIME"
+	WorkloadConfigCapabilitiesDropSysTtyConfig      WorkloadConfigCapabilitiesDrop = "SYS_TTY_CONFIG"
+	WorkloadConfigCapabilitiesDropSyslog            WorkloadConfigCapabilitiesDrop = "SYSLOG"
+	WorkloadConfigCapabilitiesDropWakeAlarm         WorkloadConfigCapabilitiesDrop = "WAKE_ALARM"
+)
+
+type WorkloadConfigCapabilitiesKeep string
+
+const (
+	WorkloadConfigCapabilitiesKeepAuditControl      WorkloadConfigCapabilitiesKeep = "AUDIT_CONTROL"
+	WorkloadConfigCapabilitiesKeepAuditRead         WorkloadConfigCapabilitiesKeep = "AUDIT_READ"
+	WorkloadConfigCapabilitiesKeepAuditWrite        WorkloadConfigCapabilitiesKeep = "AUDIT_WRITE"
+	WorkloadConfigCapabilitiesKeepBlockSuspend      WorkloadConfigCapabilitiesKeep = "BLOCK_SUSPEND"
+	WorkloadConfigCapabilitiesKeepBpf               WorkloadConfigCapabilitiesKeep = "BPF"
+	WorkloadConfigCapabilitiesKeepCheckpointRestore WorkloadConfigCapabilitiesKeep = "CHECKPOINT_RESTORE"
+	WorkloadConfigCapabilitiesKeepChown             WorkloadConfigCapabilitiesKeep = "CHOWN"
+	WorkloadConfigCapabilitiesKeepDacOverride       WorkloadConfigCapabilitiesKeep = "DAC_OVERRIDE"
+	WorkloadConfigCapabilitiesKeepDacReadSearch     WorkloadConfigCapabilitiesKeep = "DAC_READ_SEARCH"
+	WorkloadConfigCapabilitiesKeepFowner            WorkloadConfigCapabilitiesKeep = "FOWNER"
+	WorkloadConfigCapabilitiesKeepFsetid            WorkloadConfigCapabilitiesKeep = "FSETID"
+	WorkloadConfigCapabilitiesKeepIpcLock           WorkloadConfigCapabilitiesKeep = "IPC_LOCK"
+	WorkloadConfigCapabilitiesKeepIpcOwner          WorkloadConfigCapabilitiesKeep = "IPC_OWNER"
+	WorkloadConfigCapabilitiesKeepKill              WorkloadConfigCapabilitiesKeep = "KILL"
+	WorkloadConfigCapabilitiesKeepLease             WorkloadConfigCapabilitiesKeep = "LEASE"
+	WorkloadConfigCapabilitiesKeepLinuxImmutable    WorkloadConfigCapabilitiesKeep = "LINUX_IMMUTABLE"
+	WorkloadConfigCapabilitiesKeepMacAdmin          WorkloadConfigCapabilitiesKeep = "MAC_ADMIN"
+	WorkloadConfigCapabilitiesKeepMacOverride       WorkloadConfigCapabilitiesKeep = "MAC_OVERRIDE"
+	WorkloadConfigCapabilitiesKeepMknod             WorkloadConfigCapabilitiesKeep = "MKNOD"
+	WorkloadConfigCapabilitiesKeepNetAdmin          WorkloadConfigCapabilitiesKeep = "NET_ADMIN"
+	WorkloadConfigCapabilitiesKeepNetBindService    WorkloadConfigCapabilitiesKeep = "NET_BIND_SERVICE"
+	WorkloadConfigCapabilitiesKeepNetBroadcast      WorkloadConfigCapabilitiesKeep = "NET_BROADCAST"
+	WorkloadConfigCapabilitiesKeepNetRaw            WorkloadConfigCapabilitiesKeep = "NET_RAW"
+	WorkloadConfigCapabilitiesKeepPerfmon           WorkloadConfigCapabilitiesKeep = "PERFMON"
+	WorkloadConfigCapabilitiesKeepSetfcap           WorkloadConfigCapabilitiesKeep = "SETFCAP"
+	WorkloadConfigCapabilitiesKeepSetgid            WorkloadConfigCapabilitiesKeep = "SETGID"
+	WorkloadConfigCapabilitiesKeepSetpcap           WorkloadConfigCapabilitiesKeep = "SETPCAP"
+	WorkloadConfigCapabilitiesKeepSetuid            WorkloadConfigCapabilitiesKeep = "SETUID"
+	WorkloadConfigCapabilitiesKeepSysAdmin          WorkloadConfigCapabilitiesKeep = "SYS_ADMIN"
+	WorkloadConfigCapabilitiesKeepSysBoot           WorkloadConfigCapabilitiesKeep = "SYS_BOOT"
+	WorkloadConfigCapabilitiesKeepSysChroot         WorkloadConfigCapabilitiesKeep = "SYS_CHROOT"
+	WorkloadConfigCapabilitiesKeepSysModule         WorkloadConfigCapabilitiesKeep = "SYS_MODULE"
+	WorkloadConfigCapabilitiesKeepSysNice           WorkloadConfigCapabilitiesKeep = "SYS_NICE"
+	WorkloadConfigCapabilitiesKeepSysPacct          WorkloadConfigCapabilitiesKeep = "SYS_PACCT"
+	WorkloadConfigCapabilitiesKeepSysPtrace         WorkloadConfigCapabilitiesKeep = "SYS_PTRACE"
+	WorkloadConfigCapabilitiesKeepSysRawio          WorkloadConfigCapabilitiesKeep = "SYS_RAWIO"
+	WorkloadConfigCapabilitiesKeepSysResource       WorkloadConfigCapabilitiesKeep = "SYS_RESOURCE"
+	WorkloadConfigCapabilitiesKeepSysTime           WorkloadConfigCapabilitiesKeep = "SYS_TIME"
+	WorkloadConfigCapabilitiesKeepSysTtyConfig      WorkloadConfigCapabilitiesKeep = "SYS_TTY_CONFIG"
+	WorkloadConfigCapabilitiesKeepSyslog            WorkloadConfigCapabilitiesKeep = "SYSLOG"
+	WorkloadConfigCapabilitiesKeepWakeAlarm         WorkloadConfigCapabilitiesKeep = "WAKE_ALARM"
+)
+
+type WorkloadConfigCapabilities struct {
+	Drop []WorkloadConfigCapabilitiesDrop `json:"drop,omitempty"`
+	Keep []WorkloadConfigCapabilitiesKeep `json:"keep,omitempty"`
+}
+
+type WorkloadConfigSeccomp struct {
+	Unconfined bool `json:"unconfined,omitempty"`
+}
+
 type WorkloadConfig struct {
 	Scheduling         WorkloadConfigScheduling         `json:"scheduling,omitempty"`
 	ThinProvision      *float32                         `json:"thinProvision,omitempty"`
@@ -933,6 +1040,8 @@ type WorkloadConfig struct {
 	LocationPodZoneMap WorkloadConfigLocationPodZoneMap `json:"locationPodZoneMap,omitempty"`
 	Proxy              *WorkloadConfigProxy             `json:"proxy,omitempty"`
 	Subsets            *WorkloadConfigSubsets           `json:"subsets,omitempty"`
+	Capabilities       *WorkloadConfigCapabilities      `json:"capabilities,omitempty"`
+	Seccomp            *WorkloadConfigSeccomp           `json:"seccomp,omitempty"`
 }
 
 type WorkloadHealth struct {

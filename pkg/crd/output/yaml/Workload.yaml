@@ -421,6 +421,13 @@ spec:
                   timeoutSeconds:
                     type: number
                 type: object
+              disruptionBudget:
+                properties:
+                  maxUnavailable:
+                    type: string
+                  minAvailable:
+                    type: string
+                type: object
               extras:
                 properties:
                   affinity:

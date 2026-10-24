@@ -3,6 +3,7 @@
 package mk8sAddons
 
 import "github.com/controlplane-com/libs-go/pkg/schema/workload"
+import "github.com/controlplane-com/libs-go/pkg/schema/base"
 
 type AwsECRAddonConfig struct {
 	RoleArn string `json:"roleArn,omitempty"`
@@ -290,13 +291,13 @@ type KubevirtAddonConfig struct {
 }
 
 type LogsAddonConfig struct {
-	AuditEnabled      bool              `json:"auditEnabled,omitempty"`
-	IncludeNamespaces RegularExpression `json:"includeNamespaces,omitempty"`
-	ExcludeNamespaces RegularExpression `json:"excludeNamespaces,omitempty"`
-	Docker            bool              `json:"docker,omitempty"`
-	Kubelet           bool              `json:"kubelet,omitempty"`
-	Kernel            bool              `json:"kernel,omitempty"`
-	Events            bool              `json:"events,omitempty"`
+	AuditEnabled      bool       `json:"auditEnabled,omitempty"`
+	IncludeNamespaces base.Regex `json:"includeNamespaces,omitempty"`
+	ExcludeNamespaces base.Regex `json:"excludeNamespaces,omitempty"`
+	Docker            bool       `json:"docker,omitempty"`
+	Kubelet           bool       `json:"kubelet,omitempty"`
+	Kernel            bool       `json:"kernel,omitempty"`
+	Events            bool       `json:"events,omitempty"`
 }
 
 type LogsAddonStatus struct {
@@ -304,20 +305,26 @@ type LogsAddonStatus struct {
 }
 
 type MetricsAddonConfigScrapeAnnotated struct {
-	IntervalSeconds   *float32          `json:"intervalSeconds,omitempty"`
-	IncludeNamespaces RegularExpression `json:"includeNamespaces,omitempty"`
-	ExcludeNamespaces RegularExpression `json:"excludeNamespaces,omitempty"`
-	RetainLabels      RegularExpression `json:"retainLabels,omitempty"`
+	IntervalSeconds   *float32   `json:"intervalSeconds,omitempty"`
+	IncludeNamespaces base.Regex `json:"includeNamespaces,omitempty"`
+	ExcludeNamespaces base.Regex `json:"excludeNamespaces,omitempty"`
+	RetainLabels      base.Regex `json:"retainLabels,omitempty"`
 }
 
 type MetricsAddonConfig struct {
-	KubeState       bool                              `json:"kubeState,omitempty"`
-	CoreDns         bool                              `json:"coreDns,omitempty"`
-	Kubelet         bool                              `json:"kubelet,omitempty"`
-	Apiserver       bool                              `json:"apiserver,omitempty"`
-	NodeExporter    bool                              `json:"nodeExporter,omitempty"`
-	Cadvisor        bool                              `json:"cadvisor,omitempty"`
-	ScrapeAnnotated MetricsAddonConfigScrapeAnnotated `json:"scrapeAnnotated,omitempty"`
+	KubeState        bool                              `json:"kubeState,omitempty"`
+	KubeStateDrop    string                            `json:"kubeStateDrop,omitempty"`
+	CoreDns          bool                              `json:"coreDns,omitempty"`
+	CoreDnsDrop      string                            `json:"coreDnsDrop,omitempty"`
+	Kubelet          bool                              `json:"kubelet,omitempty"`
+	KubeletDrop      string                            `json:"kubeletDrop,omitempty"`
+	Apiserver        bool                              `json:"apiserver,omitempty"`
+	ApiserverDrop    string                            `json:"apiserverDrop,omitempty"`
+	NodeExporter     bool                              `json:"nodeExporter,omitempty"`
+	NodeExporterDrop string                            `json:"nodeExporterDrop,omitempty"`
+	Cadvisor         bool                              `json:"cadvisor,omitempty"`
+	CadvisorDrop     string                            `json:"cadvisorDrop,omitempty"`
+	ScrapeAnnotated  MetricsAddonConfigScrapeAnnotated `json:"scrapeAnnotated,omitempty"`
 }
 
 type MetricsAddonStatusRemoteWriteConfig map[string]any
@@ -345,5 +352,3 @@ type RegistryMirrorConfigMirrors struct {
 type RegistryMirrorConfig struct {
 	Mirrors []RegistryMirrorConfigMirrors `json:"mirrors,omitempty"`
 }
-
-type RegularExpression string
