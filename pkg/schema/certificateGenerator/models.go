@@ -100,6 +100,7 @@ type CloudflareDns01 struct {
 type Dns01ChallengeProvider string
 
 const (
+	Dns01ChallengeProviderCpln       Dns01ChallengeProvider = "cpln"
 	Dns01ChallengeProviderRoute53    Dns01ChallengeProvider = "route53"
 	Dns01ChallengeProviderCloudDns   Dns01ChallengeProvider = "cloudDns"
 	Dns01ChallengeProviderAzureDns   Dns01ChallengeProvider = "azureDns"
@@ -138,6 +139,7 @@ type Dns01Challenge struct {
 type Dns01Provider string
 
 const (
+	Dns01ProviderCpln       Dns01Provider = "cpln"
 	Dns01ProviderRoute53    Dns01Provider = "route53"
 	Dns01ProviderCloudDns   Dns01Provider = "cloudDns"
 	Dns01ProviderAzureDns   Dns01Provider = "azureDns"
