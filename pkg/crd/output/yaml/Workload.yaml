@@ -756,6 +756,17 @@ spec:
                     type: string
                   scaleToZeroDelay:
                     type: number
+                  scaling:
+                    properties:
+                      idleDeleteDelay:
+                        type: number
+                      maxSessions:
+                        type: number
+                      maxWorkers:
+                        type: number
+                      minWorkers:
+                        type: number
+                    type: object
                   token:
                     type: string
                   ttl:

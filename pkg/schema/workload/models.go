@@ -834,15 +834,23 @@ type WorkloadSpecSandboxVolume struct {
 	InitialCapacity *float32 `json:"initialCapacity,omitempty"`
 }
 
+type WorkloadSpecSandboxScaling struct {
+	MaxSessions     *float32 `json:"maxSessions,omitempty"`
+	MinWorkers      *float32 `json:"minWorkers,omitempty"`
+	MaxWorkers      *float32 `json:"maxWorkers,omitempty"`
+	IdleDeleteDelay *float32 `json:"idleDeleteDelay,omitempty"`
+}
+
 type WorkloadSpecSandbox struct {
-	Ide              sandbox.SandboxIde        `json:"ide,omitempty"`
-	Type             sandbox.SandboxType       `json:"type,omitempty"`
-	Password         string                    `json:"password,omitempty"`
-	Token            string                    `json:"token,omitempty"`
-	Volume           WorkloadSpecSandboxVolume `json:"volume,omitempty"`
-	AppPort          *float32                  `json:"appPort,omitempty"`
-	ScaleToZeroDelay *float32                  `json:"scaleToZeroDelay,omitempty"`
-	Ttl              string                    `json:"ttl,omitempty"`
+	Ide              sandbox.SandboxIde          `json:"ide,omitempty"`
+	Type             sandbox.SandboxType         `json:"type,omitempty"`
+	Password         string                      `json:"password,omitempty"`
+	Token            string                      `json:"token,omitempty"`
+	Volume           *WorkloadSpecSandboxVolume  `json:"volume,omitempty"`
+	AppPort          *float32                    `json:"appPort,omitempty"`
+	ScaleToZeroDelay *float32                    `json:"scaleToZeroDelay,omitempty"`
+	Scaling          *WorkloadSpecSandboxScaling `json:"scaling,omitempty"`
+	Ttl              string                      `json:"ttl,omitempty"`
 }
 
 type WorkloadSpec struct {
