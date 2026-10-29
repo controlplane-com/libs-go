@@ -240,6 +240,37 @@ type GrpcWeb struct {
 	Typed_config      GrpcWebTypedConfig   `json:"typed_config,omitempty"`
 }
 
+type HeaderMutationName string
+
+const (
+	HeaderMutationNameEnvoyFiltersHttpHeaderMutation HeaderMutationName = "envoy.filters.http.header_mutation"
+)
+
+type HeaderMutationTypedConfigMutations struct {
+	Request_mutations  []HeaderMutationRule `json:"request_mutations,omitempty"`
+	Response_mutations []HeaderMutationRule `json:"response_mutations,omitempty"`
+}
+
+type HeaderMutationTypedConfigType string
+
+const (
+	HeaderMutationTypedConfigTypeTypeGoogleapisComEnvoyExtensionsFiltersHttpHeaderMutationV3HeaderMutation HeaderMutationTypedConfigType = "type.googleapis.com/envoy.extensions.filters.http.header_mutation.v3.HeaderMutation"
+)
+
+type HeaderMutationTypedConfig struct {
+	Mutations HeaderMutationTypedConfigMutations `json:"mutations,omitempty"`
+	Type      HeaderMutationTypedConfigType      `json:"@type,omitempty"`
+}
+
+type HeaderMutation struct {
+	Priority          envoyCommon.Priority      `json:"priority,omitempty"`
+	ExcludedWorkloads []string                  `json:"excludedWorkloads,omitempty"`
+	Name              HeaderMutationName        `json:"name,omitempty"`
+	Typed_config      HeaderMutationTypedConfig `json:"typed_config,omitempty"`
+}
+
+type HeaderMutationRule any /* TODO: [object Object]*/
+
 type HttpFilter any /* TODO: [object Object]*/
 
 type HttpUri struct {
