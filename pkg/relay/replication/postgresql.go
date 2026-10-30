@@ -24,6 +24,9 @@ func StartReplication(c *Config) error {
 		return err
 	}
 
+	if err := ensureSlot(c); err != nil {
+		return err
+	}
 	lsn, err := getRestartLsn(c)
 	if err != nil {
 		return err
@@ -36,6 +39,20 @@ func StartReplication(c *Config) error {
 	}
 	logging.Logger().Info("Logical replication started", zap.String("slot", c.Slot))
 	return streamWal(c, conn.PgConn(), lsn)
+}
+
+func ensureSlot(c *Config) error {
+	conn, err := connection(c)
+	if err != nil {
+		return err
+	}
+	defer conn.Close(context.Background())
+	_, err = conn.Exec(context.Background(),
+		"SELECT pg_create_logical_replication_slot($1, 'wal2json') WHERE NOT EXISTS (SELECT 1 FROM pg_replication_slots WHERE slot_name = $1)", c.Slot)
+	if err != nil {
+		return fmt.Errorf("failed to ensure replication slot %s: %v", c.Slot, err)
+	}
+	return nil
 }
 
 func getRestartLsn(c *Config) (pglogrepl.LSN, error) {
