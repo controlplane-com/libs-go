@@ -19,6 +19,13 @@ func StartReplication(c *Config) error {
 	if c == nil {
 		return fmt.Errorf("replication config cannot be nil")
 	}
+	switch c.Mode {
+	case ModePoll:
+		return startPolling(c)
+	case "", ModeLogical:
+	default:
+		return fmt.Errorf("unknown replication mode %q", c.Mode)
+	}
 	conn, err := replicationConnection(c)
 	if err != nil {
 		return err

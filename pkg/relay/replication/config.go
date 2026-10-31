@@ -1,6 +1,7 @@
 package replication
 
 import (
+	"fmt"
 	"github.com/controlplane-com/libs-go/pkg/pipeline"
 	"go.uber.org/zap/zapcore"
 	"time"
@@ -33,9 +34,19 @@ type Config struct {
 	User                        string          `json:"-"`
 	Database                    string          `json:"-"`
 	Password                    string          `json:"-"`
+	Mode                        Mode            `json:"mode"`
 	Slot                        string          `json:"slot"`
 	WalAcknowledgementFrequency time.Duration   `cpln:"default:30s" json:"-"`
+	PollInterval                time.Duration   `cpln:"default:5s" json:"-"`
+	PollBatchSize               int             `cpln:"default:100" json:"-"`
 	Destinations                DestinationList `json:"destinations"`
+}
+
+func (c Config) Name() string {
+	if c.Mode == ModePoll {
+		return fmt.Sprintf("poll %v", c.Tables())
+	}
+	return "slot " + c.Slot
 }
 
 func (c Config) Tables() []string {
@@ -45,6 +56,11 @@ func (c Config) Tables() []string {
 	}
 	return pipeline.ExtractMapValues(tableMap)
 }
+
+type Mode = string
+
+const ModeLogical Mode = "logical"
+const ModePoll Mode = "poll"
 
 type Action = string
 
