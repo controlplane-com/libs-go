@@ -122,6 +122,12 @@ type VolumeSet struct {
 	Gvc          any             `json:"gvc,omitempty"`
 }
 
+type VolumeSetConfigLocationVolumeZoneMap map[string]VolumeZoneMap
+
+type VolumeSetConfig struct {
+	LocationVolumeZoneMap VolumeSetConfigLocationVolumeZoneMap `json:"locationVolumeZoneMap,omitempty"`
+}
+
 type VolumeSetSpecCustomEncryptionRegions map[string]CustomEncryptionRegion
 
 type VolumeSetSpecCustomEncryption struct {
@@ -191,3 +197,5 @@ type VolumeSnapshot struct {
 	Size    *float32             `json:"size,omitempty"`
 	Tags    []VolumeSnapshotTags `json:"tags,omitempty"`
 }
+
+type VolumeZoneMap map[string]string

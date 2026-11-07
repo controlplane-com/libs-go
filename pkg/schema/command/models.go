@@ -198,6 +198,7 @@ type CopyVolumeStatus struct {
 	NewResourceName             string                              `json:"newResourceName,omitempty"`
 	NewVolumeAttributes         CopyVolumeStatusNewVolumeAttributes `json:"newVolumeAttributes,omitempty"`
 	NewVolumeSize               *float32                            `json:"newVolumeSize,omitempty"`
+	NewVolumeZone               string                              `json:"newVolumeZone,omitempty"`
 	DestinationDeviceIdToRemove string                              `json:"destinationDeviceIdToRemove,omitempty"`
 	TargetHasWorkloadPod        bool                                `json:"targetHasWorkloadPod,omitempty"`
 	SourceDeviceId              string                              `json:"sourceDeviceId,omitempty"`
