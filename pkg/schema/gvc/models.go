@@ -3,13 +3,97 @@
 package gvc
 
 import "github.com/controlplane-com/libs-go/pkg/schema/base"
-import "github.com/controlplane-com/libs-go/pkg/schema/workload"
 import "github.com/controlplane-com/libs-go/pkg/schema/tracing"
 import "github.com/controlplane-com/libs-go/pkg/schema/envoy"
 import "github.com/controlplane-com/libs-go/pkg/schema/env"
+import "github.com/controlplane-com/libs-go/pkg/schema/workload"
 import "github.com/controlplane-com/libs-go/pkg/schema/query"
 
 type GvcTags map[string]any
+
+type GvcSpecEndpointNamingFormat string
+
+const (
+	GvcSpecEndpointNamingFormatDefault GvcSpecEndpointNamingFormat = "default"
+	GvcSpecEndpointNamingFormatLegacy  GvcSpecEndpointNamingFormat = "legacy"
+	GvcSpecEndpointNamingFormatOrg     GvcSpecEndpointNamingFormat = "org"
+)
+
+type GvcSpecTracingLightstep struct {
+	Endpoint    string `json:"endpoint"`
+	Credentials string `json:"credentials,omitempty"`
+}
+
+type GvcSpecTracingCustomTags map[string]tracing.TracingCustomTag
+
+type GvcSpecTracingProviderOtel struct {
+	Endpoint string `json:"endpoint"`
+}
+
+type GvcSpecTracingProviderLightstep struct {
+	Endpoint    string `json:"endpoint"`
+	Credentials string `json:"credentials,omitempty"`
+}
+
+type GvcSpecTracingProviderControlplane struct {
+}
+
+type GvcSpecTracingProvider struct {
+	Otel         *GvcSpecTracingProviderOtel         `json:"otel,omitempty"`
+	Lightstep    *GvcSpecTracingProviderLightstep    `json:"lightstep,omitempty"`
+	Controlplane *GvcSpecTracingProviderControlplane `json:"controlplane,omitempty"`
+}
+
+type GvcSpecTracing struct {
+	Sampling   float32                   `json:"sampling"`
+	Lightstep  *GvcSpecTracingLightstep  `json:"lightstep,omitempty"`
+	CustomTags *GvcSpecTracingCustomTags `json:"customTags,omitempty"`
+	Provider   *GvcSpecTracingProvider   `json:"provider,omitempty"`
+}
+
+type GvcSpecSidecar struct {
+	Envoy envoy.EnvoyFilters `json:"envoy,omitempty"`
+}
+
+type GvcSpecLoadBalancerMultiZone struct {
+	Enabled bool `json:"enabled,omitempty"`
+}
+
+type GvcSpecLoadBalancerRedirectClass struct {
+	Status5xx string `json:"status5xx,omitempty"`
+	Status401 string `json:"status401,omitempty"`
+}
+
+type GvcSpecLoadBalancerRedirect struct {
+	Class *GvcSpecLoadBalancerRedirectClass `json:"class,omitempty"`
+}
+
+type GvcSpecLoadBalancer struct {
+	Dedicated      bool                          `json:"dedicated,omitempty"`
+	MultiZone      *GvcSpecLoadBalancerMultiZone `json:"multiZone,omitempty"`
+	TrustedProxies *float32                      `json:"trustedProxies,omitempty"`
+	Redirect       *GvcSpecLoadBalancerRedirect  `json:"redirect,omitempty"`
+	IpSet          string                        `json:"ipSet,omitempty"`
+}
+
+type GvcSpecKeda struct {
+	Enabled      bool     `json:"enabled,omitempty"`
+	IdentityLink string   `json:"identityLink,omitempty"`
+	Secrets      []string `json:"secrets,omitempty"`
+}
+
+type GvcSpec struct {
+	StaticPlacement      *StaticPlacement            `json:"staticPlacement,omitempty"`
+	PullSecretLinks      []string                    `json:"pullSecretLinks,omitempty"`
+	Domain               string                      `json:"domain,omitempty"`
+	EndpointNamingFormat GvcSpecEndpointNamingFormat `json:"endpointNamingFormat,omitempty"`
+	AliasWorkloadLink    string                      `json:"aliasWorkloadLink,omitempty"`
+	Tracing              *GvcSpecTracing             `json:"tracing,omitempty"`
+	Sidecar              *GvcSpecSidecar             `json:"sidecar,omitempty"`
+	Env                  []env.EnvVar                `json:"env,omitempty"`
+	LoadBalancer         *GvcSpecLoadBalancer        `json:"loadBalancer,omitempty"`
+	Keda                 *GvcSpecKeda                `json:"keda,omitempty"`
+}
 
 type Gvc struct {
 	Id           string     `json:"id,omitempty"`
@@ -102,90 +186,6 @@ type GvcLoadBalancerConfig struct {
 	MinMemory          string                               `json:"minMemory,omitempty"`
 	ReadinessProbe     *GvcLoadBalancerConfigReadinessProbe `json:"readinessProbe,omitempty"`
 	LivenessProbe      *GvcLoadBalancerConfigLivenessProbe  `json:"livenessProbe,omitempty"`
-}
-
-type GvcSpecEndpointNamingFormat string
-
-const (
-	GvcSpecEndpointNamingFormatDefault GvcSpecEndpointNamingFormat = "default"
-	GvcSpecEndpointNamingFormatLegacy  GvcSpecEndpointNamingFormat = "legacy"
-	GvcSpecEndpointNamingFormatOrg     GvcSpecEndpointNamingFormat = "org"
-)
-
-type GvcSpecTracingLightstep struct {
-	Endpoint    string `json:"endpoint"`
-	Credentials string `json:"credentials,omitempty"`
-}
-
-type GvcSpecTracingCustomTags map[string]tracing.TracingCustomTag
-
-type GvcSpecTracingProviderOtel struct {
-	Endpoint string `json:"endpoint"`
-}
-
-type GvcSpecTracingProviderLightstep struct {
-	Endpoint    string `json:"endpoint"`
-	Credentials string `json:"credentials,omitempty"`
-}
-
-type GvcSpecTracingProviderControlplane struct {
-}
-
-type GvcSpecTracingProvider struct {
-	Otel         *GvcSpecTracingProviderOtel         `json:"otel,omitempty"`
-	Lightstep    *GvcSpecTracingProviderLightstep    `json:"lightstep,omitempty"`
-	Controlplane *GvcSpecTracingProviderControlplane `json:"controlplane,omitempty"`
-}
-
-type GvcSpecTracing struct {
-	Sampling   float32                   `json:"sampling"`
-	Lightstep  *GvcSpecTracingLightstep  `json:"lightstep,omitempty"`
-	CustomTags *GvcSpecTracingCustomTags `json:"customTags,omitempty"`
-	Provider   *GvcSpecTracingProvider   `json:"provider,omitempty"`
-}
-
-type GvcSpecSidecar struct {
-	Envoy envoy.EnvoyFilters `json:"envoy,omitempty"`
-}
-
-type GvcSpecLoadBalancerMultiZone struct {
-	Enabled bool `json:"enabled,omitempty"`
-}
-
-type GvcSpecLoadBalancerRedirectClass struct {
-	Status5xx string `json:"status5xx,omitempty"`
-	Status401 string `json:"status401,omitempty"`
-}
-
-type GvcSpecLoadBalancerRedirect struct {
-	Class *GvcSpecLoadBalancerRedirectClass `json:"class,omitempty"`
-}
-
-type GvcSpecLoadBalancer struct {
-	Dedicated      bool                          `json:"dedicated,omitempty"`
-	MultiZone      *GvcSpecLoadBalancerMultiZone `json:"multiZone,omitempty"`
-	TrustedProxies *float32                      `json:"trustedProxies,omitempty"`
-	Redirect       *GvcSpecLoadBalancerRedirect  `json:"redirect,omitempty"`
-	IpSet          string                        `json:"ipSet,omitempty"`
-}
-
-type GvcSpecKeda struct {
-	Enabled      bool     `json:"enabled,omitempty"`
-	IdentityLink string   `json:"identityLink,omitempty"`
-	Secrets      []string `json:"secrets,omitempty"`
-}
-
-type GvcSpec struct {
-	StaticPlacement      *StaticPlacement            `json:"staticPlacement,omitempty"`
-	PullSecretLinks      []string                    `json:"pullSecretLinks,omitempty"`
-	Domain               string                      `json:"domain,omitempty"`
-	EndpointNamingFormat GvcSpecEndpointNamingFormat `json:"endpointNamingFormat,omitempty"`
-	AliasWorkloadLink    string                      `json:"aliasWorkloadLink,omitempty"`
-	Tracing              *GvcSpecTracing             `json:"tracing,omitempty"`
-	Sidecar              *GvcSpecSidecar             `json:"sidecar,omitempty"`
-	Env                  []env.EnvVar                `json:"env,omitempty"`
-	LoadBalancer         *GvcSpecLoadBalancer        `json:"loadBalancer,omitempty"`
-	Keda                 *GvcSpecKeda                `json:"keda,omitempty"`
 }
 
 type GvcStatus map[string]any
