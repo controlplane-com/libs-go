@@ -8,7 +8,6 @@ const (
 	AutoscalerConfigExpanderRandom     AutoscalerConfigExpander = "random"
 	AutoscalerConfigExpanderMostPods   AutoscalerConfigExpander = "most-pods"
 	AutoscalerConfigExpanderLeastWaste AutoscalerConfigExpander = "least-waste"
-	AutoscalerConfigExpanderPrice      AutoscalerConfigExpander = "price"
 )
 
 type AutoscalerConfig struct {

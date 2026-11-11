@@ -60,7 +60,6 @@ const (
 	GcpProviderImageRecommendedUbuntuNoble2404  GcpProviderImageRecommended = "ubuntu/noble-24.04"
 	GcpProviderImageRecommendedDebianBookworm12 GcpProviderImageRecommended = "debian/bookworm-12"
 	GcpProviderImageRecommendedDebianTrixie13   GcpProviderImageRecommended = "debian/trixie-13"
-	GcpProviderImageRecommendedGoogleCosStable  GcpProviderImageRecommended = "google/cos-stable"
 )
 
 type GcpProviderImageFamily struct {
@@ -98,7 +97,6 @@ const (
 	ImageRecommendedUbuntuNoble2404  ImageRecommended = "ubuntu/noble-24.04"
 	ImageRecommendedDebianBookworm12 ImageRecommended = "debian/bookworm-12"
 	ImageRecommendedDebianTrixie13   ImageRecommended = "debian/trixie-13"
-	ImageRecommendedGoogleCosStable  ImageRecommended = "google/cos-stable"
 )
 
 type ImageFamily struct {
