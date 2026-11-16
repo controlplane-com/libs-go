@@ -11,10 +11,6 @@ type Hints struct {
 	CertificateRequestors []string `json:"certificateRequestors,omitempty"`
 }
 
-type VolumeSetFlags struct {
-	PendingVolumeCreationGracePeriodSeconds float32 `json:"pendingVolumeCreationGracePeriodSeconds,omitempty"`
-}
-
 type Keda struct {
 	Identity *identity.Identity `json:"identity,omitempty"`
 }
@@ -48,7 +44,6 @@ type ScheduleCommand struct {
 	WorkloadConfig *workload.WorkloadConfig    `json:"workloadConfig,omitempty"`
 	Identity       *identity.Identity          `json:"identity,omitempty"`
 	Hints          *Hints                      `json:"hints,omitempty"`
-	VolumeSetFlags *VolumeSetFlags             `json:"volumeSetFlags,omitempty"`
 	Keda           *Keda                       `json:"keda,omitempty"`
 }
 

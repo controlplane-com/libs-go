@@ -328,9 +328,10 @@ type DeleteOrphanedVolumeSnapshotSpec struct {
 type DeleteOrphanedVolumeSnapshotStatusStage string
 
 const (
-	DeleteOrphanedVolumeSnapshotStatusStageDeleteSnapshot  DeleteOrphanedVolumeSnapshotStatusStage = "delete-snapshot"
-	DeleteOrphanedVolumeSnapshotStatusStageUpdateVolumeSet DeleteOrphanedVolumeSnapshotStatusStage = "update-volume-set"
-	DeleteOrphanedVolumeSnapshotStatusStageFail            DeleteOrphanedVolumeSnapshotStatusStage = "fail"
+	DeleteOrphanedVolumeSnapshotStatusStageDeleteSnapshot        DeleteOrphanedVolumeSnapshotStatusStage = "delete-snapshot"
+	DeleteOrphanedVolumeSnapshotStatusStageAwaitSnapshotDeletion DeleteOrphanedVolumeSnapshotStatusStage = "await-snapshot-deletion"
+	DeleteOrphanedVolumeSnapshotStatusStageUpdateVolumeSet       DeleteOrphanedVolumeSnapshotStatusStage = "update-volume-set"
+	DeleteOrphanedVolumeSnapshotStatusStageFail                  DeleteOrphanedVolumeSnapshotStatusStage = "fail"
 )
 
 type DeleteOrphanedVolumeSnapshotStatusClusterIdByLocation map[string]string
@@ -429,8 +430,9 @@ type DeleteVolumeSnapshotStatusSnapshot struct {
 type DeleteVolumeSnapshotStatusStage string
 
 const (
-	DeleteVolumeSnapshotStatusStageDeleteSnapshot  DeleteVolumeSnapshotStatusStage = "delete-snapshot"
-	DeleteVolumeSnapshotStatusStageUpdateVolumeSet DeleteVolumeSnapshotStatusStage = "update-volume-set"
+	DeleteVolumeSnapshotStatusStageDeleteSnapshot        DeleteVolumeSnapshotStatusStage = "delete-snapshot"
+	DeleteVolumeSnapshotStatusStageAwaitSnapshotDeletion DeleteVolumeSnapshotStatusStage = "await-snapshot-deletion"
+	DeleteVolumeSnapshotStatusStageUpdateVolumeSet       DeleteVolumeSnapshotStatusStage = "update-volume-set"
 )
 
 type DeleteVolumeSnapshotStatus struct {

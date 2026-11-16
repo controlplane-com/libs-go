@@ -2,6 +2,7 @@ package math
 
 import (
 	"encoding/json"
+	"fmt"
 	"math"
 )
 
@@ -18,6 +19,32 @@ func (f Float64) MarshalJSON() ([]byte, error) {
 	default:
 		return json.Marshal(float64(f)) // default serialization for normal values
 	}
+}
+
+func (f *Float64) UnmarshalJSON(data []byte) error {
+	if string(data) == "null" {
+		return nil
+	}
+	var s string
+	if err := json.Unmarshal(data, &s); err == nil {
+		switch s {
+		case "NaN":
+			*f = NaN()
+		case "Infinity":
+			*f = Inf(1)
+		case "-Infinity":
+			*f = Inf(-1)
+		default:
+			return fmt.Errorf("invalid Float64 %q", s)
+		}
+		return nil
+	}
+	var v float64
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	*f = Float64(v)
+	return nil
 }
 
 func Inf(sign int) Float64 {
