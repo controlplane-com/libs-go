@@ -28,7 +28,7 @@ func newTestSecret(name string) *secret.Secret {
 	return &secret.Secret{
 		Name:        base.Name(name),
 		Description: "Test secret created by integration test",
-		Version:     common.Float32Ptr(1),
+		Version:     common.Float64Ptr(1),
 		Type:        secret.SecretTypeOpaque,
 		Tags: secret.SecretTags{
 			"test":        "true",
@@ -266,7 +266,7 @@ func (s *SecretTestSuite) TestSecret_Dictionary() {
 	sec := &secret.Secret{
 		Name:        base.Name(secretName),
 		Description: "Test dictionary secret",
-		Version:     common.Float32Ptr(1),
+		Version:     common.Float64Ptr(1),
 		Type:        secret.SecretTypeDictionary,
 		Tags: secret.SecretTags{
 			"test": "true",

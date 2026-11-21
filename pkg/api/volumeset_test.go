@@ -28,7 +28,7 @@ func newTestVolumeSet(name string) *volumeSet.VolumeSet {
 	return &volumeSet.VolumeSet{
 		Name:        base.Name(name),
 		Description: "Test volume set created by integration test",
-		Version:     common.Float32Ptr(1),
+		Version:     common.Float64Ptr(1),
 		Tags: volumeSet.VolumeSetTags{
 			"test":        "true",
 			"integration": "libs-go",
@@ -259,9 +259,9 @@ func (s *VolumeSetTestSuite) TestVolumeSet_WithAutoscaling() {
 	vsName := "test-vs-autoscale-" + randomSuffix()
 	vs := newTestVolumeSet(vsName)
 	vs.Spec.Autoscaling = &volumeSet.VolumeSetSpecAutoscaling{
-		MaxCapacity:       common.Float32Ptr(100),
-		MinFreePercentage: common.Float32Ptr(10),
-		ScalingFactor:     common.Float32Ptr(1.1),
+		MaxCapacity:       common.Float64Ptr(100),
+		MinFreePercentage: common.Float64Ptr(10),
+		ScalingFactor:     common.Float64Ptr(1.1),
 	}
 
 	_, err := s.Client().VolumeSets().Create(ctx, s.TestOrg(), s.TestGVC(), vs)
@@ -275,7 +275,7 @@ func (s *VolumeSetTestSuite) TestVolumeSet_WithAutoscaling() {
 	fetched, err := s.Client().VolumeSets().Get(ctx, s.TestOrg(), s.TestGVC(), vsName)
 	s.Require().NoError(err)
 	s.NotNil(fetched.Spec.Autoscaling, "Volume set should have autoscaling config")
-	s.Equal(float32(100), *fetched.Spec.Autoscaling.MaxCapacity)
+	s.Equal(float64(100), *fetched.Spec.Autoscaling.MaxCapacity)
 }
 
 // TestVolumeSet_WithSnapshots tests creating a volume set with snapshot configuration.
@@ -286,7 +286,7 @@ func (s *VolumeSetTestSuite) TestVolumeSet_WithSnapshots() {
 	vsName := "test-vs-snapshots-" + randomSuffix()
 	vs := newTestVolumeSet(vsName)
 	vs.Spec.Snapshots = &volumeSet.SnapshotSpec{
-		CreateFinalSnapshot: true,
+		CreateFinalSnapshot: common.BoolPtr(true),
 		RetentionDuration:   "7d",
 		Schedule:            "0 0 * * *", // Daily at midnight
 	}
@@ -302,7 +302,7 @@ func (s *VolumeSetTestSuite) TestVolumeSet_WithSnapshots() {
 	fetched, err := s.Client().VolumeSets().Get(ctx, s.TestOrg(), s.TestGVC(), vsName)
 	s.Require().NoError(err)
 	s.NotNil(fetched.Spec.Snapshots, "Volume set should have snapshots config")
-	s.True(fetched.Spec.Snapshots.CreateFinalSnapshot)
+	s.True(common.BoolVal(fetched.Spec.Snapshots.CreateFinalSnapshot))
 }
 
 // TestVolumeSet_XfsFileSystem tests creating a volume set with XFS file system.

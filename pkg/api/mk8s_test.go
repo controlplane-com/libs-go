@@ -31,7 +31,7 @@ func newTestMk8sCluster(name string) *mk8s.Mk8sCluster {
 	return &mk8s.Mk8sCluster{
 		Name:        base.Name(name),
 		Description: "Test mk8s cluster created by integration test",
-		Version:     common.Float32Ptr(1),
+		Version:     common.Float64Ptr(1),
 		Tags: mk8s.Mk8SClusterTags{
 			"test":        "true",
 			"integration": "libs-go",
@@ -39,7 +39,7 @@ func newTestMk8sCluster(name string) *mk8s.Mk8sCluster {
 		Spec: mk8s.Mk8SClusterSpec{
 			Version: mk8s.Mk8SClusterSpecVersion1315,
 			Provider: mk8s.Mk8SClusterSpecProvider{
-				Ephemeral: mk8sEphemeral.EphemeralProvider{
+				Ephemeral: &mk8sEphemeral.EphemeralProvider{
 					Location: mk8sEphemeral.EphemeralProviderLocationAwsUsEast2,
 					NodePools: []mk8sEphemeral.EphemeralPool{
 						{
@@ -428,18 +428,21 @@ func (s *Mk8sTestSuite) TestMk8s_AddOns() {
 
 	for _, cluster := range clusters {
 		addOns := cluster.Spec.AddOns
+		if addOns == nil {
+			return
+		}
 		s.T().Logf("Mk8s cluster %s add-ons:", cluster.Name)
 		// NonCustomizableAddonConfig types are empty structs, check Metrics config
-		if addOns.Metrics.KubeState {
+		if addOns.Metrics != nil && common.BoolVal(addOns.Metrics.KubeState) {
 			s.T().Logf("  - Metrics: kubeState=true")
 		}
-		if addOns.Metrics.CoreDns {
+		if addOns.Metrics != nil && common.BoolVal(addOns.Metrics.CoreDns) {
 			s.T().Logf("  - Metrics: coreDns=true")
 		}
-		if addOns.Logs.AuditEnabled {
+		if addOns.Logs != nil && common.BoolVal(addOns.Logs.AuditEnabled) {
 			s.T().Logf("  - Logs: auditEnabled=true")
 		}
-		if addOns.Nvidia.TaintGPUNodes {
+		if addOns.Nvidia != nil && common.BoolVal(addOns.Nvidia.TaintGPUNodes) {
 			s.T().Logf("  - Nvidia: taintGPUNodes=true")
 		}
 		if addOns.AzureWorkloadIdentity.TenantId != "" {

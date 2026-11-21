@@ -29,7 +29,7 @@ func newTestAgent(name string) *agent.Agent {
 	return &agent.Agent{
 		Name:        base.Name(name),
 		Description: "Test agent created by integration test",
-		Version:     common.Float32Ptr(1),
+		Version:     common.Float64Ptr(1),
 		Tags: agent.AgentTags{
 			"test":        "true",
 			"integration": "libs-go",
@@ -369,7 +369,7 @@ func (s *AgentTestSuite) TestAgent_MultipleTags() {
 	a := &agent.Agent{
 		Name:        base.Name(agentName),
 		Description: "Test agent with multiple tags",
-		Version:     common.Float32Ptr(1),
+		Version:     common.Float64Ptr(1),
 		Tags: agent.AgentTags{
 			"env":         "test",
 			"team":        "platform",

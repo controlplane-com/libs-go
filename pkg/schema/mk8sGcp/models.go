@@ -5,20 +5,20 @@ package mk8sGcp
 import "github.com/controlplane-com/libs-go/pkg/schema/mk8sCommon"
 
 type GcpPool struct {
-	Name                 string             `json:"name"`
-	Labels               mk8sCommon.Labels  `json:"labels,omitempty"`
-	Taints               mk8sCommon.Taints  `json:"taints,omitempty"`
-	MaxPods              mk8sCommon.MaxPods `json:"maxPods,omitempty"`
-	MachineType          string             `json:"machineType"`
-	AssignPublicIP       bool               `json:"assignPublicIP,omitempty"`
-	Zone                 string             `json:"zone"`
-	OverrideImage        Image              `json:"overrideImage,omitempty"`
-	BootDiskSize         float32            `json:"bootDiskSize"`
-	MinSize              float32            `json:"minSize"`
-	MaxSize              float32            `json:"maxSize"`
-	Preemptible          bool               `json:"preemptible,omitempty"`
-	Subnet               string             `json:"subnet"`
-	LocalPersistentDisks *float32           `json:"localPersistentDisks,omitempty"`
+	Name                 string              `json:"name"`
+	Labels               mk8sCommon.Labels   `json:"labels,omitzero"`
+	Taints               mk8sCommon.Taints   `json:"taints,omitzero"`
+	MaxPods              *mk8sCommon.MaxPods `json:"maxPods,omitzero"`
+	MachineType          string              `json:"machineType"`
+	AssignPublicIP       *bool               `json:"assignPublicIP,omitzero"`
+	Zone                 string              `json:"zone"`
+	OverrideImage        *Image              `json:"overrideImage,omitzero"`
+	BootDiskSize         float64             `json:"bootDiskSize"`
+	MinSize              float64             `json:"minSize"`
+	MaxSize              float64             `json:"maxSize"`
+	Preemptible          *bool               `json:"preemptible,omitzero"`
+	Subnet               string              `json:"subnet"`
+	LocalPersistentDisks *float64            `json:"localPersistentDisks,omitzero"`
 }
 
 type GcpProviderLabels map[string]string
@@ -48,9 +48,9 @@ const (
 )
 
 type GcpProviderNetworking struct {
-	ServiceNetwork GcpProviderNetworkingServiceNetwork `json:"serviceNetwork,omitempty"`
-	PodNetwork     GcpProviderNetworkingPodNetwork     `json:"podNetwork,omitempty"`
-	DnsForwarder   string                              `json:"dnsForwarder,omitempty"`
+	ServiceNetwork GcpProviderNetworkingServiceNetwork `json:"serviceNetwork,omitzero"`
+	PodNetwork     GcpProviderNetworkingPodNetwork     `json:"podNetwork,omitzero"`
+	DnsForwarder   string                              `json:"dnsForwarder,omitzero"`
 }
 
 type GcpProviderImageRecommended string
@@ -68,24 +68,24 @@ type GcpProviderImageFamily struct {
 }
 
 type GcpProviderImage struct {
-	Recommended GcpProviderImageRecommended `json:"recommended,omitempty"`
-	Family      GcpProviderImageFamily      `json:"family,omitempty"`
-	Exact       string                      `json:"exact,omitempty"`
+	Recommended GcpProviderImageRecommended `json:"recommended,omitzero"`
+	Family      *GcpProviderImageFamily     `json:"family,omitzero"`
+	Exact       string                      `json:"exact,omitzero"`
 }
 
 type GcpProvider struct {
-	ProjectId        string                      `json:"projectId"`
-	Region           string                      `json:"region"`
-	Labels           GcpProviderLabels           `json:"labels,omitempty"`
-	Tags             []string                    `json:"tags,omitempty"`
-	Metadata         GcpProviderMetadata         `json:"metadata,omitempty"`
-	Network          string                      `json:"network"`
-	SaKeyLink        string                      `json:"saKeyLink"`
-	Networking       GcpProviderNetworking       `json:"networking,omitempty"`
-	PreInstallScript mk8sCommon.PreInstallScript `json:"preInstallScript,omitempty"`
-	Image            GcpProviderImage            `json:"image"`
-	NodePools        []GcpPool                   `json:"nodePools,omitempty"`
-	Autoscaler       mk8sCommon.AutoscalerConfig `json:"autoscaler,omitempty"`
+	ProjectId        string                       `json:"projectId"`
+	Region           string                       `json:"region"`
+	Labels           GcpProviderLabels            `json:"labels,omitzero"`
+	Tags             []string                     `json:"tags,omitzero"`
+	Metadata         GcpProviderMetadata          `json:"metadata,omitzero"`
+	Network          string                       `json:"network"`
+	SaKeyLink        string                       `json:"saKeyLink"`
+	Networking       *GcpProviderNetworking       `json:"networking,omitzero"`
+	PreInstallScript mk8sCommon.PreInstallScript  `json:"preInstallScript,omitzero"`
+	Image            GcpProviderImage             `json:"image"`
+	NodePools        []GcpPool                    `json:"nodePools,omitzero"`
+	Autoscaler       *mk8sCommon.AutoscalerConfig `json:"autoscaler,omitzero"`
 }
 
 type GcpProviderStatus map[string]any
@@ -105,7 +105,7 @@ type ImageFamily struct {
 }
 
 type Image struct {
-	Recommended ImageRecommended `json:"recommended,omitempty"`
-	Family      ImageFamily      `json:"family,omitempty"`
-	Exact       string           `json:"exact,omitempty"`
+	Recommended ImageRecommended `json:"recommended,omitzero"`
+	Family      *ImageFamily     `json:"family,omitzero"`
+	Exact       string           `json:"exact,omitzero"`
 }

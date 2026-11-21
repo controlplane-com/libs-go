@@ -1,22 +1,42 @@
-/* auto-generated */
+/* hand-maintained — canonical source of truth for the `agent` resource schema.
+ *
+ * These structs (formerly emitted by joi-to-go from nodelibs/schema/src/agent.ts)
+ * are now the CANONICAL definition. `validate:` struct tags carry the validation rules;
+ * pkg/validate.FromType reflects over these types to build the *validate.Rule tree
+ * that the engine runs — replacing the hand-written pkg/handlers/schema_agent.go
+ * builder. See nodelibs/schema/src/agent.ts for the original Joi source, and
+ * go-libs/schema/ipSet/models.go for the tag DSL grammar.
+ *
+ * The createSchema fork (name required, description defaults to the name) is
+ * expressed as: `required` on Name (a field tag) + a cross-field Refine registered
+ * in pkg/handlers (schema_reflect_agent.go) for the description-defaults-to-name
+ * part (a Joi.ref default a field tag cannot carry).
+ */
 
 package agent
 
 import "github.com/controlplane-com/libs-go/pkg/schema/base"
 
-type AgentTags map[string]any
+// AgentTags aliases base.Tags so the reflection base-type registry resolves it to
+// the shared TagsRule.
+type AgentTags = base.Tags
+
+// HttpHttpsUri is a URI restricted to the http/https schemes — the strongly-typed
+// replacement for the `uri,custom=uriHttpHttps` tag (Joi.string().uri({scheme:
+// ['http','https']})).
+type HttpHttpsUri string
 
 type Agent struct {
-	Id           string      `json:"id,omitempty"`
-	Name         base.Name   `json:"name,omitempty"`
-	Kind         base.Kind   `json:"kind,omitempty"`
-	Version      *float32    `json:"version,omitempty"`
-	Description  string      `json:"description,omitempty"`
-	Tags         AgentTags   `json:"tags,omitempty"`
-	Created      string      `json:"created,omitempty"`
-	LastModified string      `json:"lastModified,omitempty"`
-	Links        base.Links  `json:"links,omitempty"`
-	Status       AgentStatus `json:"status,omitempty"`
+	Id           string       `json:"id,omitzero" validate:"uuid,readOnly"`
+	Name         base.Name    `json:"name,omitzero"`
+	Kind         base.Kind    `json:"kind,omitzero"`
+	Version      *float64     `json:"version,omitzero" validate:"positive,integer,readOnly"`
+	Description  string       `json:"description,omitzero" validate:"trim,max=250,allow="`
+	Tags         AgentTags    `json:"tags,omitzero" validate:"default={}"`
+	Created      string       `json:"created,omitzero" validate:"date,readOnly"`
+	LastModified string       `json:"lastModified,omitzero" validate:"date,readOnly"`
+	Links        base.Links   `json:"links,omitzero" validate:"readOnly"`
+	Status       *AgentStatus `json:"status,omitzero"`
 }
 
 type AgentInfoProtocolVersion string
@@ -26,15 +46,19 @@ const (
 	AgentInfoProtocolVersionV2 AgentInfoProtocolVersion = "v2"
 )
 
+func (AgentInfoProtocolVersion) EnumValues() []string {
+	return []string{string(AgentInfoProtocolVersionV1), string(AgentInfoProtocolVersionV2)}
+}
+
 type AgentInfoEnv map[string]any
 
 type AgentInfo struct {
-	ProtocolVersion AgentInfoProtocolVersion `json:"protocolVersion,omitempty"`
-	InstanceId      string                   `json:"instanceId,omitempty"`
-	LastActive      string                   `json:"lastActive,omitempty"`
-	Env             AgentInfoEnv             `json:"env,omitempty"`
-	PeerCount       *float32                 `json:"peerCount,omitempty"`
-	ServiceCount    *float32                 `json:"serviceCount,omitempty"`
+	ProtocolVersion AgentInfoProtocolVersion `json:"protocolVersion,omitzero"`
+	InstanceId      string                   `json:"instanceId,omitzero"`
+	LastActive      string                   `json:"lastActive,omitzero" validate:"date,iso"`
+	Env             AgentInfoEnv             `json:"env,omitzero"`
+	PeerCount       *float64                 `json:"peerCount,omitzero" validate:"positive,integer"`
+	ServiceCount    *float64                 `json:"serviceCount,omitzero" validate:"positive,integer"`
 }
 
 type AgentStatusProtocolVersion string
@@ -44,9 +68,13 @@ const (
 	AgentStatusProtocolVersionV2 AgentStatusProtocolVersion = "v2"
 )
 
+func (AgentStatusProtocolVersion) EnumValues() []string {
+	return []string{string(AgentStatusProtocolVersionV1), string(AgentStatusProtocolVersionV2)}
+}
+
 type AgentStatus struct {
-	BootstrapConfig *BootstrapConfig           `json:"bootstrapConfig,omitempty"`
-	ProtocolVersion AgentStatusProtocolVersion `json:"protocolVersion,omitempty"`
+	BootstrapConfig *BootstrapConfig           `json:"bootstrapConfig,omitzero"`
+	ProtocolVersion AgentStatusProtocolVersion `json:"protocolVersion,omitzero"`
 }
 
 type BootstrapConfigProtocolVersion string
@@ -56,10 +84,14 @@ const (
 	BootstrapConfigProtocolVersionV2 BootstrapConfigProtocolVersion = "v2"
 )
 
+func (BootstrapConfigProtocolVersion) EnumValues() []string {
+	return []string{string(BootstrapConfigProtocolVersionV1), string(BootstrapConfigProtocolVersionV2)}
+}
+
 type BootstrapConfig struct {
-	RegistrationToken string                         `json:"registrationToken"`
-	AgentId           string                         `json:"agentId"`
-	AgentLink         string                         `json:"agentLink"`
-	HubEndpoint       string                         `json:"hubEndpoint"`
-	ProtocolVersion   BootstrapConfigProtocolVersion `json:"protocolVersion,omitempty"`
+	RegistrationToken string                         `json:"registrationToken" validate:"required"`
+	AgentId           string                         `json:"agentId" validate:"required"`
+	AgentLink         string                         `json:"agentLink" validate:"required"`
+	HubEndpoint       HttpHttpsUri                   `json:"hubEndpoint" validate:"required"`
+	ProtocolVersion   BootstrapConfigProtocolVersion `json:"protocolVersion,omitzero"`
 }

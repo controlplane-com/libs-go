@@ -9,6 +9,7 @@ import (
 
 	"github.com/stretchr/testify/suite"
 	"github.com/controlplane-com/libs-go/pkg/common"
+	"github.com/controlplane-com/libs-go/pkg/schema/port"
 	"github.com/controlplane-com/libs-go/pkg/schema/workload"
 )
 
@@ -24,11 +25,11 @@ func TestDeploymentSuite(t *testing.T) {
 
 // newTestWorkloadForDeployment creates a minimal workload spec for deployment testing.
 func newTestWorkloadForDeployment(name string) *workload.Workload {
-	port := float32(8080)
+	port := port.Port(8080)
 	return &workload.Workload{
-		Name:        name,
+		Name:        workload.WorkloadName(name),
 		Description: "Test workload for deployment integration test",
-		Version:     common.Float32Ptr(1),
+		Version:     common.Float64Ptr(1),
 		Tags: workload.WorkloadTags{
 			"test":        "true",
 			"integration": "libs-go",
@@ -162,7 +163,7 @@ func (s *DeploymentTestSuite) TestDeployment_Get() {
 
 	// Get the first deployment by name
 	deploymentName := deployments[0].Name
-	fetched, err := s.Client().Deployments().Get(ctx, s.TestOrg(), s.TestGVC(), wlName, deploymentName)
+	fetched, err := s.Client().Deployments().Get(ctx, s.TestOrg(), s.TestGVC(), wlName, string(deploymentName))
 	s.Require().NoError(err)
 	s.Equal(deploymentName, fetched.Name)
 	s.Equal("deployment", string(fetched.Kind))

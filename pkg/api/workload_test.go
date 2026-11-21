@@ -9,6 +9,7 @@ import (
 
 	"github.com/stretchr/testify/suite"
 	"github.com/controlplane-com/libs-go/pkg/common"
+	"github.com/controlplane-com/libs-go/pkg/schema/port"
 	"github.com/controlplane-com/libs-go/pkg/schema/query"
 	"github.com/controlplane-com/libs-go/pkg/schema/workload"
 )
@@ -24,11 +25,11 @@ func TestWorkloadSuite(t *testing.T) {
 
 // newTestWorkload creates a minimal workload spec for testing.
 func newTestWorkload(name string) *workload.Workload {
-	port := float32(8080)
+	port := port.Port(8080)
 	return &workload.Workload{
-		Name:        name,
+		Name:        workload.WorkloadName(name),
 		Description: "Test workload created by integration test",
-		Version:     common.Float32Ptr(1),
+		Version:     common.Float64Ptr(1),
 		Tags: workload.WorkloadTags{
 			"test":        "true",
 			"integration": "libs-go",
@@ -225,7 +226,7 @@ func (s *WorkloadTestSuite) TestWorkload_Query() {
 	found := false
 	for w, err := range s.Client().Workloads().Query(ctx, s.TestOrg(), q) {
 		s.Require().NoError(err)
-		if w.Name == wlName {
+		if string(w.Name) == wlName {
 			found = true
 			break
 		}

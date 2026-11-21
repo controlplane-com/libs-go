@@ -56,9 +56,22 @@ func (p *PostgresqlConnection) DbRo() *gorm.DB {
 	return p.dbRo
 }
 
-func postgresqlDb(c *ConnectionConfiguration) (*gorm.DB, error) {
+// buildDSN assembles the libpq keyword/value connection string, including the
+// optional server-side statement_timeout (ports connection.ts afterCreate `SET
+// statement_timeout`). Extracted for unit testing.
+func buildDSN(c *ConnectionConfiguration) string {
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
 		c.Host, c.User, c.Password, c.Database, c.Port)
+	if c.StatementTimeout > 0 {
+		// `options='-c statement_timeout=<ms>'` is a startup parameter applied to every
+		// physical connection — the driver-agnostic equivalent of a per-connection SET.
+		dsn += fmt.Sprintf(" options='-c statement_timeout=%d'", c.StatementTimeout.Milliseconds())
+	}
+	return dsn
+}
+
+func postgresqlDb(c *ConnectionConfiguration) (*gorm.DB, error) {
+	dsn := buildDSN(c)
 	gormDb, err := gorm.Open(postgres.Open(dsn), c.Config)
 	if err != nil {
 		return nil, err

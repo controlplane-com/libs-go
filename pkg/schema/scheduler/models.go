@@ -8,11 +8,11 @@ import (
 )
 
 type Hints struct {
-	CertificateRequestors []string `json:"certificateRequestors,omitempty"`
+	CertificateRequestors []string `json:"certificateRequestors,omitzero"`
 }
 
 type Keda struct {
-	Identity *identity.Identity `json:"identity,omitempty"`
+	Identity *identity.Identity `json:"identity,omitzero"`
 }
 
 type ScheduleCommandEventType string
@@ -35,16 +35,16 @@ const (
 type ScheduleCommand struct {
 	Id             string                      `json:"id"`
 	EventType      ScheduleCommandEventType    `json:"eventType"`
-	DeleteReason   ScheduleCommandDeleteReason `json:"deleteReason,omitempty"`
+	DeleteReason   ScheduleCommandDeleteReason `json:"deleteReason,omitzero"`
 	Timestamp      string                      `json:"timestamp"`
 	Gvc            *gvc.Gvc                    `json:"gvc"`
-	Org            *org.Org                    `json:"org,omitempty"`
-	GvcConfig      *gvc.GvcConfig              `json:"gvcConfig,omitempty"`
-	Workload       *workload.Workload          `json:"workload,omitempty"`
-	WorkloadConfig *workload.WorkloadConfig    `json:"workloadConfig,omitempty"`
-	Identity       *identity.Identity          `json:"identity,omitempty"`
-	Hints          *Hints                      `json:"hints,omitempty"`
-	Keda           *Keda                       `json:"keda,omitempty"`
+	Org            *org.Org                    `json:"org,omitzero"`
+	GvcConfig      *gvc.GvcConfig              `json:"gvcConfig,omitzero"`
+	Workload       *workload.Workload          `json:"workload,omitzero"`
+	WorkloadConfig *workload.WorkloadConfig    `json:"workloadConfig,omitzero"`
+	Identity       *identity.Identity          `json:"identity,omitzero"`
+	Hints          *Hints                      `json:"hints,omitzero"`
+	Keda           *Keda                       `json:"keda,omitzero"`
 }
 
 type ScheduleServiceCommandDeleteReason string
@@ -58,7 +58,7 @@ const (
 type ScheduleServiceCommand struct {
 	Id           string                             `json:"id"`
 	EventType    ScheduleCommandEventType           `json:"eventType"`
-	DeleteReason ScheduleServiceCommandDeleteReason `json:"deleteReason,omitempty"`
+	DeleteReason ScheduleServiceCommandDeleteReason `json:"deleteReason,omitzero"`
 	Timestamp    string                             `json:"timestamp"`
 	Service      any                                `json:"service"`
 }

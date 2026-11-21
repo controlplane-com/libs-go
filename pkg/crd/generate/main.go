@@ -147,8 +147,10 @@ fmt.Printf("Wrote CRD YAML for %s to %s\n")
 func findCRDStructs(dir string) ([]string, error) {
 	fset := token.NewFileSet()
 
-	// ParseDir parses the entire directory of Go code into an AST.
-	pkgs, err := parser.ParseDir(fset, dir, nil, 0)
+	// private.go holds internal types (Joi `.meta({private:true})`) and _test.go types are not in the importable package; neither is a CRD.
+	pkgs, err := parser.ParseDir(fset, dir, func(info os.FileInfo) bool {
+		return info.Name() != "private.go" && !strings.HasSuffix(info.Name(), "_test.go")
+	}, 0)
 	if err != nil {
 		return nil, err
 	}

@@ -28,7 +28,7 @@ func newTestIdentity(name string) *identity.Identity {
 	return &identity.Identity{
 		Name:        base.Name(name),
 		Description: "Test identity created by integration test",
-		Version:     common.Float32Ptr(1),
+		Version:     common.Float64Ptr(1),
 		Tags: identity.IdentityTags{
 			"test":        "true",
 			"integration": "libs-go",

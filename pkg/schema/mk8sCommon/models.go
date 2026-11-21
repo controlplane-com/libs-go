@@ -11,14 +11,14 @@ const (
 )
 
 type AutoscalerConfig struct {
-	Expander             []AutoscalerConfigExpander `json:"expander,omitempty"`
-	UnneededTime         string                     `json:"unneededTime,omitempty"`
-	UnreadyTime          string                     `json:"unreadyTime,omitempty"`
-	UtilizationThreshold *float32                   `json:"utilizationThreshold,omitempty"`
+	Expander             []AutoscalerConfigExpander `json:"expander,omitzero"`
+	UnneededTime         string                     `json:"unneededTime,omitzero"`
+	UnreadyTime          string                     `json:"unreadyTime,omitzero"`
+	UtilizationThreshold *float64                   `json:"utilizationThreshold,omitzero"`
 }
 
 type CacertsRes struct {
-	Cacerts string `json:"cacerts,omitempty"`
+	Cacerts string `json:"cacerts,omitzero"`
 }
 
 type GoDuration string
@@ -26,20 +26,20 @@ type GoDuration string
 type InitBody map[string]any
 
 type InitRes struct {
-	Script string `json:"script,omitempty"`
+	Script string `json:"script,omitzero"`
 }
 
 type JoinBody map[string]any
 
 type JoinRes struct {
-	Script string `json:"script,omitempty"`
+	Script string `json:"script,omitzero"`
 }
 
 type KubeConfigBody map[string]any
 
 type KubeConfigRes struct {
-	Kubeconfig string `json:"kubeconfig,omitempty"`
-	FileName   string `json:"fileName,omitempty"`
+	Kubeconfig string `json:"kubeconfig,omitzero"`
+	FileName   string `json:"fileName,omitzero"`
 }
 
 type Labels map[string]string
@@ -51,8 +51,8 @@ type NodePoolName string
 type PreInstallScript string
 
 type ReadyRes struct {
-	Ready   bool   `json:"ready,omitempty"`
-	Message string `json:"message,omitempty"`
+	Ready   *bool  `json:"ready,omitzero"`
+	Message string `json:"message,omitzero"`
 }
 
 type SshPublicKey string
@@ -66,15 +66,15 @@ const (
 )
 
 type Taint struct {
-	Key    SshPublicKey `json:"key,omitempty"`
-	Value  string       `json:"value,omitempty"`
-	Effect TaintEffect  `json:"effect,omitempty"`
+	Key    SshPublicKey `json:"key,omitzero"`
+	Value  string       `json:"value,omitzero"`
+	Effect TaintEffect  `json:"effect,omitzero"`
 }
 
 type Taints []Taint
 
 type UnmanagedPool struct {
 	Name   string `json:"name"`
-	Labels Labels `json:"labels,omitempty"`
-	Taints Taints `json:"taints,omitempty"`
+	Labels Labels `json:"labels,omitzero"`
+	Taints Taints `json:"taints,omitzero"`
 }

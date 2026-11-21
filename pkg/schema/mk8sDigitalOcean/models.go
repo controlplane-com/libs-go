@@ -5,14 +5,14 @@ package mk8sDigitalOcean
 import "github.com/controlplane-com/libs-go/pkg/schema/mk8sCommon"
 
 type DigitalOceanPool struct {
-	Name          string             `json:"name"`
-	Labels        mk8sCommon.Labels  `json:"labels,omitempty"`
-	Taints        mk8sCommon.Taints  `json:"taints,omitempty"`
-	MaxPods       mk8sCommon.MaxPods `json:"maxPods,omitempty"`
-	DropletSize   string             `json:"dropletSize"`
-	OverrideImage string             `json:"overrideImage,omitempty"`
-	MinSize       float32            `json:"minSize"`
-	MaxSize       float32            `json:"maxSize"`
+	Name          string              `json:"name"`
+	Labels        mk8sCommon.Labels   `json:"labels,omitzero"`
+	Taints        mk8sCommon.Taints   `json:"taints,omitzero"`
+	MaxPods       *mk8sCommon.MaxPods `json:"maxPods,omitzero"`
+	DropletSize   string              `json:"dropletSize"`
+	OverrideImage string              `json:"overrideImage,omitzero"`
+	MinSize       float64             `json:"minSize"`
+	MaxSize       float64             `json:"maxSize"`
 }
 
 type DigitalOceanProviderRegion string
@@ -54,24 +54,24 @@ const (
 )
 
 type DigitalOceanProviderNetworking struct {
-	ServiceNetwork DigitalOceanProviderNetworkingServiceNetwork `json:"serviceNetwork,omitempty"`
-	PodNetwork     DigitalOceanProviderNetworkingPodNetwork     `json:"podNetwork,omitempty"`
-	DnsForwarder   string                                       `json:"dnsForwarder,omitempty"`
+	ServiceNetwork DigitalOceanProviderNetworkingServiceNetwork `json:"serviceNetwork,omitzero"`
+	PodNetwork     DigitalOceanProviderNetworkingPodNetwork     `json:"podNetwork,omitzero"`
+	DnsForwarder   string                                       `json:"dnsForwarder,omitzero"`
 }
 
 type DigitalOceanProvider struct {
-	Region           DigitalOceanProviderRegion     `json:"region,omitempty"`
-	DigitalOceanTags []ValidTag                     `json:"digitalOceanTags,omitempty"`
-	Networking       DigitalOceanProviderNetworking `json:"networking,omitempty"`
-	PreInstallScript mk8sCommon.PreInstallScript    `json:"preInstallScript,omitempty"`
-	TokenSecretLink  string                         `json:"tokenSecretLink"`
-	VpcId            string                         `json:"vpcId"`
-	NodePools        []DigitalOceanPool             `json:"nodePools,omitempty"`
-	Image            string                         `json:"image"`
-	SshKeys          []string                       `json:"sshKeys"`
-	ExtraSshKeys     []mk8sCommon.SshPublicKey      `json:"extraSshKeys,omitempty"`
-	Autoscaler       mk8sCommon.AutoscalerConfig    `json:"autoscaler,omitempty"`
-	ReservedIPs      []string                       `json:"reservedIPs,omitempty"`
+	Region           DigitalOceanProviderRegion      `json:"region,omitzero" validate:"required"`
+	DigitalOceanTags []ValidTag                      `json:"digitalOceanTags,omitzero"`
+	Networking       *DigitalOceanProviderNetworking `json:"networking,omitzero"`
+	PreInstallScript mk8sCommon.PreInstallScript     `json:"preInstallScript,omitzero"`
+	TokenSecretLink  string                          `json:"tokenSecretLink"`
+	VpcId            string                          `json:"vpcId"`
+	NodePools        []DigitalOceanPool              `json:"nodePools,omitzero"`
+	Image            string                          `json:"image"`
+	SshKeys          []string                        `json:"sshKeys"`
+	ExtraSshKeys     []mk8sCommon.SshPublicKey       `json:"extraSshKeys,omitzero"`
+	Autoscaler       *mk8sCommon.AutoscalerConfig    `json:"autoscaler,omitzero"`
+	ReservedIPs      []string                        `json:"reservedIPs,omitzero"`
 }
 
 type DigitalOceanProviderStatus map[string]any

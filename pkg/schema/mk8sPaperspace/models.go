@@ -66,14 +66,14 @@ const (
 
 type PaperspacePool struct {
 	Name         string                     `json:"name"`
-	Labels       mk8sCommon.Labels          `json:"labels,omitempty"`
-	Taints       mk8sCommon.Taints          `json:"taints,omitempty"`
-	MaxPods      mk8sCommon.MaxPods         `json:"maxPods,omitempty"`
-	MinSize      float32                    `json:"minSize"`
-	MaxSize      float32                    `json:"maxSize"`
-	PublicIpType PaperspacePoolPublicIpType `json:"publicIpType,omitempty"`
-	BootDiskSize *float32                   `json:"bootDiskSize,omitempty"`
-	MachineType  PaperspacePoolMachineType  `json:"machineType,omitempty"`
+	Labels       mk8sCommon.Labels          `json:"labels,omitzero"`
+	Taints       mk8sCommon.Taints          `json:"taints,omitzero"`
+	MaxPods      *mk8sCommon.MaxPods        `json:"maxPods,omitzero"`
+	MinSize      float64                    `json:"minSize"`
+	MaxSize      float64                    `json:"maxSize"`
+	PublicIpType PaperspacePoolPublicIpType `json:"publicIpType,omitzero" validate:"required"`
+	BootDiskSize *float64                   `json:"bootDiskSize,omitzero"`
+	MachineType  PaperspacePoolMachineType  `json:"machineType,omitzero" validate:"required"`
 }
 
 type PaperspaceProviderRegion string
@@ -85,15 +85,15 @@ const (
 )
 
 type PaperspaceProvider struct {
-	Region             PaperspaceProviderRegion    `json:"region,omitempty"`
-	TokenSecretLink    string                      `json:"tokenSecretLink"`
-	SharedDrives       []string                    `json:"sharedDrives,omitempty"`
-	NodePools          []PaperspacePool            `json:"nodePools,omitempty"`
-	Autoscaler         mk8sCommon.AutoscalerConfig `json:"autoscaler,omitempty"`
-	UnmanagedNodePools []mk8sCommon.UnmanagedPool  `json:"unmanagedNodePools,omitempty"`
-	PreInstallScript   mk8sCommon.PreInstallScript `json:"preInstallScript,omitempty"`
-	UserIds            []string                    `json:"userIds,omitempty"`
-	NetworkId          string                      `json:"networkId"`
+	Region             PaperspaceProviderRegion     `json:"region,omitzero" validate:"required"`
+	TokenSecretLink    string                       `json:"tokenSecretLink"`
+	SharedDrives       []string                     `json:"sharedDrives,omitzero"`
+	NodePools          []PaperspacePool             `json:"nodePools,omitzero"`
+	Autoscaler         *mk8sCommon.AutoscalerConfig `json:"autoscaler,omitzero"`
+	UnmanagedNodePools []mk8sCommon.UnmanagedPool   `json:"unmanagedNodePools,omitzero"`
+	PreInstallScript   mk8sCommon.PreInstallScript  `json:"preInstallScript,omitzero"`
+	UserIds            []string                     `json:"userIds,omitzero"`
+	NetworkId          string                       `json:"networkId"`
 }
 
 type PaperspaceProviderStatus map[string]any

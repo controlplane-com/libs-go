@@ -31,18 +31,18 @@ func newTestDomain(name string, gvcLink string) *domain.Domain {
 	return &domain.Domain{
 		Name:        name,
 		Description: "Test domain created by integration test",
-		Version:     common.Float32Ptr(1),
+		Version:     common.Float64Ptr(1),
 		Tags: domain.DomainTags{
 			"test":        "true",
 			"integration": "libs-go",
 		},
-		Spec: domain.DomainSpec{
+		Spec: &domain.DomainSpec{
 			DnsMode:           domain.DomainSpecDnsModeNs,
-			GvcLink:           gvcLink,
+			GvcLink:           domain.GvcLink(gvcLink),
 			CertChallengeType: domain.DomainSpecCertChallengeTypeDns01,
 			Ports: []domain.ExternalPort{
 				{
-					Number:   common.Float32Ptr(443),
+					Number:   common.Float64Ptr(443),
 					Protocol: domain.ExternalPortProtocolHttp2,
 				},
 			},

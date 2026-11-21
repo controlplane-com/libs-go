@@ -1,4 +1,7 @@
-/* auto-generated */
+/* hand-maintained — canonical source of truth for the LocationDnsMessage schema.
+ * `validate:` tags drive pkg/validate.FromType. See nodelibs/schema/src/locationDns.ts.
+ * A NATS/DNS-updater message shape (SUB — not a registered kind).
+ */
 
 package locationDns
 
@@ -9,18 +12,25 @@ const (
 	LocationDnsMessageOperationDelete LocationDnsMessageOperation = "delete"
 )
 
+// EnumValues carries locationDns.ts's `valid('update','delete')` on the TYPE. The
+// field's own `valid=` tag says the same thing, but a second field of this type
+// declared without that tag would otherwise have no enum at all.
+func (LocationDnsMessageOperation) EnumValues() []string {
+	return []string{"update", "delete"}
+}
+
 type LocationDnsMessage struct {
-	Org                string                      `json:"org"`
-	Gvc                string                      `json:"gvc"`
-	GvcAlias           string                      `json:"gvcAlias"`
-	Workload           string                      `json:"workload"`
-	WorkloadId         string                      `json:"workloadId,omitempty"`
-	Operation          LocationDnsMessageOperation `json:"operation,omitempty"`
-	DeleteReason       string                      `json:"deleteReason,omitempty"`
-	Name               string                      `json:"name"`
-	Target             string                      `json:"target"`
-	AvailabilityZone   string                      `json:"availabilityZone,omitempty"`
-	RoutingTier        *float32                    `json:"routingTier,omitempty"`
-	LatencyOffsetMs    *float32                    `json:"latencyOffsetMs,omitempty"`
-	LatencyToleranceMs *float32                    `json:"latencyToleranceMs,omitempty"`
+	Org                string                      `json:"org" validate:"required"`
+	Gvc                string                      `json:"gvc" validate:"required"`
+	GvcAlias           string                      `json:"gvcAlias" validate:"required"`
+	Workload           string                      `json:"workload" validate:"required"`
+	WorkloadId         string                      `json:"workloadId,omitzero"`
+	Operation          LocationDnsMessageOperation `json:"operation,omitzero" validate:"valid=update|delete,required"`
+	DeleteReason       string                      `json:"deleteReason,omitzero"`
+	Name               string                      `json:"name" validate:"required"`
+	Target             string                      `json:"target" validate:"required"`
+	AvailabilityZone   string                      `json:"availabilityZone,omitzero"`
+	RoutingTier        *float64                    `json:"routingTier,omitzero" validate:"integer,min=0"`
+	LatencyOffsetMs    *float64                    `json:"latencyOffsetMs,omitzero" validate:"integer"`
+	LatencyToleranceMs *float64                    `json:"latencyToleranceMs,omitzero" validate:"integer,min=0"`
 }

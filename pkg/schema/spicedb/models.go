@@ -1,8 +1,18 @@
-/* auto-generated */
+/* hand-maintained — canonical source of truth for the `spicedbcluster` schema.
+ * `validate:` tags drive pkg/validate.FromType reflection (replaces the
+ * schema_spicedb.go builder). See nodelibs/schema/src/spicedb.ts. locations use
+ * the SpicedbLocationLink leaf type (LocalLink+toKind('location')); ClusterStatus
+ * .unknown(true) is a RegisterObjectRules (schema_reflect_datanet.go). */
 
 package spicedb
 
 import "github.com/controlplane-com/libs-go/pkg/schema/base"
+
+// SpicedbLocationLink is the constrained element type for spec.locations.
+type SpicedbLocationLink string
+
+// SpicedbClusterTags aliases base.Tags for the reflection base-type registry.
+type SpicedbClusterTags = base.Tags
 
 type ClusterSpecVersion string
 
@@ -11,17 +21,14 @@ const (
 )
 
 type ClusterSpec struct {
-	Version   ClusterSpecVersion `json:"version,omitempty"`
-	Locations []string           `json:"locations,omitempty"`
+	Version   ClusterSpecVersion    `json:"version,omitzero" validate:"valid=1.14.1"`
+	Locations []SpicedbLocationLink `json:"locations,omitzero" validate:"sort,min=1,dedupe"`
 }
 
+// ClusterStatus ports `Joi.object({externalEndpoint}).unknown(true)`.
 type ClusterStatus struct {
-	ExternalEndpoint string `json:"externalEndpoint,omitempty"`
-
-	/* WARNING!! Arbitrary properties are being ignored! */
+	ExternalEndpoint string `json:"externalEndpoint,omitzero"`
 }
-
-type SpicedbClusterTags map[string]any
 
 type SpicedbClusterSpecVersion string
 
@@ -30,21 +37,22 @@ const (
 )
 
 type SpicedbClusterSpec struct {
-	Version   SpicedbClusterSpecVersion `json:"version,omitempty"`
-	Locations []string                  `json:"locations,omitempty"`
+	Version   SpicedbClusterSpecVersion `json:"version,omitzero" validate:"valid=1.14.1"`
+	Locations []SpicedbLocationLink     `json:"locations,omitzero" validate:"sort,min=1,dedupe"`
 }
 
+// SpicedbCluster ports `Base.keys({spec: required, alias: optional readOnly, status})`.
 type SpicedbCluster struct {
-	Id           string             `json:"id,omitempty"`
-	Name         base.Name          `json:"name,omitempty"`
-	Kind         base.Kind          `json:"kind,omitempty"`
-	Version      *float32           `json:"version,omitempty"`
-	Description  string             `json:"description,omitempty"`
-	Tags         SpicedbClusterTags `json:"tags,omitempty"`
-	Created      string             `json:"created,omitempty"`
-	LastModified string             `json:"lastModified,omitempty"`
-	Links        base.Links         `json:"links,omitempty"`
-	Spec         SpicedbClusterSpec `json:"spec"`
-	Alias        string             `json:"alias,omitempty"`
-	Status       ClusterStatus      `json:"status,omitempty"`
+	Id           string             `json:"id,omitzero" validate:"uuid,readOnly"`
+	Name         base.Name          `json:"name,omitzero"`
+	Kind         base.Kind          `json:"kind,omitzero"`
+	Version      *float64           `json:"version,omitzero" validate:"positive,integer,readOnly"`
+	Description  string             `json:"description,omitzero" validate:"trim,max=250,allow="`
+	Tags         SpicedbClusterTags `json:"tags,omitzero" validate:"default={}"`
+	Created      string             `json:"created,omitzero" validate:"date,readOnly"`
+	LastModified string             `json:"lastModified,omitzero" validate:"date,readOnly"`
+	Links        base.Links         `json:"links,omitzero" validate:"readOnly"`
+	Spec         SpicedbClusterSpec `json:"spec" validate:"required"`
+	Alias        string             `json:"alias,omitzero" validate:"readOnly"`
+	Status       *ClusterStatus     `json:"status,omitzero"`
 }

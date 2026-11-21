@@ -1,15 +1,88 @@
-/* auto-generated */
+/* hand-maintained — canonical source of truth for the `gvc` resource schema.
+ *
+ * `validate:` struct tags drive pkg/validate.FromType. See
+ * nodelibs/schema/src/gvc.ts and the tag DSL on go-libs/schema/ipSet/models.go.
+ *
+ * Cross-partition embeds resolve via the base-type registry: env.EnvCollection
+ * (workload slice), envoy.EnvoyFilters (registered here -> EnvoyRule), query.Query
+ * (registered here -> QueryRule), and tracing.Tracing (Partition D, reflected).
+ *
+ * Object-level rules (validate.go):
+ *   - GvcSpec: endpointNamingFormat POST default (gvcSpecRefine);
+ *   - GvcLoadBalancerConfig: minScale<=maxScale (gvcLbScaleRefine).
+ */
 
 package gvc
 
-import "github.com/controlplane-com/libs-go/pkg/schema/base"
-import "github.com/controlplane-com/libs-go/pkg/schema/tracing"
-import "github.com/controlplane-com/libs-go/pkg/schema/envoy"
-import "github.com/controlplane-com/libs-go/pkg/schema/env"
-import "github.com/controlplane-com/libs-go/pkg/schema/workload"
-import "github.com/controlplane-com/libs-go/pkg/schema/query"
+import (
+	"github.com/controlplane-com/libs-go/pkg/schema/base"
+	"github.com/controlplane-com/libs-go/pkg/schema/env"
+	"github.com/controlplane-com/libs-go/pkg/schema/envoy"
+	"github.com/controlplane-com/libs-go/pkg/schema/query"
+	"github.com/controlplane-com/libs-go/pkg/schema/tracing"
+)
 
-type GvcTags map[string]any
+// LocationLink / SecretLink are localLink leaf types (validate.go)
+// so they can appear as slice elements (which cannot carry field tags).
+type LocationLink string
+type SecretLink string
+
+// IpSetLink / IdentityLink / WorkloadLink are localLink leaf types carrying their
+// kind check via the Validator interface (were localLink field tags).
+type IpSetLink string
+type IdentityLink string
+type WorkloadLink string
+
+// LocationLinkSet is a slice of location links deduplicated by value (was
+// custom=dedupeEmpty). The `sort` tag on the field applies on top.
+type LocationLinkSet []LocationLink
+
+// SecretLinkSet is a slice of secret links deduplicated by value (was
+// custom=dedupeEmpty). The `sort` tag on the field applies on top.
+type SecretLinkSet []SecretLink
+
+// MemFmt is a memory-quantity string (pattern=memFmt) whose unit casing is
+// normalised (custom=memNormalize). The field's max/default tags apply on top.
+type MemFmt string
+
+// CpuFmt is a cpu-quantity string (pattern=cpuFmt). The field's max/default tags
+// apply on top.
+type CpuFmt string
+
+// GvcTags aliases base.Tags for the reflection base-type registry.
+type GvcTags = base.Tags
+
+type GvcStatus map[string]any
+
+type Gvc struct {
+	Id           string     `json:"id,omitzero" validate:"uuid,readOnly"`
+	Name         base.Name  `json:"name,omitzero"`
+	Kind         base.Kind  `json:"kind,omitzero"`
+	Version      *float64   `json:"version,omitzero" validate:"positive,integer,readOnly"`
+	Description  string     `json:"description,omitzero" validate:"trim,max=250,allow="`
+	Tags         GvcTags    `json:"tags,omitzero" validate:"default={}"`
+	Created      string     `json:"created,omitzero" validate:"date,readOnly"`
+	LastModified string     `json:"lastModified,omitzero" validate:"date,readOnly"`
+	Links        base.Links `json:"links,omitzero" validate:"readOnly"`
+	Alias        string     `json:"alias,omitzero" validate:"optional,readOnly"`
+	Spec         *GvcSpec   `json:"spec,omitzero"`
+	Status       *GvcStatus `json:"status,omitzero"`
+}
+
+type LocationOptionsItem struct {
+	LocationLink       LocationLink `json:"locationLink" validate:"required"`
+	RoutingTier        *float64     `json:"routingTier,omitzero" validate:"integer,min=0,optional"`
+	LatencyOffsetMs    *float64     `json:"latencyOffsetMs,omitzero" validate:"integer,optional"`
+	LatencyToleranceMs *float64     `json:"latencyToleranceMs,omitzero" validate:"integer,min=0,optional"`
+}
+
+type LocationOptions []LocationOptionsItem //ts:export
+
+type StaticPlacement struct {
+	LocationLinks   LocationLinkSet `json:"locationLinks,omitzero" validate:"sort"`
+	LocationQuery   *query.Query    `json:"locationQuery,omitzero"`
+	LocationOptions LocationOptions `json:"locationOptions,omitzero" validate:"optional"`
+}
 
 type GvcSpecEndpointNamingFormat string
 
@@ -19,230 +92,100 @@ const (
 	GvcSpecEndpointNamingFormatOrg     GvcSpecEndpointNamingFormat = "org"
 )
 
-type GvcSpecTracingLightstep struct {
-	Endpoint    string `json:"endpoint"`
-	Credentials string `json:"credentials,omitempty"`
-}
-
-type GvcSpecTracingCustomTags map[string]tracing.TracingCustomTag
-
-type GvcSpecTracingProviderOtel struct {
-	Endpoint string `json:"endpoint"`
-}
-
-type GvcSpecTracingProviderLightstep struct {
-	Endpoint    string `json:"endpoint"`
-	Credentials string `json:"credentials,omitempty"`
-}
-
-type GvcSpecTracingProviderControlplane struct {
-}
-
-type GvcSpecTracingProvider struct {
-	Otel         *GvcSpecTracingProviderOtel         `json:"otel,omitempty"`
-	Lightstep    *GvcSpecTracingProviderLightstep    `json:"lightstep,omitempty"`
-	Controlplane *GvcSpecTracingProviderControlplane `json:"controlplane,omitempty"`
-}
-
-type GvcSpecTracing struct {
-	Sampling   float32                   `json:"sampling"`
-	Lightstep  *GvcSpecTracingLightstep  `json:"lightstep,omitempty"`
-	CustomTags *GvcSpecTracingCustomTags `json:"customTags,omitempty"`
-	Provider   *GvcSpecTracingProvider   `json:"provider,omitempty"`
-}
-
 type GvcSpecSidecar struct {
-	Envoy envoy.EnvoyFilters `json:"envoy,omitempty"`
+	Envoy *envoy.EnvoyFilters `json:"envoy,omitzero"`
 }
 
 type GvcSpecLoadBalancerMultiZone struct {
-	Enabled bool `json:"enabled,omitempty"`
+	Enabled *bool `json:"enabled,omitzero" validate:"default=false,optional"`
 }
 
 type GvcSpecLoadBalancerRedirectClass struct {
-	Status5xx string `json:"status5xx,omitempty"`
-	Status401 string `json:"status401,omitempty"`
+	Status5xx string `json:"status5xx,omitzero" validate:"uri,optional"`
+	Status401 string `json:"status401,omitzero" validate:"optional"`
 }
 
 type GvcSpecLoadBalancerRedirect struct {
-	Class *GvcSpecLoadBalancerRedirectClass `json:"class,omitempty"`
+	Class *GvcSpecLoadBalancerRedirectClass `json:"class,omitzero" validate:"optional"`
 }
 
 type GvcSpecLoadBalancer struct {
-	Dedicated      bool                          `json:"dedicated,omitempty"`
-	MultiZone      *GvcSpecLoadBalancerMultiZone `json:"multiZone,omitempty"`
-	TrustedProxies *float32                      `json:"trustedProxies,omitempty"`
-	Redirect       *GvcSpecLoadBalancerRedirect  `json:"redirect,omitempty"`
-	IpSet          string                        `json:"ipSet,omitempty"`
+	Dedicated      *bool                         `json:"dedicated,omitzero"`
+	MultiZone      *GvcSpecLoadBalancerMultiZone `json:"multiZone,omitzero" validate:"optional"`
+	TrustedProxies *float64                      `json:"trustedProxies,omitzero" validate:"integer,min=0,max=2,default=0"`
+	Redirect       *GvcSpecLoadBalancerRedirect  `json:"redirect,omitzero" validate:"optional"`
+	IpSet          IpSetLink                     `json:"ipSet,omitzero" validate:"optional"`
 }
 
 type GvcSpecKeda struct {
-	Enabled      bool     `json:"enabled,omitempty"`
-	IdentityLink string   `json:"identityLink,omitempty"`
-	Secrets      []string `json:"secrets,omitempty"`
+	Enabled      *bool         `json:"enabled,omitzero" validate:"default=false"`
+	IdentityLink IdentityLink  `json:"identityLink,omitzero" validate:"optional"`
+	Secrets      SecretLinkSet `json:"secrets,omitzero" validate:"sort"`
 }
 
 type GvcSpec struct {
-	StaticPlacement      *StaticPlacement            `json:"staticPlacement,omitempty"`
-	PullSecretLinks      []string                    `json:"pullSecretLinks,omitempty"`
-	Domain               string                      `json:"domain,omitempty"`
-	EndpointNamingFormat GvcSpecEndpointNamingFormat `json:"endpointNamingFormat,omitempty"`
-	AliasWorkloadLink    string                      `json:"aliasWorkloadLink,omitempty"`
-	Tracing              *GvcSpecTracing             `json:"tracing,omitempty"`
-	Sidecar              *GvcSpecSidecar             `json:"sidecar,omitempty"`
-	Env                  []env.EnvVar                `json:"env,omitempty"`
-	LoadBalancer         *GvcSpecLoadBalancer        `json:"loadBalancer,omitempty"`
-	Keda                 *GvcSpecKeda                `json:"keda,omitempty"`
+	StaticPlacement      *StaticPlacement            `json:"staticPlacement,omitzero"`
+	PullSecretLinks      SecretLinkSet               `json:"pullSecretLinks,omitzero" validate:"sort"`
+	Domain               string                      `json:"domain,omitzero" validate:"domaintlds,optional"`
+	EndpointNamingFormat GvcSpecEndpointNamingFormat `json:"endpointNamingFormat,omitzero" validate:"valid=default|legacy|org"`
+	AliasWorkloadLink    WorkloadLink                `json:"aliasWorkloadLink,omitzero" validate:"optional"`
+	Tracing              *tracing.Tracing            `json:"tracing,omitzero"`
+	Sidecar              *GvcSpecSidecar             `json:"sidecar,omitzero"`
+	Env                  env.EnvCollection           `json:"env,omitzero" validate:"optional"`
+	LoadBalancer         *GvcSpecLoadBalancer        `json:"loadBalancer,omitzero"`
+	Keda                 *GvcSpecKeda                `json:"keda,omitzero"`
 }
 
-type Gvc struct {
-	Id           string     `json:"id,omitempty"`
-	Name         base.Name  `json:"name,omitempty"`
-	Kind         base.Kind  `json:"kind,omitempty"`
-	Version      *float32   `json:"version,omitempty"`
-	Description  string     `json:"description,omitempty"`
-	Tags         GvcTags    `json:"tags,omitempty"`
-	Created      string     `json:"created,omitempty"`
-	LastModified string     `json:"lastModified,omitempty"`
-	Links        base.Links `json:"links,omitempty"`
-	Alias        string     `json:"alias,omitempty"`
-	Spec         *GvcSpec   `json:"spec,omitempty"`
-	Status       *GvcStatus `json:"status,omitempty"`
-}
+// --- config sub-schemas (gvc.ts:190+; not a registered kind) ---
 
 type GvcConfigClusters map[string]GvcConfigClusterEntry
 
 type GvcConfigPreferredClusters map[string]GvcConfigPreferredClusterEntry
 
 type GvcConfigProxy struct {
-	MinCpu *float32 `json:"minCpu,omitempty"`
-}
-
-type GvcConfigLoadBalancerReadinessProbe struct {
-	TimeoutSeconds   *float32 `json:"timeoutSeconds,omitempty"`
-	FailureThreshold *float32 `json:"failureThreshold,omitempty"`
-	SuccessThreshold *float32 `json:"successThreshold,omitempty"`
-}
-
-type GvcConfigLoadBalancerLivenessProbe struct {
-	TimeoutSeconds   *float32 `json:"timeoutSeconds,omitempty"`
-	FailureThreshold *float32 `json:"failureThreshold,omitempty"`
-	SuccessThreshold *float32 `json:"successThreshold,omitempty"`
-}
-
-type GvcConfigLoadBalancer struct {
-	DistributedIngress bool                                 `json:"distributedIngress,omitempty"`
-	DeploymentCount    *float32                             `json:"deploymentCount,omitempty"`
-	MinScale           *float32                             `json:"minScale,omitempty"`
-	MaxScale           *float32                             `json:"maxScale,omitempty"`
-	MinCpu             string                               `json:"minCpu,omitempty"`
-	MinMemory          string                               `json:"minMemory,omitempty"`
-	ReadinessProbe     *GvcConfigLoadBalancerReadinessProbe `json:"readinessProbe,omitempty"`
-	LivenessProbe      *GvcConfigLoadBalancerLivenessProbe  `json:"livenessProbe,omitempty"`
+	MinCpu *float64 `json:"minCpu,omitzero" validate:"min=0,max=1000,optional"`
 }
 
 type GvcConfigCapacityAi struct {
-	MemToCpuRatio *float32 `json:"memToCpuRatio,omitempty"`
+	MemToCpuRatio *float64 `json:"memToCpuRatio,omitzero" validate:"integer,min=1,max=10"`
 }
 
 type GvcConfig struct {
-	Clusters          GvcConfigClusters          `json:"clusters,omitempty"`
-	PreferredClusters GvcConfigPreferredClusters `json:"preferredClusters,omitempty"`
-	Proxy             *GvcConfigProxy            `json:"proxy,omitempty"`
-	LoadBalancer      *GvcConfigLoadBalancer     `json:"loadBalancer,omitempty"`
-	ThinProvision     *float32                   `json:"thinProvision,omitempty"`
-	LargeDiskSize     workload.Memory            `json:"largeDiskSize,omitempty"`
-	CapacityAI        *GvcConfigCapacityAi       `json:"capacityAI,omitempty"`
-	Spire             bool                       `json:"spire,omitempty"`
+	Clusters          GvcConfigClusters          `json:"clusters,omitzero"`
+	PreferredClusters GvcConfigPreferredClusters `json:"preferredClusters,omitzero"`
+	Proxy             *GvcConfigProxy            `json:"proxy,omitzero" validate:"optional"`
+	LoadBalancer      *GvcLoadBalancerConfig     `json:"loadBalancer,omitzero" validate:"optional"`
+	ThinProvision     *float64                   `json:"thinProvision,omitzero" validate:"min=0.01,max=1.0"`
+	LargeDiskSize     MemFmt                     `json:"largeDiskSize,omitzero" validate:"max=20"`
+	CapacityAI        *GvcConfigCapacityAi       `json:"capacityAI,omitzero"`
+	Spire             *bool                      `json:"spire,omitzero"`
 }
 
 type GvcConfigClusterEntry struct {
-	ClusterId string `json:"clusterId,omitempty"`
-	Since     string `json:"since,omitempty"`
+	ClusterId string `json:"clusterId,omitzero"`
+	Since     string `json:"since,omitzero" validate:"date"`
 }
 
 type GvcConfigPreferredClusterEntry struct {
-	ClusterId string `json:"clusterId,omitempty"`
+	ClusterId string `json:"clusterId,omitzero"`
 }
 
-type GvcLoadBalancerConfigReadinessProbe struct {
-	TimeoutSeconds   *float32 `json:"timeoutSeconds,omitempty"`
-	FailureThreshold *float32 `json:"failureThreshold,omitempty"`
-	SuccessThreshold *float32 `json:"successThreshold,omitempty"`
+type GvcLoadBalancerProbe struct {
+	TimeoutSeconds   *float64 `json:"timeoutSeconds,omitzero" validate:"integer,min=1,max=60"`
+	FailureThreshold *float64 `json:"failureThreshold,omitzero" validate:"integer,min=1,max=10"`
+	SuccessThreshold *float64 `json:"successThreshold,omitzero" validate:"integer,min=1,max=10"`
 }
 
-type GvcLoadBalancerConfigLivenessProbe struct {
-	TimeoutSeconds   *float32 `json:"timeoutSeconds,omitempty"`
-	FailureThreshold *float32 `json:"failureThreshold,omitempty"`
-	SuccessThreshold *float32 `json:"successThreshold,omitempty"`
-}
-
+// GvcLoadBalancerConfig ports gvc.ts:190. gvcLbScaleRefine enforces minScale<=maxScale.
 type GvcLoadBalancerConfig struct {
-	DistributedIngress bool                                 `json:"distributedIngress,omitempty"`
-	DeploymentCount    *float32                             `json:"deploymentCount,omitempty"`
-	MinScale           *float32                             `json:"minScale,omitempty"`
-	MaxScale           *float32                             `json:"maxScale,omitempty"`
-	MinCpu             string                               `json:"minCpu,omitempty"`
-	MinMemory          string                               `json:"minMemory,omitempty"`
-	ReadinessProbe     *GvcLoadBalancerConfigReadinessProbe `json:"readinessProbe,omitempty"`
-	LivenessProbe      *GvcLoadBalancerConfigLivenessProbe  `json:"livenessProbe,omitempty"`
-}
-
-type GvcStatus map[string]any
-
-type LocationOptions []LocationOptionsItem
-
-type LocationOptionsItem struct {
-	LocationLink       string   `json:"locationLink"`
-	RoutingTier        *float32 `json:"routingTier,omitempty"`
-	LatencyOffsetMs    *float32 `json:"latencyOffsetMs,omitempty"`
-	LatencyToleranceMs *float32 `json:"latencyToleranceMs,omitempty"`
-}
-
-type StaticPlacementLocationQueryContext map[string]any
-
-type StaticPlacementLocationQueryFetch string
-
-const (
-	StaticPlacementLocationQueryFetchLinks StaticPlacementLocationQueryFetch = "links"
-	StaticPlacementLocationQueryFetchItems StaticPlacementLocationQueryFetch = "items"
-)
-
-type StaticPlacementLocationQuerySpecMatch string
-
-const (
-	StaticPlacementLocationQuerySpecMatchAll  StaticPlacementLocationQuerySpecMatch = "all"
-	StaticPlacementLocationQuerySpecMatchAny  StaticPlacementLocationQuerySpecMatch = "any"
-	StaticPlacementLocationQuerySpecMatchNone StaticPlacementLocationQuerySpecMatch = "none"
-)
-
-type StaticPlacementLocationQuerySpecSortOrder string
-
-const (
-	StaticPlacementLocationQuerySpecSortOrderAsc  StaticPlacementLocationQuerySpecSortOrder = "asc"
-	StaticPlacementLocationQuerySpecSortOrderDesc StaticPlacementLocationQuerySpecSortOrder = "desc"
-)
-
-type StaticPlacementLocationQuerySpecSort struct {
-	By    string                                    `json:"by"`
-	Order StaticPlacementLocationQuerySpecSortOrder `json:"order,omitempty"`
-}
-
-type StaticPlacementLocationQuerySpec struct {
-	Match StaticPlacementLocationQuerySpecMatch `json:"match,omitempty"`
-	Terms []query.Term                          `json:"terms,omitempty"`
-	Sort  *StaticPlacementLocationQuerySpecSort `json:"sort,omitempty"`
-}
-
-type StaticPlacementLocationQuery struct {
-	Kind    base.Kind                            `json:"kind,omitempty"`
-	Context *StaticPlacementLocationQueryContext `json:"context,omitempty"`
-	Fetch   StaticPlacementLocationQueryFetch    `json:"fetch,omitempty"`
-	Spec    *StaticPlacementLocationQuerySpec    `json:"spec,omitempty"`
-}
-
-type StaticPlacement struct {
-	LocationLinks   []string                      `json:"locationLinks,omitempty"`
-	LocationQuery   *StaticPlacementLocationQuery `json:"locationQuery,omitempty"`
-	LocationOptions *[]LocationOptionsItem        `json:"locationOptions,omitempty"`
+	// Retired (master 54353d516): still validated, then stripped, so stored configs keep
+	// validating and the key is never written back or echoed.
+	DistributedIngress *bool                 `json:"distributedIngress,omitzero" validate:"strip"`
+	DeploymentCount    *float64              `json:"deploymentCount,omitzero" validate:"integer,min=1,max=10,optional"`
+	MinScale           *float64              `json:"minScale,omitzero" validate:"integer,min=2,default=2"`
+	MaxScale           *float64              `json:"maxScale,omitzero" validate:"integer,min=2,default=10"`
+	MinCpu             CpuFmt                `json:"minCpu,omitzero" validate:"max=20,default=100m"`
+	MinMemory          MemFmt                `json:"minMemory,omitzero" validate:"max=20,default=500Mi"`
+	ReadinessProbe     *GvcLoadBalancerProbe `json:"readinessProbe,omitzero" validate:"optional"`
+	LivenessProbe      *GvcLoadBalancerProbe `json:"livenessProbe,omitzero" validate:"optional"`
 }

@@ -1,4 +1,6 @@
-/* auto-generated */
+/* hand-maintained — canonical source of truth (nodelibs/schema/src/deployment.ts).
+ * `joi:` tags drive pkg/validate.FromType; DSL on go-libs/schema/ipSet/models.go.
+ * Registered as the `deployment` kind via reflection in schema_reflect_workload.go. */
 
 package deployment
 
@@ -7,44 +9,46 @@ import "github.com/controlplane-com/libs-go/pkg/schema/cronjob"
 import "github.com/controlplane-com/libs-go/pkg/schema/containerstatus"
 
 type Deployment struct {
-	Name         string           `json:"name"`
-	Kind         base.Kind        `json:"kind,omitempty"`
-	Links        base.Links       `json:"links,omitempty"`
-	LastModified string           `json:"lastModified,omitempty"`
-	Status       DeploymentStatus `json:"status,omitempty"`
-}
-
-type DeploymentIdentity struct {
-	Link      string   `json:"link,omitempty"`
-	Version   *float32 `json:"version,omitempty"`
-	AppliedAt string   `json:"appliedAt,omitempty"`
+	Name         base.Name         `json:"name" validate:"required"`
+	Kind         base.Kind         `json:"kind,omitzero"`
+	Links        base.Links        `json:"links,omitzero"`
+	LastModified string            `json:"lastModified,omitzero" validate:"date,iso"`
+	Status       *DeploymentStatus `json:"status,omitzero"`
 }
 
 type DeploymentStatus struct {
-	Endpoint                  string                       `json:"endpoint,omitempty"`
-	Remote                    string                       `json:"remote,omitempty"`
-	LastProcessedVersion      *float32                     `json:"lastProcessedVersion,omitempty"`
-	ExpectedDeploymentVersion *float32                     `json:"expectedDeploymentVersion,omitempty"`
-	Identity                  DeploymentIdentity           `json:"identity,omitempty"`
-	Internal                  any                          `json:"internal,omitempty"`
-	Ready                     bool                         `json:"ready,omitempty"`
-	Deploying                 bool                         `json:"deploying,omitempty"`
-	Versions                  []DeploymentVersion          `json:"versions,omitempty"`
-	JobExecutions             []cronjob.JobExecutionStatus `json:"jobExecutions,omitempty"`
-	Message                   string                       `json:"message,omitempty"`
-	DesiredScale              *float32                     `json:"desiredScale,omitempty"`
+	Endpoint                  string                       `json:"endpoint,omitzero" validate:"uri"`
+	Remote                    string                       `json:"remote,omitzero" validate:"uri"`
+	LastProcessedVersion      *float64                     `json:"lastProcessedVersion,omitzero" validate:"integer"`
+	ExpectedDeploymentVersion *float64                     `json:"expectedDeploymentVersion,omitzero" validate:"integer"`
+	Identity                  *DeploymentIdentity          `json:"identity,omitzero"`
+	Internal                  any                          `json:"internal,omitzero"`
+	Ready                     *bool                        `json:"ready,omitzero"`
+	Deploying                 *bool                        `json:"deploying,omitzero"`
+	Versions                  []DeploymentVersion          `json:"versions,omitzero"`
+	JobExecutions             []cronjob.JobExecutionStatus `json:"jobExecutions,omitzero"`
+	Message                   string                       `json:"message,omitzero" validate:"default=,allow="`
+	DesiredScale              *float64                     `json:"desiredScale,omitzero" validate:"integer"`
+}
+
+// DeploymentIdentity is the last identity version fully applied in this location
+// (deployment.ts DeploymentIdentity, master 621e7da48).
+type DeploymentIdentity struct {
+	Link      string   `json:"link,omitzero"`
+	Version   *float64 `json:"version,omitzero" validate:"integer"`
+	AppliedAt string   `json:"appliedAt,omitzero" validate:"date"`
 }
 
 type DeploymentVersionContainers map[string]containerstatus.ContainerStatus
 
 type DeploymentVersion struct {
-	Name         string                      `json:"name,omitempty"`
-	Created      string                      `json:"created,omitempty"`
-	Workload     *float32                    `json:"workload,omitempty"`
-	Gvc          *float32                    `json:"gvc,omitempty"`
-	Containers   DeploymentVersionContainers `json:"containers,omitempty"`
-	Ready        bool                        `json:"ready,omitempty"`
-	Message      string                      `json:"message,omitempty"`
-	Zone         string                      `json:"zone,omitempty"`
-	DesiredScale *float32                    `json:"desiredScale,omitempty"`
+	Name         string                      `json:"name,omitzero"`
+	Created      string                      `json:"created,omitzero" validate:"date"`
+	Workload     *float64                    `json:"workload,omitzero"`
+	Gvc          *float64                    `json:"gvc,omitzero"`
+	Containers   DeploymentVersionContainers `json:"containers,omitzero"`
+	Ready        *bool                       `json:"ready,omitzero"`
+	Message      string                      `json:"message,omitzero" validate:"allow="`
+	Zone         string                      `json:"zone,omitzero" validate:"allow="`
+	DesiredScale *float64                    `json:"desiredScale,omitzero" validate:"integer"`
 }

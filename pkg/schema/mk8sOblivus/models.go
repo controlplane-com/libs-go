@@ -45,13 +45,13 @@ const (
 )
 
 type OblivusPool struct {
-	Name    string             `json:"name"`
-	Labels  mk8sCommon.Labels  `json:"labels,omitempty"`
-	Taints  mk8sCommon.Taints  `json:"taints,omitempty"`
-	MaxPods mk8sCommon.MaxPods `json:"maxPods,omitempty"`
-	MinSize float32            `json:"minSize"`
-	MaxSize float32            `json:"maxSize"`
-	Flavor  OblivusPoolFlavor  `json:"flavor,omitempty"`
+	Name    string              `json:"name"`
+	Labels  mk8sCommon.Labels   `json:"labels,omitzero"`
+	Taints  mk8sCommon.Taints   `json:"taints,omitzero"`
+	MaxPods *mk8sCommon.MaxPods `json:"maxPods,omitzero"`
+	MinSize float64             `json:"minSize"`
+	MaxSize float64             `json:"maxSize"`
+	Flavor  OblivusPoolFlavor   `json:"flavor,omitzero" validate:"required"`
 }
 
 type OblivusProviderDatacenter string
@@ -62,13 +62,13 @@ const (
 )
 
 type OblivusProvider struct {
-	Datacenter         OblivusProviderDatacenter   `json:"datacenter,omitempty"`
-	TokenSecretLink    string                      `json:"tokenSecretLink"`
-	NodePools          []OblivusPool               `json:"nodePools,omitempty"`
-	SshKeys            []string                    `json:"sshKeys,omitempty"`
-	UnmanagedNodePools []mk8sCommon.UnmanagedPool  `json:"unmanagedNodePools,omitempty"`
-	Autoscaler         mk8sCommon.AutoscalerConfig `json:"autoscaler,omitempty"`
-	PreInstallScript   mk8sCommon.PreInstallScript `json:"preInstallScript,omitempty"`
+	Datacenter         OblivusProviderDatacenter    `json:"datacenter,omitzero" validate:"required"`
+	TokenSecretLink    string                       `json:"tokenSecretLink"`
+	NodePools          []OblivusPool                `json:"nodePools,omitzero"`
+	SshKeys            []string                     `json:"sshKeys,omitzero"`
+	UnmanagedNodePools []mk8sCommon.UnmanagedPool   `json:"unmanagedNodePools,omitzero"`
+	Autoscaler         *mk8sCommon.AutoscalerConfig `json:"autoscaler,omitzero"`
+	PreInstallScript   mk8sCommon.PreInstallScript  `json:"preInstallScript,omitzero"`
 }
 
 type OblivusProviderStatus map[string]any

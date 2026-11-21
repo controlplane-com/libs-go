@@ -19,14 +19,14 @@ const (
 )
 
 type Ami struct {
-	Recommended AmiRecommended `json:"recommended,omitempty"`
-	Exact       string         `json:"exact,omitempty"`
+	Recommended AmiRecommended `json:"recommended,omitzero"`
+	Exact       string         `json:"exact,omitzero"`
 }
 
 type AssumeRoleLink struct {
 	RoleArn           string `json:"roleArn"`
-	ExternalId        string `json:"externalId,omitempty"`
-	SessionNamePrefix string `json:"sessionNamePrefix,omitempty"`
+	ExternalId        string `json:"externalId,omitzero"`
+	SessionNamePrefix string `json:"sessionNamePrefix,omitzero"`
 }
 
 type AwsPoolSpotAllocationStrategy string
@@ -39,25 +39,25 @@ const (
 )
 
 type AwsPoolCpuOptions struct {
-	NestedVirtualization bool `json:"nestedVirtualization,omitempty"`
+	NestedVirtualization *bool `json:"nestedVirtualization,omitzero"`
 }
 
 type AwsPool struct {
 	Name                                string                        `json:"name"`
-	Labels                              mk8sCommon.Labels             `json:"labels,omitempty"`
-	Taints                              mk8sCommon.Taints             `json:"taints,omitempty"`
-	MaxPods                             mk8sCommon.MaxPods            `json:"maxPods,omitempty"`
+	Labels                              mk8sCommon.Labels             `json:"labels,omitzero"`
+	Taints                              mk8sCommon.Taints             `json:"taints,omitzero"`
+	MaxPods                             *mk8sCommon.MaxPods           `json:"maxPods,omitzero"`
 	InstanceTypes                       []string                      `json:"instanceTypes"`
-	OverrideImage                       Ami                           `json:"overrideImage,omitempty"`
-	BootDiskSize                        float32                       `json:"bootDiskSize"`
-	MinSize                             float32                       `json:"minSize"`
-	MaxSize                             float32                       `json:"maxSize"`
-	OnDemandBaseCapacity                float32                       `json:"onDemandBaseCapacity"`
-	OnDemandPercentageAboveBaseCapacity float32                       `json:"onDemandPercentageAboveBaseCapacity"`
-	SpotAllocationStrategy              AwsPoolSpotAllocationStrategy `json:"spotAllocationStrategy,omitempty"`
+	OverrideImage                       *Ami                          `json:"overrideImage,omitzero"`
+	BootDiskSize                        float64                       `json:"bootDiskSize"`
+	MinSize                             float64                       `json:"minSize"`
+	MaxSize                             float64                       `json:"maxSize"`
+	OnDemandBaseCapacity                float64                       `json:"onDemandBaseCapacity"`
+	OnDemandPercentageAboveBaseCapacity float64                       `json:"onDemandPercentageAboveBaseCapacity"`
+	SpotAllocationStrategy              AwsPoolSpotAllocationStrategy `json:"spotAllocationStrategy,omitzero"`
 	SubnetIds                           []string                      `json:"subnetIds"`
-	ExtraSecurityGroupIds               []string                      `json:"extraSecurityGroupIds,omitempty"`
-	CpuOptions                          AwsPoolCpuOptions             `json:"cpuOptions,omitempty"`
+	ExtraSecurityGroupIds               []string                      `json:"extraSecurityGroupIds,omitzero"`
+	CpuOptions                          *AwsPoolCpuOptions            `json:"cpuOptions,omitzero"`
 }
 
 type AwsProviderRegion string
@@ -117,9 +117,9 @@ const (
 )
 
 type AwsProviderNetworking struct {
-	ServiceNetwork AwsProviderNetworkingServiceNetwork `json:"serviceNetwork,omitempty"`
-	PodNetwork     AwsProviderNetworkingPodNetwork     `json:"podNetwork,omitempty"`
-	DnsForwarder   string                              `json:"dnsForwarder,omitempty"`
+	ServiceNetwork AwsProviderNetworkingServiceNetwork `json:"serviceNetwork,omitzero"`
+	PodNetwork     AwsProviderNetworkingPodNetwork     `json:"podNetwork,omitzero"`
+	DnsForwarder   string                              `json:"dnsForwarder,omitzero"`
 }
 
 type AwsProviderImageRecommended string
@@ -137,26 +137,26 @@ const (
 )
 
 type AwsProviderImage struct {
-	Recommended AwsProviderImageRecommended `json:"recommended,omitempty"`
-	Exact       string                      `json:"exact,omitempty"`
+	Recommended AwsProviderImageRecommended `json:"recommended,omitzero"`
+	Exact       string                      `json:"exact,omitzero"`
 }
 
 type AwsProvider struct {
-	Region               AwsProviderRegion           `json:"region,omitempty"`
-	AwsTags              AwsProviderAwsTags          `json:"awsTags,omitempty"`
-	SkipCreateRoles      bool                        `json:"skipCreateRoles,omitempty"`
-	Networking           AwsProviderNetworking       `json:"networking,omitempty"`
-	PreInstallScript     string                      `json:"preInstallScript,omitempty"`
-	Image                AwsProviderImage            `json:"image"`
-	DeployRoleArn        string                      `json:"deployRoleArn"`
-	DeployRoleChain      []AssumeRoleLink            `json:"deployRoleChain,omitempty"`
-	VpcId                string                      `json:"vpcId"`
-	KeyPair              string                      `json:"keyPair,omitempty"`
-	DiskEncryptionKeyArn string                      `json:"diskEncryptionKeyArn,omitempty"`
-	SecurityGroupIds     []string                    `json:"securityGroupIds,omitempty"`
-	ExtraNodePolicies    []PolicyArn                 `json:"extraNodePolicies,omitempty"`
-	NodePools            []AwsPool                   `json:"nodePools,omitempty"`
-	Autoscaler           mk8sCommon.AutoscalerConfig `json:"autoscaler,omitempty"`
+	Region               AwsProviderRegion            `json:"region,omitzero" validate:"required"`
+	AwsTags              AwsProviderAwsTags           `json:"awsTags,omitzero"`
+	SkipCreateRoles      *bool                        `json:"skipCreateRoles,omitzero"`
+	Networking           *AwsProviderNetworking       `json:"networking,omitzero"`
+	PreInstallScript     string                       `json:"preInstallScript,omitzero"`
+	Image                AwsProviderImage             `json:"image"`
+	DeployRoleArn        string                       `json:"deployRoleArn"`
+	DeployRoleChain      []AssumeRoleLink             `json:"deployRoleChain,omitzero"`
+	VpcId                string                       `json:"vpcId"`
+	KeyPair              string                       `json:"keyPair,omitzero"`
+	DiskEncryptionKeyArn string                       `json:"diskEncryptionKeyArn,omitzero"`
+	SecurityGroupIds     []string                     `json:"securityGroupIds,omitzero"`
+	ExtraNodePolicies    []PolicyArn                  `json:"extraNodePolicies,omitzero"`
+	NodePools            []AwsPool                    `json:"nodePools,omitzero"`
+	Autoscaler           *mk8sCommon.AutoscalerConfig `json:"autoscaler,omitzero"`
 }
 
 type AwsProviderStatus map[string]any

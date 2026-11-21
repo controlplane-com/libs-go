@@ -1,26 +1,27 @@
-/* auto-generated */
+/* hand-maintained — canonical source of truth (nodelibs/schema/src/containerstatus.ts).
+ * `joi:` tags drive pkg/validate.FromType; DSL on go-libs/schema/ipSet/models.go. */
 
 package containerstatus
 
 type ContainerStatusRestarts struct {
-	LastRestartTime string   `json:"lastRestartTime,omitempty"`
-	ExitCode        *float32 `json:"exitCode,omitempty"`
-	Reason          string   `json:"reason,omitempty"`
-	Count           *float32 `json:"count,omitempty"`
+	LastRestartTime string   `json:"lastRestartTime,omitzero" validate:"date"`
+	ExitCode        *float64 `json:"exitCode,omitzero"`
+	Reason          string   `json:"reason,omitzero"`
+	Count           *float64 `json:"count,omitzero"`
 }
 
 type ContainerStatus struct {
-	Name      string                  `json:"name,omitempty"`
-	Image     string                  `json:"image,omitempty"`
-	Ready     bool                    `json:"ready,omitempty"`
-	Resources DeploymentResources     `json:"resources,omitempty"`
-	Message   string                  `json:"message,omitempty"`
-	Restarts  ContainerStatusRestarts `json:"restarts,omitempty"`
+	Name      string                   `json:"name,omitzero"`
+	Image     string                   `json:"image,omitzero"`
+	Ready     *bool                    `json:"ready,omitzero"`
+	Resources *DeploymentResources     `json:"resources,omitzero"`
+	Message   string                   `json:"message,omitzero" validate:"allow="`
+	Restarts  *ContainerStatusRestarts `json:"restarts,omitzero"`
 }
 
 type DeploymentResources struct {
-	Replicas      *float32 `json:"replicas,omitempty"`
-	ReplicasReady *float32 `json:"replicasReady,omitempty"`
-	Cpu           *float32 `json:"cpu,omitempty"`
-	Memory        *float32 `json:"memory,omitempty"`
+	Replicas      *float64 `json:"replicas,omitzero"`
+	ReplicasReady *float64 `json:"replicasReady,omitzero"`
+	Cpu           *float64 `json:"cpu,omitzero"`
+	Memory        *float64 `json:"memory,omitzero"`
 }

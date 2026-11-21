@@ -5,17 +5,17 @@ package mk8sAzure
 import "github.com/controlplane-com/libs-go/pkg/schema/mk8sCommon"
 
 type AzurePool struct {
-	Name          string             `json:"name"`
-	Labels        mk8sCommon.Labels  `json:"labels,omitempty"`
-	Taints        mk8sCommon.Taints  `json:"taints,omitempty"`
-	MaxPods       mk8sCommon.MaxPods `json:"maxPods,omitempty"`
-	Size          string             `json:"size"`
-	SubnetId      string             `json:"subnetId"`
-	Zones         []float32          `json:"zones"`
-	OverrideImage Image              `json:"overrideImage,omitempty"`
-	BootDiskSize  float32            `json:"bootDiskSize"`
-	MinSize       float32            `json:"minSize"`
-	MaxSize       float32            `json:"maxSize"`
+	Name          string              `json:"name"`
+	Labels        mk8sCommon.Labels   `json:"labels,omitzero"`
+	Taints        mk8sCommon.Taints   `json:"taints,omitzero"`
+	MaxPods       *mk8sCommon.MaxPods `json:"maxPods,omitzero"`
+	Size          string              `json:"size"`
+	SubnetId      string              `json:"subnetId"`
+	Zones         []float64           `json:"zones"`
+	OverrideImage *Image              `json:"overrideImage,omitzero"`
+	BootDiskSize  float64             `json:"bootDiskSize"`
+	MinSize       float64             `json:"minSize"`
+	MaxSize       float64             `json:"maxSize"`
 }
 
 type AzureProviderNetworkingServiceNetwork string
@@ -40,9 +40,9 @@ const (
 )
 
 type AzureProviderNetworking struct {
-	ServiceNetwork AzureProviderNetworkingServiceNetwork `json:"serviceNetwork,omitempty"`
-	PodNetwork     AzureProviderNetworkingPodNetwork     `json:"podNetwork,omitempty"`
-	DnsForwarder   string                                `json:"dnsForwarder,omitempty"`
+	ServiceNetwork AzureProviderNetworkingServiceNetwork `json:"serviceNetwork,omitzero"`
+	PodNetwork     AzureProviderNetworkingPodNetwork     `json:"podNetwork,omitzero"`
+	DnsForwarder   string                                `json:"dnsForwarder,omitzero"`
 }
 
 type AzureProviderImageRecommended string
@@ -63,25 +63,25 @@ type AzureProviderImageReference struct {
 }
 
 type AzureProviderImage struct {
-	Recommended AzureProviderImageRecommended `json:"recommended,omitempty"`
-	Reference   AzureProviderImageReference   `json:"reference,omitempty"`
+	Recommended AzureProviderImageRecommended `json:"recommended,omitzero"`
+	Reference   *AzureProviderImageReference  `json:"reference,omitzero"`
 }
 
 type AzureProviderTags map[string]string
 
 type AzureProvider struct {
-	Location         string                      `json:"location"`
-	SubscriptionId   string                      `json:"subscriptionId"`
-	SdkSecretLink    string                      `json:"sdkSecretLink"`
-	ResourceGroup    string                      `json:"resourceGroup"`
-	Networking       AzureProviderNetworking     `json:"networking,omitempty"`
-	PreInstallScript string                      `json:"preInstallScript,omitempty"`
-	Image            AzureProviderImage          `json:"image"`
-	SshKeys          []mk8sCommon.SshPublicKey   `json:"sshKeys"`
-	NetworkId        string                      `json:"networkId"`
-	Tags             AzureProviderTags           `json:"tags,omitempty"`
-	NodePools        []AzurePool                 `json:"nodePools,omitempty"`
-	Autoscaler       mk8sCommon.AutoscalerConfig `json:"autoscaler,omitempty"`
+	Location         string                       `json:"location"`
+	SubscriptionId   string                       `json:"subscriptionId"`
+	SdkSecretLink    string                       `json:"sdkSecretLink"`
+	ResourceGroup    string                       `json:"resourceGroup"`
+	Networking       *AzureProviderNetworking     `json:"networking,omitzero"`
+	PreInstallScript string                       `json:"preInstallScript,omitzero"`
+	Image            AzureProviderImage           `json:"image"`
+	SshKeys          []mk8sCommon.SshPublicKey    `json:"sshKeys"`
+	NetworkId        string                       `json:"networkId"`
+	Tags             AzureProviderTags            `json:"tags,omitzero"`
+	NodePools        []AzurePool                  `json:"nodePools,omitzero"`
+	Autoscaler       *mk8sCommon.AutoscalerConfig `json:"autoscaler,omitzero"`
 }
 
 type AzureProviderStatus map[string]any
@@ -104,6 +104,6 @@ type ImageReference struct {
 }
 
 type Image struct {
-	Recommended ImageRecommended `json:"recommended,omitempty"`
-	Reference   ImageReference   `json:"reference,omitempty"`
+	Recommended ImageRecommended `json:"recommended,omitzero"`
+	Reference   *ImageReference  `json:"reference,omitzero"`
 }

@@ -3,25 +3,25 @@
 package base
 
 type ApiError struct {
-	Status  *float32 `json:"status,omitempty"`
-	Message string   `json:"message,omitempty"`
-	Code    string   `json:"code,omitempty"`
-	Details any      `json:"details,omitempty"`
-	Id      string   `json:"id,omitempty"`
+	Status  *float64 `json:"status,omitzero"`
+	Message string   `json:"message,omitzero"`
+	Code    string   `json:"code,omitzero"`
+	Details any      `json:"details,omitzero"`
+	Id      string   `json:"id,omitzero"`
 }
 
 type BaseTags map[string]any
 
 type Base struct {
-	Id           string   `json:"id,omitempty"`
-	Name         Name     `json:"name,omitempty"`
-	Kind         Kind     `json:"kind,omitempty"`
-	Version      *float32 `json:"version,omitempty"`
-	Description  string   `json:"description,omitempty"`
-	Tags         BaseTags `json:"tags,omitempty"`
-	Created      string   `json:"created,omitempty"`
-	LastModified string   `json:"lastModified,omitempty"`
-	Links        Links    `json:"links,omitempty"`
+	Id           string   `json:"id,omitzero"`
+	Name         Name     `json:"name,omitzero"`
+	Kind         Kind     `json:"kind,omitzero"`
+	Version      *float64 `json:"version,omitzero"`
+	Description  string   `json:"description,omitzero"`
+	Tags         BaseTags `json:"tags,omitzero"`
+	Created      string   `json:"created,omitzero"`
+	LastModified string   `json:"lastModified,omitzero"`
+	Links        Links    `json:"links,omitzero"`
 }
 
 type CloudProvider string
@@ -133,8 +133,8 @@ const (
 )
 
 type List struct {
-	Kind     ListKind     `json:"kind,omitempty"`
-	ItemKind ListItemKind `json:"itemKind,omitempty"`
+	Kind     ListKind     `json:"kind,omitzero"`
+	ItemKind ListItemKind `json:"itemKind,omitzero"`
 	Items    []any        `json:"items"`
 	Links    []Link       `json:"links"`
 }
@@ -142,7 +142,7 @@ type List struct {
 type LocalLink string
 
 type MultiZoneOptions struct {
-	Enabled bool `json:"enabled,omitempty"`
+	Enabled *bool `json:"enabled,omitzero"`
 }
 
 type Name string

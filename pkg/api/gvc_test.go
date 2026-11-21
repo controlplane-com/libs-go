@@ -33,7 +33,7 @@ func (s *GVCTestSuite) TestGVC_Create() {
 	g := &gvc.Gvc{
 		Name:        base.Name(gvcName),
 		Description: "Test GVC created by integration test",
-		Version:     common.Float32Ptr(1),
+		Version:     common.Float64Ptr(1),
 		Tags: gvc.GvcTags{
 			"test":        "true",
 			"integration": "libs-go",
@@ -78,7 +78,7 @@ func (s *GVCTestSuite) TestGVC_Update() {
 	g := &gvc.Gvc{
 		Name:        base.Name(gvcName),
 		Description: "Original description",
-		Version:     common.Float32Ptr(1),
+		Version:     common.Float64Ptr(1),
 	}
 
 	_, err := s.Client().GVCs().Create(ctx, s.TestOrg(), g)
@@ -108,7 +108,7 @@ func (s *GVCTestSuite) TestGVC_Delete() {
 	g := &gvc.Gvc{
 		Name:        base.Name(gvcName),
 		Description: "GVC to be deleted",
-		Version:     common.Float32Ptr(1),
+		Version:     common.Float64Ptr(1),
 	}
 
 	_, err := s.Client().GVCs().Create(ctx, s.TestOrg(), g)
@@ -182,7 +182,7 @@ func (s *GVCTestSuite) TestGVC_Query() {
 	g := &gvc.Gvc{
 		Name:        base.Name(gvcName),
 		Description: "GVC for query test",
-		Version:     common.Float32Ptr(1),
+		Version:     common.Float64Ptr(1),
 		Tags: gvc.GvcTags{
 			"querytest": "yes",
 		},

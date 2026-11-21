@@ -1,4 +1,7 @@
-/* auto-generated */
+/* hand-maintained — canonical source of truth for the `task` resource schema.
+ * `validate:` tags drive pkg/validate.FromType. See nodelibs/schema/src/task.ts.
+ * NOT Base-derived (plain object). Registered as the `task` kind.
+ */
 
 package task
 
@@ -23,16 +26,16 @@ const (
 type TaskResponse map[string]any
 
 type Task struct {
-	Id           string       `json:"id,omitempty"`
-	Kind         TaskKind     `json:"kind,omitempty"`
-	Description  string       `json:"description,omitempty"`
-	Created      string       `json:"created,omitempty"`
-	LastModified string       `json:"lastModified,omitempty"`
-	TargetEmail  string       `json:"targetEmail,omitempty"`
-	CreatorLink  string       `json:"creatorLink,omitempty"`
-	Type         string       `json:"type,omitempty"`
-	Context      TaskContext  `json:"context,omitempty"`
-	Status       TaskStatus   `json:"status,omitempty"`
-	Response     TaskResponse `json:"response,omitempty"`
-	Links        []base.Link  `json:"links,omitempty"`
+	Id           string       `json:"id,omitzero"`
+	Kind         TaskKind     `json:"kind,omitzero" validate:"valid=task"`
+	Description  string       `json:"description,omitzero" validate:"trim"`
+	Created      string       `json:"created,omitzero" validate:"date"`
+	LastModified string       `json:"lastModified,omitzero" validate:"date"`
+	TargetEmail  string       `json:"targetEmail,omitzero" validate:"email"`
+	CreatorLink  string       `json:"creatorLink,omitzero"`
+	Type         string       `json:"type,omitzero"`
+	Context      TaskContext  `json:"context,omitzero"`
+	Status       TaskStatus   `json:"status,omitzero" validate:"valid=pending|complete|canceled"`
+	Response     TaskResponse `json:"response,omitzero"`
+	Links        base.Links   `json:"links,omitzero" validate:"optional"`
 }

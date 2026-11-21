@@ -21,5 +21,10 @@ type ConnectionConfiguration struct {
 	MaxOpenConnections        int
 	MaxIdleConnectionLifetime time.Duration
 	MaxConnectionLifetime     time.Duration
+	// StatementTimeout, when > 0, caps every query server-side by adding
+	// `options='-c statement_timeout=<ms>'` to the DSN — a startup parameter applied
+	// to every physical connection (equivalent to a per-connection SET). Opt-in so a
+	// service with legitimately long queries is unaffected; 0 leaves it unset.
+	StatementTimeout time.Duration
 	*gorm.Config
 }

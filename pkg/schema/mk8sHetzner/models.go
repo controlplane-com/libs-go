@@ -5,28 +5,28 @@ package mk8sHetzner
 import "github.com/controlplane-com/libs-go/pkg/schema/mk8sCommon"
 
 type DedicatedServerHetznerPool struct {
-	Name    string             `json:"name"`
-	Labels  mk8sCommon.Labels  `json:"labels,omitempty"`
-	Taints  mk8sCommon.Taints  `json:"taints,omitempty"`
-	MaxPods mk8sCommon.MaxPods `json:"maxPods,omitempty"`
+	Name    string              `json:"name"`
+	Labels  mk8sCommon.Labels   `json:"labels,omitzero"`
+	Taints  mk8sCommon.Taints   `json:"taints,omitzero"`
+	MaxPods *mk8sCommon.MaxPods `json:"maxPods,omitzero"`
 }
 
 type HetznerJoinParams struct {
-	IpAddress    string `json:"ipAddress,omitempty"`
+	IpAddress    string `json:"ipAddress,omitzero"`
 	NodePoolName string `json:"nodePoolName"`
 
 	/* WARNING!! Arbitrary properties are being ignored! */
 }
 
 type HetznerPool struct {
-	Name          string             `json:"name"`
-	Labels        mk8sCommon.Labels  `json:"labels,omitempty"`
-	Taints        mk8sCommon.Taints  `json:"taints,omitempty"`
-	MaxPods       mk8sCommon.MaxPods `json:"maxPods,omitempty"`
-	ServerType    string             `json:"serverType"`
-	OverrideImage string             `json:"overrideImage,omitempty"`
-	MinSize       float32            `json:"minSize"`
-	MaxSize       float32            `json:"maxSize"`
+	Name          string              `json:"name"`
+	Labels        mk8sCommon.Labels   `json:"labels,omitzero"`
+	Taints        mk8sCommon.Taints   `json:"taints,omitzero"`
+	MaxPods       *mk8sCommon.MaxPods `json:"maxPods,omitzero"`
+	ServerType    string              `json:"serverType"`
+	OverrideImage string              `json:"overrideImage,omitzero"`
+	MinSize       float64             `json:"minSize"`
+	MaxSize       float64             `json:"maxSize"`
 }
 
 type HetznerProviderRegion string
@@ -44,19 +44,19 @@ type HetznerProviderHetznerLabels map[string]string
 type HetznerProviderFloatingIpSelector map[string]string
 
 type HetznerProvider struct {
-	Region                   HetznerProviderRegion             `json:"region,omitempty"`
-	HetznerLabels            HetznerProviderHetznerLabels      `json:"hetznerLabels,omitempty"`
-	Networking               NetworkingConfig                  `json:"networking,omitempty"`
-	PreInstallScript         mk8sCommon.PreInstallScript       `json:"preInstallScript,omitempty"`
+	Region                   HetznerProviderRegion             `json:"region,omitzero" validate:"required"`
+	HetznerLabels            HetznerProviderHetznerLabels      `json:"hetznerLabels,omitzero"`
+	Networking               *NetworkingConfig                 `json:"networking,omitzero"`
+	PreInstallScript         mk8sCommon.PreInstallScript       `json:"preInstallScript,omitzero"`
 	TokenSecretLink          string                            `json:"tokenSecretLink"`
 	NetworkId                string                            `json:"networkId"`
-	FirewallId               string                            `json:"firewallId,omitempty"`
-	NodePools                []HetznerPool                     `json:"nodePools,omitempty"`
-	DedicatedServerNodePools []DedicatedServerHetznerPool      `json:"dedicatedServerNodePools,omitempty"`
+	FirewallId               string                            `json:"firewallId,omitzero"`
+	NodePools                []HetznerPool                     `json:"nodePools,omitzero"`
+	DedicatedServerNodePools []DedicatedServerHetznerPool      `json:"dedicatedServerNodePools,omitzero"`
 	Image                    string                            `json:"image"`
-	SshKey                   string                            `json:"sshKey,omitempty"`
-	Autoscaler               mk8sCommon.AutoscalerConfig       `json:"autoscaler,omitempty"`
-	FloatingIPSelector       HetznerProviderFloatingIpSelector `json:"floatingIPSelector,omitempty"`
+	SshKey                   string                            `json:"sshKey,omitzero"`
+	Autoscaler               *mk8sCommon.AutoscalerConfig      `json:"autoscaler,omitzero"`
+	FloatingIPSelector       HetznerProviderFloatingIpSelector `json:"floatingIPSelector,omitzero"`
 }
 
 type HetznerProviderStatus map[string]any
@@ -83,7 +83,7 @@ const (
 )
 
 type NetworkingConfig struct {
-	ServiceNetwork NetworkingConfigServiceNetwork `json:"serviceNetwork,omitempty"`
-	PodNetwork     NetworkingConfigPodNetwork     `json:"podNetwork,omitempty"`
-	DnsForwarder   string                         `json:"dnsForwarder,omitempty"`
+	ServiceNetwork NetworkingConfigServiceNetwork `json:"serviceNetwork,omitzero"`
+	PodNetwork     NetworkingConfigPodNetwork     `json:"podNetwork,omitzero"`
+	DnsForwarder   string                         `json:"dnsForwarder,omitzero"`
 }

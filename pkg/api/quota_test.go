@@ -28,9 +28,9 @@ func newTestQuota(name string) *quota.Quota {
 	return &quota.Quota{
 		Name:        base.Name(name),
 		Description: "Test quota created by integration test",
-		Version:     common.Float32Ptr(1),
+		Version:     common.Float64Ptr(1),
 		Unit:        "count",
-		Max:         common.Float32Ptr(100),
+		Max:         common.Float64Ptr(100),
 	}
 }
 
@@ -125,7 +125,7 @@ func (s *QuotaTestSuite) TestQuota_Create() {
 	}()
 
 	s.Equal(quotaName, string(created.Name))
-	s.Equal(float32(100), *created.Max)
+	s.Equal(float64(100), *created.Max)
 }
 
 // TestQuota_Update tests updating a quota.
@@ -150,12 +150,12 @@ func (s *QuotaTestSuite) TestQuota_Update() {
 
 	// Update the quota
 	q.Description = "Updated description"
-	q.Max = common.Float32Ptr(200)
+	q.Max = common.Float64Ptr(200)
 
 	updated, err := s.Client().Quotas().Update(ctx, s.TestOrg(), quotaName, q)
 	s.Require().NoError(err)
 	s.Equal("Updated description", updated.Description)
-	s.Equal(float32(200), *updated.Max)
+	s.Equal(float64(200), *updated.Max)
 }
 
 // TestQuota_Delete tests deleting a quota.
@@ -290,7 +290,7 @@ func (s *QuotaTestSuite) TestQuota_CurrentUsage() {
 	for _, q := range quotas {
 		// Current should be >= 0 (may be nil for some quotas)
 		if q.Current != nil {
-			s.GreaterOrEqual(*q.Current, float32(0), "Quota current usage should be >= 0")
+			s.GreaterOrEqual(*q.Current, float64(0), "Quota current usage should be >= 0")
 		}
 		s.T().Logf("Quota %s: current=%v, max=%v", q.Name, q.Current, q.Max)
 	}

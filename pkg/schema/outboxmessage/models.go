@@ -3,8 +3,8 @@
 package outboxmessage
 
 type OutboxMessage struct {
-	Id        string `json:"id,omitempty"`
-	Created   string `json:"created,omitempty"`
-	Delivered string `json:"delivered,omitempty"`
-	Payload   string `json:"payload,omitempty"`
+	Id        string `json:"id,omitzero"`
+	Created   string `json:"created,omitzero"`
+	Delivered string `json:"delivered,omitzero" validate:"date"`
+	Payload   string `json:"payload,omitzero"`
 }

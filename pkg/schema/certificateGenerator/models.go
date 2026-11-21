@@ -1,140 +1,25 @@
-/* auto-generated */
+/* hand-maintained — canonical source of truth for the `certificategenerator`
+ * resource schema. Ported from nodelibs/schema/src/certificateGenerator.ts
+ * (master 0c0ece779); the joi-to-go emission it replaces carried one inlined copy
+ * of every nested object per parent (Dns01ChallengeRoute53 == Route53Dns01 == …),
+ * which the TS file itself names once.
+ *
+ * `validate:` struct tags carry the rules validate.Reflect can express; the xor /
+ * when clauses live in validate.go. See go-libs/schema/ipSet/models.go for the
+ * tag DSL.
+ */
 
 package certificateGenerator
 
 import "github.com/controlplane-com/libs-go/pkg/schema/base"
 
-type AcmeChallenge struct {
-	Http01 Http01Challenge `json:"http01,omitempty"`
-	Dns01  Dns01Challenge  `json:"dns01,omitempty"`
-}
+// SecretLink ports `LocalLink.custom(toKind('secret'))`: the four dns01 provider
+// credentials and the externalAccountBinding HMAC key all point at a secret.
+type SecretLink string
 
-type AcmeGeneratorExternalAccountBinding struct {
-	KeyId      string `json:"keyId"`
-	SecretLink string `json:"secretLink"`
-}
-
-type AcmeGeneratorChallenge struct {
-	Http01 Http01Challenge `json:"http01,omitempty"`
-	Dns01  Dns01Challenge  `json:"dns01,omitempty"`
-}
-
-type AcmeGenerator struct {
-	Server                 string                              `json:"server"`
-	Email                  string                              `json:"email,omitempty"`
-	ExternalAccountBinding AcmeGeneratorExternalAccountBinding `json:"externalAccountBinding,omitempty"`
-	Challenge              AcmeGeneratorChallenge              `json:"challenge"`
-}
-
-type AzureDnsDns01 struct {
-	ResourceGroupName string `json:"resourceGroupName"`
-	HostedZoneName    string `json:"hostedZoneName,omitempty"`
-	SecretLink        string `json:"secretLink"`
-}
-
-type CertificateGeneratorTags map[string]any
-
-type CertificateGeneratorSpecProvider string
-
-const (
-	CertificateGeneratorSpecProviderAcme CertificateGeneratorSpecProvider = "acme"
-)
-
-type CertificateGeneratorSpecAcmeExternalAccountBinding struct {
-	KeyId      string `json:"keyId"`
-	SecretLink string `json:"secretLink"`
-}
-
-type CertificateGeneratorSpecAcmeChallenge struct {
-	Http01 Http01Challenge `json:"http01,omitempty"`
-	Dns01  Dns01Challenge  `json:"dns01,omitempty"`
-}
-
-type CertificateGeneratorSpecAcme struct {
-	Server                 string                                             `json:"server"`
-	Email                  string                                             `json:"email,omitempty"`
-	ExternalAccountBinding CertificateGeneratorSpecAcmeExternalAccountBinding `json:"externalAccountBinding,omitempty"`
-	Challenge              CertificateGeneratorSpecAcmeChallenge              `json:"challenge"`
-}
-
-type CertificateGeneratorSpec struct {
-	Provider CertificateGeneratorSpecProvider `json:"provider,omitempty"`
-	Acme     CertificateGeneratorSpecAcme     `json:"acme,omitempty"`
-}
-
-type CertificateGenerator struct {
-	Id           string                     `json:"id,omitempty"`
-	Name         base.Name                  `json:"name,omitempty"`
-	Kind         base.Kind                  `json:"kind,omitempty"`
-	Version      *float32                   `json:"version,omitempty"`
-	Description  string                     `json:"description,omitempty"`
-	Tags         CertificateGeneratorTags   `json:"tags,omitempty"`
-	Created      string                     `json:"created,omitempty"`
-	LastModified string                     `json:"lastModified,omitempty"`
-	Links        base.Links                 `json:"links,omitempty"`
-	Spec         CertificateGeneratorSpec   `json:"spec"`
-	Status       CertificateGeneratorStatus `json:"status,omitempty"`
-}
-
-type CertificateGeneratorProvider string
-
-const (
-	CertificateGeneratorProviderAcme CertificateGeneratorProvider = "acme"
-)
-
-type CertificateGeneratorStatus struct {
-	Ready       bool   `json:"ready,omitempty"`
-	Message     string `json:"message,omitempty"`
-	LastUpdated string `json:"lastUpdated,omitempty"`
-}
-
-type CloudDnsDns01 struct {
-	Project    string `json:"project"`
-	SecretLink string `json:"secretLink"`
-}
-
-type CloudflareDns01 struct {
-	SecretLink string `json:"secretLink"`
-}
-
-type Dns01ChallengeProvider string
-
-const (
-	Dns01ChallengeProviderCpln       Dns01ChallengeProvider = "cpln"
-	Dns01ChallengeProviderRoute53    Dns01ChallengeProvider = "route53"
-	Dns01ChallengeProviderCloudDns   Dns01ChallengeProvider = "cloudDns"
-	Dns01ChallengeProviderAzureDns   Dns01ChallengeProvider = "azureDns"
-	Dns01ChallengeProviderCloudflare Dns01ChallengeProvider = "cloudflare"
-)
-
-type Dns01ChallengeRoute53 struct {
-	Region       string `json:"region"`
-	HostedZoneId string `json:"hostedZoneId,omitempty"`
-	SecretLink   string `json:"secretLink"`
-}
-
-type Dns01ChallengeCloudDns struct {
-	Project    string `json:"project"`
-	SecretLink string `json:"secretLink"`
-}
-
-type Dns01ChallengeAzureDns struct {
-	ResourceGroupName string `json:"resourceGroupName"`
-	HostedZoneName    string `json:"hostedZoneName,omitempty"`
-	SecretLink        string `json:"secretLink"`
-}
-
-type Dns01ChallengeCloudflare struct {
-	SecretLink string `json:"secretLink"`
-}
-
-type Dns01Challenge struct {
-	Provider   Dns01ChallengeProvider   `json:"provider,omitempty"`
-	Route53    Dns01ChallengeRoute53    `json:"route53,omitempty"`
-	CloudDns   Dns01ChallengeCloudDns   `json:"cloudDns,omitempty"`
-	AzureDns   Dns01ChallengeAzureDns   `json:"azureDns,omitempty"`
-	Cloudflare Dns01ChallengeCloudflare `json:"cloudflare,omitempty"`
-}
+// AcmeDirectoryUrl ports `Joi.string().uri({ scheme: ['https'] })` — the CA's ACME
+// directory URL. https only, so a plaintext directory cannot be configured.
+type AcmeDirectoryUrl string
 
 type Dns01Provider string
 
@@ -146,16 +31,103 @@ const (
 	Dns01ProviderCloudflare Dns01Provider = "cloudflare"
 )
 
-type ExternalAccountBinding struct {
-	KeyId      string `json:"keyId"`
-	SecretLink string `json:"secretLink"`
-}
-
-type Http01Challenge struct {
+func (Dns01Provider) EnumValues() []string {
+	return []string{
+		string(Dns01ProviderCpln), string(Dns01ProviderRoute53), string(Dns01ProviderCloudDns),
+		string(Dns01ProviderAzureDns), string(Dns01ProviderCloudflare),
+	}
 }
 
 type Route53Dns01 struct {
-	Region       string `json:"region"`
-	HostedZoneId string `json:"hostedZoneId,omitempty"`
-	SecretLink   string `json:"secretLink"`
+	Region       string     `json:"region" validate:"required"`
+	HostedZoneId string     `json:"hostedZoneId,omitzero" validate:"optional"`
+	SecretLink   SecretLink `json:"secretLink" validate:"required"`
+}
+
+type CloudDnsDns01 struct {
+	Project    string     `json:"project" validate:"required"`
+	SecretLink SecretLink `json:"secretLink" validate:"required"`
+}
+
+type AzureDnsDns01 struct {
+	ResourceGroupName string     `json:"resourceGroupName" validate:"required"`
+	HostedZoneName    string     `json:"hostedZoneName,omitzero" validate:"optional"`
+	SecretLink        SecretLink `json:"secretLink" validate:"required"`
+}
+
+type CloudflareDns01 struct {
+	SecretLink SecretLink `json:"secretLink" validate:"required"`
+}
+
+// Http01Challenge is `Joi.object({})`: present-but-empty is the whole signal, so any
+// key is rejected.
+type Http01Challenge struct{}
+
+// Dns01Challenge is the discriminated union over `provider`: the matching provider
+// block is required and the other three are forbidden (the .when()s in validate.go).
+type Dns01Challenge struct {
+	Provider   Dns01Provider    `json:"provider,omitzero" validate:"default=cpln"`
+	Route53    *Route53Dns01    `json:"route53,omitzero"`
+	CloudDns   *CloudDnsDns01   `json:"cloudDns,omitzero"`
+	AzureDns   *AzureDnsDns01   `json:"azureDns,omitzero"`
+	Cloudflare *CloudflareDns01 `json:"cloudflare,omitzero"`
+}
+
+// AcmeChallenge carries exactly one challenge type (the .xor in validate.go).
+type AcmeChallenge struct {
+	Http01 *Http01Challenge `json:"http01,omitzero"`
+	Dns01  *Dns01Challenge  `json:"dns01,omitzero"`
+}
+
+type ExternalAccountBinding struct {
+	KeyId      string     `json:"keyId" validate:"required"`
+	SecretLink SecretLink `json:"secretLink" validate:"required"`
+}
+
+type AcmeGenerator struct {
+	Server                 AcmeDirectoryUrl        `json:"server" validate:"required"`
+	Email                  string                  `json:"email,omitzero" validate:"email,optional"`
+	ExternalAccountBinding *ExternalAccountBinding `json:"externalAccountBinding,omitzero" validate:"optional"`
+	Challenge              AcmeChallenge           `json:"challenge" validate:"required"`
+}
+
+type CertificateGeneratorProvider string
+
+const (
+	CertificateGeneratorProviderAcme CertificateGeneratorProvider = "acme"
+)
+
+func (CertificateGeneratorProvider) EnumValues() []string {
+	return []string{string(CertificateGeneratorProviderAcme)}
+}
+
+// CertificateGeneratorSpec is the discriminated union over `provider`; `acme` is
+// required for provider acme and forbidden otherwise (the .when in validate.go).
+type CertificateGeneratorSpec struct {
+	Provider CertificateGeneratorProvider `json:"provider,omitzero" validate:"required"`
+	Acme     *AcmeGenerator               `json:"acme,omitzero"`
+}
+
+type CertificateGeneratorStatus struct {
+	Ready       *bool  `json:"ready,omitzero"`
+	Message     string `json:"message,omitzero"`
+	LastUpdated string `json:"lastUpdated,omitzero" validate:"date,iso"`
+}
+
+// CertificateGeneratorTags aliases base.Tags so the reflection base-type registry
+// resolves it to the shared TagsRule.
+type CertificateGeneratorTags = base.Tags
+
+type CertificateGenerator struct {
+	Id           string                      `json:"id,omitzero" validate:"uuid,readOnly"`
+	Name         base.Name                   `json:"name,omitzero"`
+	Kind         base.Kind                   `json:"kind,omitzero"`
+	Version      *float64                    `json:"version,omitzero" validate:"positive,integer,readOnly"`
+	Description  string                      `json:"description,omitzero" validate:"trim,max=250,allow="`
+	Tags         CertificateGeneratorTags    `json:"tags,omitzero" validate:"default={}"`
+	Created      string                      `json:"created,omitzero" validate:"date,readOnly"`
+	LastModified string                      `json:"lastModified,omitzero" validate:"date,readOnly"`
+	Links        base.Links                  `json:"links,omitzero" validate:"readOnly"`
+	Spec         CertificateGeneratorSpec    `json:"spec" validate:"required"`
+	Status       *CertificateGeneratorStatus `json:"status,omitzero"`
 }

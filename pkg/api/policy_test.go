@@ -29,7 +29,7 @@ func newTestPolicy(name, org string) *policy.Policy {
 	return &policy.Policy{
 		Name:        base.Name(name),
 		Description: "Test policy created by integration test",
-		Version:     common.Float32Ptr(1),
+		Version:     common.Float64Ptr(1),
 		Tags: policy.PolicyTags{
 			"test":        "true",
 			"integration": "libs-go",
@@ -38,8 +38,8 @@ func newTestPolicy(name, org string) *policy.Policy {
 		Target:     policy.PolicyTargetAll,
 		Bindings: []policy.Binding{
 			{
-				Permissions:    []string{"view"},
-				PrincipalLinks: []string{fmt.Sprintf("/org/%s/group/superusers", org)},
+				Permissions:    policy.Permissions{"view"},
+				PrincipalLinks: policy.PrincipalLinks{policy.PrincipalLink(fmt.Sprintf("/org/%s/group/superusers", org))},
 			},
 		},
 	}
@@ -356,16 +356,16 @@ func (s *PolicyTestSuite) TestPolicy_WithTargetLinks() {
 	pol := &policy.Policy{
 		Name:        base.Name(policyName),
 		Description: "Test policy with target links",
-		Version:     common.Float32Ptr(1),
+		Version:     common.Float64Ptr(1),
 		Tags: policy.PolicyTags{
 			"test": "true",
 		},
 		TargetKind:  "secret",
-		TargetLinks: []string{fmt.Sprintf("/org/%s/secret/%s", s.TestOrg(), secretName)},
+		TargetLinks: policy.TargetLinks{policy.TargetLink(fmt.Sprintf("/org/%s/secret/%s", s.TestOrg(), secretName))},
 		Bindings: []policy.Binding{
 			{
-				Permissions:    []string{"view", "reveal"},
-				PrincipalLinks: []string{fmt.Sprintf("/org/%s/group/superusers", s.TestOrg())},
+				Permissions:    policy.Permissions{"view", "reveal"},
+				PrincipalLinks: policy.PrincipalLinks{policy.PrincipalLink(fmt.Sprintf("/org/%s/group/superusers", s.TestOrg()))},
 			},
 		},
 	}
@@ -402,14 +402,14 @@ func (s *PolicyTestSuite) TestPolicy_UpdateBindings() {
 	// Update bindings to add more permissions
 	pol.Bindings = []policy.Binding{
 		{
-			Permissions:    []string{"view", "edit", "manage"},
-			PrincipalLinks: []string{fmt.Sprintf("/org/%s/group/superusers", s.TestOrg())},
+			Permissions:    policy.Permissions{"view", "edit", "manage"},
+			PrincipalLinks: policy.PrincipalLinks{policy.PrincipalLink(fmt.Sprintf("/org/%s/group/superusers", s.TestOrg()))},
 		},
 	}
 
 	updated, err := s.Client().Policies().Update(ctx, s.TestOrg(), policyName, pol)
 	s.Require().NoError(err)
 	s.Len(updated.Bindings, 1, "Should have one binding")
-	s.Contains(updated.Bindings[0].Permissions, "edit", "Should have edit permission")
-	s.Contains(updated.Bindings[0].Permissions, "manage", "Should have manage permission")
+	s.Contains(updated.Bindings[0].Permissions, policy.Permission("edit"), "Should have edit permission")
+	s.Contains(updated.Bindings[0].Permissions, policy.Permission("manage"), "Should have manage permission")
 }

@@ -1,17 +1,45 @@
-/* auto-generated */
+/* hand-maintained — canonical source of truth for the `volumeset` schema.
+ * `validate:` tags + the type-attached Validator methods in validate.go drive
+ * validation (replaces the schema_volumeset.go builder rule-trees). See
+ * nodelibs/schema/src/volumeSet.ts.
+ *
+ * Leaf value types carry their own rule (validate.go):
+ *   VsCpu/VsMemory → workload Cpu/Memory rules; SnapshotSchedule → ScheduleType
+ *   rule + the snapshot-frequency custom; StatusWorkloadLink →
+ *   LocalLink+toKind('workload'); PersistentVolumeStatusAttributes →
+ *   pattern(String, String.allow('')). The storageClassSuffix / retentionDuration
+ *   regexes are the StorageClassSuffix / SnapshotRetentionDuration nominal types.
+ * Cross-field .custom()s (volumeSetSpecCustom, mountResourcesCustom,
+ * volumeSetStatusDuplicateLocations, volumeSetTopCustom) are object-level
+ * .Refine()s layered in each type's ValidationRule. */
 
 package volumeSet
 
 import "github.com/controlplane-com/libs-go/pkg/schema/base"
 
+// --- leaf types ---
+
+type VsCpu string              // → CpuRule()
+type VsMemory string           // → MemoryRule()
+type SnapshotSchedule string   // → scheduleTypeRule() + snapshotSchedule frequency custom
+type StatusWorkloadLink string // → LocalLink.custom(toKind('workload'))
+
+// StorageClassSuffix is the strongly-typed replacement for the
+// `pattern=vsStorageClassSuffix` tag on VolumeSetSpec.StorageClassSuffix.
+type StorageClassSuffix string
+
+// SnapshotRetentionDuration is the strongly-typed replacement for the
+// `pattern=vsSnapshotRetention` tag on SnapshotSpec.RetentionDuration.
+type SnapshotRetentionDuration string
+
 type CustomEncryptionRegion struct {
-	KeyId string `json:"keyId,omitempty"`
+	KeyId string `json:"keyId,omitzero"`
 }
 
 type FileSystem struct {
 	Name              string   `json:"name"`
 	AccessMode        string   `json:"accessMode"`
-	CommandsSupported []string `json:"commandsSupported,omitempty"`
+	CommandsSupported []string `json:"commandsSupported,omitzero"`
 }
 
 type FileSystemType string
@@ -22,11 +50,13 @@ const (
 	FileSystemTypeShared FileSystemType = "shared"
 )
 
+func (FileSystemType) EnumValues() []string { return []string{"ext4", "xfs", "shared"} }
+
 type MountResources struct {
-	MaxCpu    string `json:"maxCpu,omitempty"`
-	MinCpu    string `json:"minCpu,omitempty"`
-	MinMemory string `json:"minMemory,omitempty"`
-	MaxMemory string `json:"maxMemory,omitempty"`
+	MaxCpu    string `json:"maxCpu,omitzero"`
+	MinCpu    string `json:"minCpu,omitzero"`
+	MinMemory string `json:"minMemory,omitzero"`
+	MaxMemory string `json:"maxMemory,omitzero"`
 }
 
 type PerformanceClassFeaturesSupported string
@@ -38,9 +68,9 @@ const (
 
 type PerformanceClass struct {
 	Name              string                              `json:"name"`
-	MinCapacity       float32                             `json:"minCapacity"`
-	MaxCapacity       float32                             `json:"maxCapacity"`
-	FeaturesSupported []PerformanceClassFeaturesSupported `json:"featuresSupported,omitempty"`
+	MinCapacity       float64                             `json:"minCapacity"`
+	MaxCapacity       float64                             `json:"maxCapacity"`
+	FeaturesSupported []PerformanceClassFeaturesSupported `json:"featuresSupported,omitzero"`
 }
 
 type PerformanceClassName string
@@ -50,6 +80,10 @@ const (
 	PerformanceClassNameHighThroughputSsd PerformanceClassName = "high-throughput-ssd"
 	PerformanceClassNameShared            PerformanceClassName = "shared"
 )
+
+func (PerformanceClassName) EnumValues() []string {
+	return []string{"general-purpose-ssd", "high-throughput-ssd", "shared"}
+}
 
 type PersistentVolumeStatusLifecycle string
 
@@ -62,134 +96,165 @@ const (
 	PersistentVolumeStatusLifecycleRepairing PersistentVolumeStatusLifecycle = "repairing"
 )
 
-type PersistentVolumeStatusDiskType string
+func (PersistentVolumeStatusLifecycle) EnumValues() []string {
+	return []string{"creating", "unused", "unbound", "bound", "deleted", "repairing"}
+}
 
-const (
-	PersistentVolumeStatusDiskTypeGp3                PersistentVolumeStatusDiskType = "gp3"
-	PersistentVolumeStatusDiskTypePdBalanced         PersistentVolumeStatusDiskType = "pd-balanced"
-	PersistentVolumeStatusDiskTypePdSsd              PersistentVolumeStatusDiskType = "pd-ssd"
-	PersistentVolumeStatusDiskTypeHyperdiskBalanced  PersistentVolumeStatusDiskType = "hyperdisk-balanced"
-	PersistentVolumeStatusDiskTypePremiumV2Lrs       PersistentVolumeStatusDiskType = "PremiumV2_LRS"
-	PersistentVolumeStatusDiskTypeDoBlockStorage     PersistentVolumeStatusDiskType = "do-block-storage"
-	PersistentVolumeStatusDiskTypeHcloudVolume       PersistentVolumeStatusDiskType = "hcloud-volume"
-	PersistentVolumeStatusDiskTypeLinodeBlockStorage PersistentVolumeStatusDiskType = "linode-block-storage"
-	PersistentVolumeStatusDiskTypeOciBvBalanced      PersistentVolumeStatusDiskType = "oci-bv-balanced"
-	PersistentVolumeStatusDiskTypeJuicefs            PersistentVolumeStatusDiskType = "juicefs"
-	PersistentVolumeStatusDiskTypeHostpath           PersistentVolumeStatusDiskType = "hostpath"
-)
-
+// PersistentVolumeStatusAttributes → pattern(String, String().allow(”)) via
+// RegisterType (the map value's allow(”) cannot be tagged).
 type PersistentVolumeStatusAttributes map[string]string
 
+// DiskType is volumeSet.ts's shared DiskTypes list (volumeSet.ts:238-244): one type for
+// every field that spells `.valid(...DiskTypes)`, so a new disk type is added once.
+type DiskType string
+
+const (
+	DiskTypeGp3                DiskType = "gp3"
+	DiskTypePdBalanced         DiskType = "pd-balanced"
+	DiskTypePdSsd              DiskType = "pd-ssd"
+	DiskTypeHyperdiskBalanced  DiskType = "hyperdisk-balanced"
+	DiskTypePremiumV2Lrs       DiskType = "PremiumV2_LRS"
+	DiskTypeDoBlockStorage     DiskType = "do-block-storage"
+	DiskTypeHcloudVolume       DiskType = "hcloud-volume"
+	DiskTypeLinodeBlockStorage DiskType = "linode-block-storage"
+	DiskTypeOciBvBalanced      DiskType = "oci-bv-balanced"
+	DiskTypeHostpath           DiskType = "hostpath"
+	DiskTypeJuicefs            DiskType = "juicefs"
+)
+
+func (DiskType) EnumValues() []string {
+	return []string{"gp3", "pd-balanced", "pd-ssd", "hyperdisk-balanced", "PremiumV2_LRS",
+		"do-block-storage", "hcloud-volume", "linode-block-storage", "oci-bv-balanced",
+		"juicefs", "hostpath"}
+}
+
+// PersistentVolumeStatusDiskType names the field's type as the generator spelled it.
+type PersistentVolumeStatusDiskType = DiskType
+
 type PersistentVolumeStatus struct {
-	Lifecycle           PersistentVolumeStatusLifecycle  `json:"lifecycle,omitempty"`
-	StorageDeviceId     string                           `json:"storageDeviceId,omitempty"`
-	OldStorageDeviceIds []string                         `json:"oldStorageDeviceIds,omitempty"`
-	ResourceName        string                           `json:"resourceName,omitempty"`
-	Index               float32                          `json:"index"`
-	CurrentSize         float32                          `json:"currentSize"`
-	CurrentBytesUsed    *float32                         `json:"currentBytesUsed,omitempty"`
-	CurrentBytesFree    *float32                         `json:"currentBytesFree,omitempty"`
-	Iops                *float32                         `json:"iops,omitempty"`
-	Throughput          *float32                         `json:"throughput,omitempty"`
-	Driver              string                           `json:"driver"`
-	DiskType            PersistentVolumeStatusDiskType   `json:"diskType,omitempty"`
-	VolumeSnapshots     []VolumeSnapshot                 `json:"volumeSnapshots,omitempty"`
-	Attributes          PersistentVolumeStatusAttributes `json:"attributes,omitempty"`
-	Zone                string                           `json:"zone,omitempty"`
-	Node                string                           `json:"node,omitempty"`
+	Lifecycle           PersistentVolumeStatusLifecycle  `json:"lifecycle,omitzero" validate:"default=creating"`
+	StorageDeviceId     string                           `json:"storageDeviceId,omitzero"`
+	OldStorageDeviceIds []string                         `json:"oldStorageDeviceIds,omitzero"`
+	ResourceName        string                           `json:"resourceName,omitzero"`
+	Index               float64                          `json:"index" validate:"required,integer,min=0"`
+	CurrentSize         float64                          `json:"currentSize" validate:"required,min=0"`
+	CurrentBytesUsed    *float64                         `json:"currentBytesUsed,omitzero" validate:"min=0"`
+	CurrentBytesFree    *float64                         `json:"currentBytesFree,omitzero" validate:"min=0"`
+	Iops                *float64                         `json:"iops,omitzero"`
+	Throughput          *float64                         `json:"throughput,omitzero"`
+	Driver              string                           `json:"driver" validate:"required"`
+	DiskType            PersistentVolumeStatusDiskType   `json:"diskType,omitzero" validate:"optional"`
+	VolumeSnapshots     []VolumeSnapshot                 `json:"volumeSnapshots,omitzero"`
+	Attributes          PersistentVolumeStatusAttributes `json:"attributes,omitzero"`
+	Zone                string                           `json:"zone,omitzero" validate:"allow="`
+	Node                string                           `json:"node,omitzero" validate:"optional,allow="`
 }
 
 type SnapshotSpec struct {
-	CreateFinalSnapshot bool   `json:"createFinalSnapshot,omitempty"`
-	RetentionDuration   string `json:"retentionDuration,omitempty"`
-	Schedule            string `json:"schedule,omitempty"`
+	CreateFinalSnapshot *bool                     `json:"createFinalSnapshot,omitzero" validate:"default=true"`
+	RetentionDuration   SnapshotRetentionDuration `json:"retentionDuration,omitzero"`
+	Schedule            SnapshotSchedule          `json:"schedule,omitzero"`
 }
 
-type VolumeSetTags map[string]any
+// VolumeSetTags aliases base.Tags for the reflection base-type registry.
+type VolumeSetTags = base.Tags
 
 type VolumeSet struct {
-	Id           string          `json:"id,omitempty"`
-	Name         base.Name       `json:"name,omitempty"`
-	Kind         base.Kind       `json:"kind,omitempty"`
-	Version      *float32        `json:"version,omitempty"`
-	Description  string          `json:"description,omitempty"`
-	Tags         VolumeSetTags   `json:"tags,omitempty"`
-	Created      string          `json:"created,omitempty"`
-	LastModified string          `json:"lastModified,omitempty"`
-	Links        base.Links      `json:"links,omitempty"`
-	Spec         VolumeSetSpec   `json:"spec"`
-	Status       VolumeSetStatus `json:"status,omitempty"`
-	Gvc          any             `json:"gvc,omitempty"`
+	Id           string           `json:"id,omitzero" validate:"uuid,readOnly"`
+	Name         base.Name        `json:"name,omitzero"`
+	Kind         base.Kind        `json:"kind,omitzero"`
+	Version      *float64         `json:"version,omitzero" validate:"positive,integer,readOnly"`
+	Description  string           `json:"description,omitzero" validate:"trim,max=250,allow="`
+	Tags         VolumeSetTags    `json:"tags,omitzero" validate:"default={}"`
+	Created      string           `json:"created,omitzero" validate:"date,readOnly"`
+	LastModified string           `json:"lastModified,omitzero" validate:"date,readOnly"`
+	Links        base.Links       `json:"links,omitzero" validate:"readOnly"`
+	Spec         VolumeSetSpec    `json:"spec" validate:"required"`
+	Status       *VolumeSetStatus `json:"status,omitzero"`
+	Gvc          any              `json:"gvc,omitzero" validate:"allow="`
+}
+
+type VolumeSetConfigLocationVolumeZoneMap map[string]VolumeZoneMap
+
+type VolumeSetConfig struct {
+	LocationVolumeZoneMap VolumeSetConfigLocationVolumeZoneMap `json:"locationVolumeZoneMap,omitzero"`
 }
 
 type VolumeSetSpecCustomEncryptionRegions map[string]CustomEncryptionRegion
 
 type VolumeSetSpecCustomEncryption struct {
-	Regions VolumeSetSpecCustomEncryptionRegions `json:"regions,omitempty"`
+	Regions VolumeSetSpecCustomEncryptionRegions `json:"regions,omitzero"`
 }
 
 type VolumeSetSpecAutoscalingPredictive struct {
-	Enabled                bool     `json:"enabled,omitempty"`
-	LookbackHours          *float32 `json:"lookbackHours,omitempty"`
-	ProjectionHours        *float32 `json:"projectionHours,omitempty"`
-	MinDataPoints          *float32 `json:"minDataPoints,omitempty"`
-	MinGrowthRateGBPerHour *float32 `json:"minGrowthRateGBPerHour,omitempty"`
-	ScalingFactor          *float32 `json:"scalingFactor,omitempty"`
+	Enabled                *bool    `json:"enabled,omitzero" validate:"default=false"`
+	LookbackHours          *float64 `json:"lookbackHours,omitzero" validate:"min=1,max=168,default=24"`
+	ProjectionHours        *float64 `json:"projectionHours,omitzero" validate:"min=1,max=72,default=6"`
+	MinDataPoints          *float64 `json:"minDataPoints,omitzero" validate:"min=2,max=100,integer,default=10"`
+	MinGrowthRateGBPerHour *float64 `json:"minGrowthRateGBPerHour,omitzero" validate:"min=0,default=0.01"`
+	ScalingFactor          *float64 `json:"scalingFactor,omitzero" validate:"min=1.1"`
 }
 
 type VolumeSetSpecAutoscaling struct {
-	MaxCapacity       *float32                            `json:"maxCapacity,omitempty"`
-	MinFreePercentage *float32                            `json:"minFreePercentage,omitempty"`
-	ScalingFactor     *float32                            `json:"scalingFactor,omitempty"`
-	Predictive        *VolumeSetSpecAutoscalingPredictive `json:"predictive,omitempty"`
+	MaxCapacity       *float64                            `json:"maxCapacity,omitzero" validate:"min=10,integer"`
+	MinFreePercentage *float64                            `json:"minFreePercentage,omitzero" validate:"max=100,min=1"`
+	ScalingFactor     *float64                            `json:"scalingFactor,omitzero" validate:"min=1.1"`
+	Predictive        *VolumeSetSpecAutoscalingPredictive `json:"predictive,omitzero"`
 }
 
+// VolumeSetSpecMountOptionsResources ports MountResources (volumeSet.ts:266); the
+// cpu/memory ratio+range check is the mountResourcesCustom Refine.
 type VolumeSetSpecMountOptionsResources struct {
-	MaxCpu    string `json:"maxCpu,omitempty"`
-	MinCpu    string `json:"minCpu,omitempty"`
-	MinMemory string `json:"minMemory,omitempty"`
-	MaxMemory string `json:"maxMemory,omitempty"`
+	MaxCpu    VsCpu    `json:"maxCpu,omitzero" validate:"default=2000m"`
+	MinCpu    VsCpu    `json:"minCpu,omitzero" validate:"default=500m"`
+	MinMemory VsMemory `json:"minMemory,omitzero" validate:"default=1Gi"`
+	MaxMemory VsMemory `json:"maxMemory,omitzero" validate:"default=2Gi"`
 }
 
 type VolumeSetSpecMountOptions struct {
-	Resources VolumeSetSpecMountOptionsResources `json:"resources,omitempty"`
+	Resources *VolumeSetSpecMountOptionsResources `json:"resources,omitzero"`
 }
 
+// VolumeSetSpec ports `VolumeSetSpec` (volumeSet.ts:318). Required + the
+// volumeSetSpecCustom cross-field .custom() are the `required` tag on the parent
+// field + the VolumeSetSpec Refine.
 type VolumeSetSpec struct {
-	InitialCapacity    float32                        `json:"initialCapacity"`
-	PerformanceClass   PerformanceClassName           `json:"performanceClass,omitempty"`
-	StorageClassSuffix string                         `json:"storageClassSuffix,omitempty"`
-	FileSystemType     FileSystemType                 `json:"fileSystemType,omitempty"`
-	CustomEncryption   *VolumeSetSpecCustomEncryption `json:"customEncryption,omitempty"`
-	Snapshots          *SnapshotSpec                  `json:"snapshots,omitempty"`
-	Autoscaling        *VolumeSetSpecAutoscaling      `json:"autoscaling,omitempty"`
-	MountOptions       *VolumeSetSpecMountOptions     `json:"mountOptions,omitempty"`
+	InitialCapacity    float64                        `json:"initialCapacity" validate:"min=10,integer,required"`
+	PerformanceClass   PerformanceClassName           `json:"performanceClass,omitzero"`
+	StorageClassSuffix StorageClassSuffix             `json:"storageClassSuffix,omitzero"`
+	FileSystemType     FileSystemType                 `json:"fileSystemType,omitzero" validate:"default=ext4"`
+	CustomEncryption   *VolumeSetSpecCustomEncryption `json:"customEncryption,omitzero"`
+	Snapshots          *SnapshotSpec                  `json:"snapshots,omitzero"`
+	Autoscaling        *VolumeSetSpecAutoscaling      `json:"autoscaling,omitzero"`
+	MountOptions       *VolumeSetSpecMountOptions     `json:"mountOptions,omitzero"`
 }
 
+// VolumeSetStatus ports `VolumeSetStatus` (volumeSet.ts:166); the duplicate-location
+// check is the volumeSetStatusDuplicateLocations Refine.
 type VolumeSetStatus struct {
-	ParentId       string                    `json:"parentId,omitempty"`
-	UsedByWorkload string                    `json:"usedByWorkload,omitempty"`
-	WorkloadLinks  []string                  `json:"workloadLinks,omitempty"`
-	BindingId      string                    `json:"bindingId,omitempty"`
-	Locations      []VolumeSetStatusLocation `json:"locations,omitempty"`
+	ParentId       string                    `json:"parentId,omitzero"`
+	UsedByWorkload StatusWorkloadLink        `json:"usedByWorkload,omitzero"`
+	WorkloadLinks  []StatusWorkloadLink      `json:"workloadLinks,omitzero"`
+	BindingId      string                    `json:"bindingId,omitzero"`
+	Locations      []VolumeSetStatusLocation `json:"locations,omitzero" validate:"default=[]"`
 }
 
 type VolumeSetStatusLocation struct {
-	Name               string                   `json:"name"`
-	Volumes            []PersistentVolumeStatus `json:"volumes,omitempty"`
-	DesiredVolumeCount *float32                 `json:"desiredVolumeCount,omitempty"`
-	ClusterId          string                   `json:"clusterId,omitempty"`
+	Name               string                   `json:"name" validate:"required"`
+	Volumes            []PersistentVolumeStatus `json:"volumes,omitzero" validate:"default=[]"`
+	DesiredVolumeCount *float64                 `json:"desiredVolumeCount,omitzero" validate:"integer,default=0,min=0"`
+	ClusterId          string                   `json:"clusterId,omitzero"`
 }
 
 type VolumeSnapshotTags map[string]string
 
 type VolumeSnapshot struct {
-	Name    string               `json:"name"`
-	Id      string               `json:"id,omitempty"`
-	Created string               `json:"created"`
-	Expires string               `json:"expires,omitempty"`
-	Size    *float32             `json:"size,omitempty"`
-	Tags    []VolumeSnapshotTags `json:"tags,omitempty"`
+	Name    string               `json:"name" validate:"required"`
+	Id      string               `json:"id,omitzero" validate:"default=,allow="`
+	Created string               `json:"created" validate:"date,required"`
+	Expires string               `json:"expires,omitzero" validate:"date"`
+	Size    *float64             `json:"size,omitzero" validate:"default=0,min=0"`
+	Tags    []VolumeSnapshotTags `json:"tags,omitzero"`
 }
 
 type VolumeZoneMap map[string]string

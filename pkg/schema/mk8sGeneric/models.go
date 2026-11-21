@@ -11,10 +11,10 @@ type GenericJoinParams struct {
 }
 
 type GenericPool struct {
-	Name    string             `json:"name"`
-	Labels  mk8sCommon.Labels  `json:"labels,omitempty"`
-	Taints  mk8sCommon.Taints  `json:"taints,omitempty"`
-	MaxPods mk8sCommon.MaxPods `json:"maxPods,omitempty"`
+	Name    string              `json:"name"`
+	Labels  mk8sCommon.Labels   `json:"labels,omitzero"`
+	Taints  mk8sCommon.Taints   `json:"taints,omitzero"`
+	MaxPods *mk8sCommon.MaxPods `json:"maxPods,omitzero"`
 }
 
 type GenericProviderLocation string
@@ -49,15 +49,15 @@ const (
 )
 
 type GenericProviderNetworking struct {
-	ServiceNetwork GenericProviderNetworkingServiceNetwork `json:"serviceNetwork,omitempty"`
-	PodNetwork     GenericProviderNetworkingPodNetwork     `json:"podNetwork,omitempty"`
-	DnsForwarder   string                                  `json:"dnsForwarder,omitempty"`
+	ServiceNetwork GenericProviderNetworkingServiceNetwork `json:"serviceNetwork,omitzero"`
+	PodNetwork     GenericProviderNetworkingPodNetwork     `json:"podNetwork,omitzero"`
+	DnsForwarder   string                                  `json:"dnsForwarder,omitzero"`
 }
 
 type GenericProvider struct {
-	Location   GenericProviderLocation   `json:"location,omitempty"`
-	Networking GenericProviderNetworking `json:"networking,omitempty"`
-	NodePools  []GenericPool             `json:"nodePools,omitempty"`
+	Location   GenericProviderLocation    `json:"location,omitzero" validate:"required"`
+	Networking *GenericProviderNetworking `json:"networking,omitzero"`
+	NodePools  []GenericPool              `json:"nodePools,omitzero"`
 }
 
 type GenericProviderStatus map[string]any

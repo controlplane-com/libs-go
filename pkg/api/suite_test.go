@@ -285,7 +285,7 @@ func (s *IntegrationSuite) ensureTestGVC() {
 	g := &gvc.Gvc{
 		Name:        base.Name(s.testGVC),
 		Description: "Integration test GVC for libs-go",
-		Version:     common.Float32Ptr(1),
+		Version:     common.Float64Ptr(1),
 	}
 
 	_, err := s.client.GVCs().Create(ctx, s.testOrg, g)

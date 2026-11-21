@@ -28,7 +28,7 @@ func newTestAuditContext(name string) *auditctx.AuditContext {
 	return &auditctx.AuditContext{
 		Name:        base.Name(name),
 		Description: "Test audit context created by integration test",
-		Version:     common.Float32Ptr(1),
+		Version:     common.Float64Ptr(1),
 		Tags: auditctx.AuditContextTags{
 			"test":        "true",
 			"integration": "libs-go",

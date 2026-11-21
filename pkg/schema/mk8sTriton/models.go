@@ -11,9 +11,9 @@ type LoadBalancerConfigGateway struct {
 }
 
 type LoadBalancerConfig struct {
-	Manual  Manual                    `json:"manual,omitempty"`
-	None    LoadBalancerConfigNone    `json:"none,omitempty"`
-	Gateway LoadBalancerConfigGateway `json:"gateway,omitempty"`
+	Manual  *Manual                    `json:"manual,omitzero"`
+	None    *LoadBalancerConfigNone    `json:"none,omitzero"`
+	Gateway *LoadBalancerConfigGateway `json:"gateway,omitzero"`
 }
 
 type ManualMetadata map[string]string
@@ -21,19 +21,19 @@ type ManualMetadata map[string]string
 type ManualTags map[string]string
 
 type ManualLogging struct {
-	NodePort       *float32 `json:"nodePort,omitempty"`
-	ExternalSyslog string   `json:"externalSyslog,omitempty"`
+	NodePort       *float64 `json:"nodePort,omitzero"`
+	ExternalSyslog string   `json:"externalSyslog,omitzero"`
 }
 
 type Manual struct {
 	PackageId         string         `json:"packageId"`
 	ImageId           string         `json:"imageId"`
 	PublicNetworkId   string         `json:"publicNetworkId"`
-	PrivateNetworkIds []string       `json:"privateNetworkIds,omitempty"`
-	Metadata          ManualMetadata `json:"metadata,omitempty"`
-	Tags              ManualTags     `json:"tags,omitempty"`
-	Logging           ManualLogging  `json:"logging,omitempty"`
-	Count             float32        `json:"count"`
+	PrivateNetworkIds []string       `json:"privateNetworkIds,omitzero"`
+	Metadata          ManualMetadata `json:"metadata,omitzero"`
+	Tags              ManualTags     `json:"tags,omitzero"`
+	Logging           *ManualLogging `json:"logging,omitzero"`
+	Count             float64        `json:"count"`
 	CnsInternalDomain string         `json:"cnsInternalDomain"`
 	CnsPublicDomain   string         `json:"cnsPublicDomain"`
 }
@@ -41,7 +41,7 @@ type Manual struct {
 type SdcConnection struct {
 	Url                  string `json:"url"`
 	Account              string `json:"account"`
-	User                 string `json:"user,omitempty"`
+	User                 string `json:"user,omitzero"`
 	PrivateKeySecretLink string `json:"privateKeySecretLink"`
 }
 
@@ -55,22 +55,22 @@ type TritonPoolTritonTags map[string]string
 
 type TritonPool struct {
 	Name              string               `json:"name"`
-	Labels            mk8sCommon.Labels    `json:"labels,omitempty"`
-	Taints            mk8sCommon.Taints    `json:"taints,omitempty"`
-	MaxPods           mk8sCommon.MaxPods   `json:"maxPods,omitempty"`
+	Labels            mk8sCommon.Labels    `json:"labels,omitzero"`
+	Taints            mk8sCommon.Taints    `json:"taints,omitzero"`
+	MaxPods           *mk8sCommon.MaxPods  `json:"maxPods,omitzero"`
 	PackageId         string               `json:"packageId"`
-	OverrideImageId   string               `json:"overrideImageId,omitempty"`
-	PublicNetworkId   string               `json:"publicNetworkId,omitempty"`
-	PrivateNetworkIds []string             `json:"privateNetworkIds,omitempty"`
-	TritonTags        TritonPoolTritonTags `json:"tritonTags,omitempty"`
-	MinSize           float32              `json:"minSize"`
-	MaxSize           float32              `json:"maxSize"`
+	OverrideImageId   string               `json:"overrideImageId,omitzero"`
+	PublicNetworkId   string               `json:"publicNetworkId,omitzero"`
+	PrivateNetworkIds []string             `json:"privateNetworkIds,omitzero"`
+	TritonTags        TritonPoolTritonTags `json:"tritonTags,omitzero"`
+	MinSize           float64              `json:"minSize"`
+	MaxSize           float64              `json:"maxSize"`
 }
 
 type TritonProviderConnection struct {
 	Url                  string `json:"url"`
 	Account              string `json:"account"`
-	User                 string `json:"user,omitempty"`
+	User                 string `json:"user,omitzero"`
 	PrivateKeySecretLink string `json:"privateKeySecretLink"`
 }
 
@@ -96,9 +96,9 @@ const (
 )
 
 type TritonProviderNetworking struct {
-	ServiceNetwork TritonProviderNetworkingServiceNetwork `json:"serviceNetwork,omitempty"`
-	PodNetwork     TritonProviderNetworkingPodNetwork     `json:"podNetwork,omitempty"`
-	DnsForwarder   string                                 `json:"dnsForwarder,omitempty"`
+	ServiceNetwork TritonProviderNetworkingServiceNetwork `json:"serviceNetwork,omitzero"`
+	PodNetwork     TritonProviderNetworkingPodNetwork     `json:"podNetwork,omitzero"`
+	DnsForwarder   string                                 `json:"dnsForwarder,omitzero"`
 }
 
 type TritonProviderLocation string
@@ -112,17 +112,17 @@ const (
 )
 
 type TritonProvider struct {
-	Connection       TritonProviderConnection    `json:"connection"`
-	Networking       TritonProviderNetworking    `json:"networking,omitempty"`
-	PreInstallScript mk8sCommon.PreInstallScript `json:"preInstallScript,omitempty"`
-	Location         TritonProviderLocation      `json:"location,omitempty"`
-	LoadBalancer     LoadBalancerConfig          `json:"loadBalancer,omitempty"`
-	PrivateNetworkId string                      `json:"privateNetworkId"`
-	FirewallEnabled  bool                        `json:"firewallEnabled,omitempty"`
-	NodePools        []TritonPool                `json:"nodePools,omitempty"`
-	ImageId          string                      `json:"imageId"`
-	SshKeys          []mk8sCommon.SshPublicKey   `json:"sshKeys,omitempty"`
-	Autoscaler       mk8sCommon.AutoscalerConfig `json:"autoscaler,omitempty"`
+	Connection       TritonProviderConnection     `json:"connection"`
+	Networking       *TritonProviderNetworking    `json:"networking,omitzero"`
+	PreInstallScript mk8sCommon.PreInstallScript  `json:"preInstallScript,omitzero"`
+	Location         TritonProviderLocation       `json:"location,omitzero" validate:"required"`
+	LoadBalancer     *LoadBalancerConfig          `json:"loadBalancer,omitzero"`
+	PrivateNetworkId string                       `json:"privateNetworkId"`
+	FirewallEnabled  *bool                        `json:"firewallEnabled,omitzero"`
+	NodePools        []TritonPool                 `json:"nodePools,omitzero"`
+	ImageId          string                       `json:"imageId"`
+	SshKeys          []mk8sCommon.SshPublicKey    `json:"sshKeys,omitzero"`
+	Autoscaler       *mk8sCommon.AutoscalerConfig `json:"autoscaler,omitzero"`
 }
 
 type TritonProviderStatus map[string]any

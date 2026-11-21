@@ -5,22 +5,22 @@ package mk8sLinode
 import "github.com/controlplane-com/libs-go/pkg/schema/mk8sCommon"
 
 type LinodeJoinParams struct {
-	IpAddress    string `json:"ipAddress,omitempty"`
+	IpAddress    string `json:"ipAddress,omitzero"`
 	NodePoolName string `json:"nodePoolName"`
 
 	/* WARNING!! Arbitrary properties are being ignored! */
 }
 
 type LinodePool struct {
-	Name          string             `json:"name"`
-	Labels        mk8sCommon.Labels  `json:"labels,omitempty"`
-	Taints        mk8sCommon.Taints  `json:"taints,omitempty"`
-	MaxPods       mk8sCommon.MaxPods `json:"maxPods,omitempty"`
-	ServerType    string             `json:"serverType"`
-	OverrideImage string             `json:"overrideImage,omitempty"`
-	SubnetId      string             `json:"subnetId"`
-	MinSize       float32            `json:"minSize"`
-	MaxSize       float32            `json:"maxSize"`
+	Name          string              `json:"name"`
+	Labels        mk8sCommon.Labels   `json:"labels,omitzero"`
+	Taints        mk8sCommon.Taints   `json:"taints,omitzero"`
+	MaxPods       *mk8sCommon.MaxPods `json:"maxPods,omitzero"`
+	ServerType    string              `json:"serverType"`
+	OverrideImage string              `json:"overrideImage,omitzero"`
+	SubnetId      string              `json:"subnetId"`
+	MinSize       float64             `json:"minSize"`
+	MaxSize       float64             `json:"maxSize"`
 }
 
 type LinodeProviderNetworkingServiceNetwork string
@@ -45,23 +45,23 @@ const (
 )
 
 type LinodeProviderNetworking struct {
-	ServiceNetwork LinodeProviderNetworkingServiceNetwork `json:"serviceNetwork,omitempty"`
-	PodNetwork     LinodeProviderNetworkingPodNetwork     `json:"podNetwork,omitempty"`
-	DnsForwarder   string                                 `json:"dnsForwarder,omitempty"`
+	ServiceNetwork LinodeProviderNetworkingServiceNetwork `json:"serviceNetwork,omitzero"`
+	PodNetwork     LinodeProviderNetworkingPodNetwork     `json:"podNetwork,omitzero"`
+	DnsForwarder   string                                 `json:"dnsForwarder,omitzero"`
 }
 
 type LinodeProvider struct {
-	Region           string                      `json:"region"`
-	TokenSecretLink  string                      `json:"tokenSecretLink"`
-	FirewallId       string                      `json:"firewallId,omitempty"`
-	NodePools        []LinodePool                `json:"nodePools,omitempty"`
-	Image            string                      `json:"image"`
-	AuthorizedUsers  []string                    `json:"authorizedUsers,omitempty"`
-	AuthorizedKeys   []string                    `json:"authorizedKeys,omitempty"`
-	VpcId            string                      `json:"vpcId"`
-	PreInstallScript mk8sCommon.PreInstallScript `json:"preInstallScript,omitempty"`
-	Networking       LinodeProviderNetworking    `json:"networking,omitempty"`
-	Autoscaler       mk8sCommon.AutoscalerConfig `json:"autoscaler,omitempty"`
+	Region           string                       `json:"region"`
+	TokenSecretLink  string                       `json:"tokenSecretLink"`
+	FirewallId       string                       `json:"firewallId,omitzero"`
+	NodePools        []LinodePool                 `json:"nodePools,omitzero"`
+	Image            string                       `json:"image"`
+	AuthorizedUsers  []string                     `json:"authorizedUsers,omitzero"`
+	AuthorizedKeys   []string                     `json:"authorizedKeys,omitzero"`
+	VpcId            string                       `json:"vpcId"`
+	PreInstallScript mk8sCommon.PreInstallScript  `json:"preInstallScript,omitzero"`
+	Networking       *LinodeProviderNetworking    `json:"networking,omitzero"`
+	Autoscaler       *mk8sCommon.AutoscalerConfig `json:"autoscaler,omitzero"`
 }
 
 type LinodeProviderStatus map[string]any

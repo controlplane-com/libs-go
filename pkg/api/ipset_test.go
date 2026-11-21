@@ -29,7 +29,7 @@ func newTestIPSet(name string) *ipSet.IpSet {
 	return &ipSet.IpSet{
 		Name:        base.Name(name),
 		Description: "Test IP set created by integration test",
-		Version:     common.Float32Ptr(1),
+		Version:     common.Float64Ptr(1),
 		Tags: ipSet.IpSetTags{
 			"test":        "true",
 			"integration": "libs-go",
@@ -47,7 +47,7 @@ func newTestIPSetWithLocation(name, locationLink string) *ipSet.IpSet {
 	return &ipSet.IpSet{
 		Name:        base.Name(name),
 		Description: "Test IP set with location",
-		Version:     common.Float32Ptr(1),
+		Version:     common.Float64Ptr(1),
 		Tags: ipSet.IpSetTags{
 			"test":        "true",
 			"integration": "libs-go",
@@ -55,7 +55,7 @@ func newTestIPSetWithLocation(name, locationLink string) *ipSet.IpSet {
 		Spec: ipSet.IpSetSpec{
 			Locations: []ipSet.IpSetLocation{
 				{
-					Name:            locationLink,
+					Name:            ipSet.LocationLink(locationLink),
 					RetentionPolicy: ipSet.IpSetLocationRetentionPolicyFree,
 				},
 			},
@@ -412,14 +412,14 @@ func (s *IPSetTestSuite) TestIPSet_RetentionPolicies() {
 	ips := &ipSet.IpSet{
 		Name:        base.Name(ipsetName),
 		Description: "Test IP set with keep retention",
-		Version:     common.Float32Ptr(1),
+		Version:     common.Float64Ptr(1),
 		Tags: ipSet.IpSetTags{
 			"test": "true",
 		},
 		Spec: ipSet.IpSetSpec{
 			Locations: []ipSet.IpSetLocation{
 				{
-					Name:            locationLink,
+					Name:            ipSet.LocationLink(locationLink),
 					RetentionPolicy: ipSet.IpSetLocationRetentionPolicyKeep,
 				},
 			},
@@ -449,7 +449,7 @@ func (s *IPSetTestSuite) TestIPSet_MultipleTags() {
 	ips := &ipSet.IpSet{
 		Name:        base.Name(ipsetName),
 		Description: "Test IP set with multiple tags",
-		Version:     common.Float32Ptr(1),
+		Version:     common.Float64Ptr(1),
 		Tags: ipSet.IpSetTags{
 			"env":         "test",
 			"team":        "platform",
@@ -510,6 +510,10 @@ func (s *IPSetTestSuite) TestIPSet_VerifyStatus() {
 	s.Require().NoError(err)
 
 	// Log status info (IP addresses may take time to allocate)
+	if fetched.Status == nil {
+		s.T().Logf("IP set status not populated yet")
+		return
+	}
 	s.T().Logf("IP set status: %d addresses, error=%s, warning=%s",
 		len(fetched.Status.IpAddresses), fetched.Status.Error, fetched.Status.Warning)
 

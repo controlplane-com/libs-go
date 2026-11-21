@@ -32,12 +32,12 @@ const (
 
 type LambdalabsPool struct {
 	Name         string                     `json:"name"`
-	Labels       mk8sCommon.Labels          `json:"labels,omitempty"`
-	Taints       mk8sCommon.Taints          `json:"taints,omitempty"`
-	MaxPods      mk8sCommon.MaxPods         `json:"maxPods,omitempty"`
-	MinSize      float32                    `json:"minSize"`
-	MaxSize      float32                    `json:"maxSize"`
-	InstanceType LambdalabsPoolInstanceType `json:"instanceType,omitempty"`
+	Labels       mk8sCommon.Labels          `json:"labels,omitzero"`
+	Taints       mk8sCommon.Taints          `json:"taints,omitzero"`
+	MaxPods      *mk8sCommon.MaxPods        `json:"maxPods,omitzero"`
+	MinSize      float64                    `json:"minSize"`
+	MaxSize      float64                    `json:"maxSize"`
+	InstanceType LambdalabsPoolInstanceType `json:"instanceType,omitzero" validate:"required"`
 }
 
 type LambdalabsProviderRegion string
@@ -59,14 +59,14 @@ const (
 )
 
 type LambdalabsProvider struct {
-	Region             LambdalabsProviderRegion    `json:"region,omitempty"`
-	TokenSecretLink    string                      `json:"tokenSecretLink"`
-	NodePools          []LambdalabsPool            `json:"nodePools,omitempty"`
-	SshKey             string                      `json:"sshKey"`
-	UnmanagedNodePools []mk8sCommon.UnmanagedPool  `json:"unmanagedNodePools,omitempty"`
-	Autoscaler         mk8sCommon.AutoscalerConfig `json:"autoscaler,omitempty"`
-	FileSystems        []string                    `json:"fileSystems,omitempty"`
-	PreInstallScript   mk8sCommon.PreInstallScript `json:"preInstallScript,omitempty"`
+	Region             LambdalabsProviderRegion     `json:"region,omitzero" validate:"required"`
+	TokenSecretLink    string                       `json:"tokenSecretLink"`
+	NodePools          []LambdalabsPool             `json:"nodePools,omitzero"`
+	SshKey             string                       `json:"sshKey"`
+	UnmanagedNodePools []mk8sCommon.UnmanagedPool   `json:"unmanagedNodePools,omitzero"`
+	Autoscaler         *mk8sCommon.AutoscalerConfig `json:"autoscaler,omitzero"`
+	FileSystems        []string                     `json:"fileSystems,omitzero"`
+	PreInstallScript   mk8sCommon.PreInstallScript  `json:"preInstallScript,omitzero"`
 }
 
 type LambdalabsProviderStatus map[string]any

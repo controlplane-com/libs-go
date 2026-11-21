@@ -1,4 +1,15 @@
-/* auto-generated */
+/* hand-maintained — canonical source of truth for the `command` schema + every
+ * typed command spec/status. `validate:` tags drive pkg/validate.FromType
+ * reflection (replaces the schema_command.go builder). See
+ * nodelibs/schema/src/command.ts.
+ *
+ * The registered `command` kind uses the generic spec/status (Object.unknown); the
+ * typed specs/statuses mirror the Joi source for parity (executor / future use).
+ * conflictQuery embeds query.Query (→ QueryRule via the base-type registry);
+ * containerOverrides embeds workload.ContainerOverride; volume/snapshot/volumeSet
+ * fields embed the volumeSet-owned types; the Expand/Shrink timeoutSeconds default
+ * and the Number-keyed / allow('') pattern maps are Refines / RegisterType (see
+ * schema_reflect_datanet.go). */
 
 package command
 
@@ -10,77 +21,36 @@ import "github.com/controlplane-com/libs-go/pkg/schema/cronjob"
 import "github.com/controlplane-com/libs-go/pkg/schema/containerstatus"
 
 type Cluster struct {
-	ClusterId string `json:"clusterId,omitempty"`
-	Since     string `json:"since,omitempty"`
+	ClusterId string `json:"clusterId,omitzero"`
+	Since     string `json:"since,omitzero" validate:"date"`
 }
 
 type Clusters map[string]Cluster
 
-type CommandTags map[string]any
+// CommandTags aliases base.Tags for the reflection base-type registry.
+type CommandTags = base.Tags
 
 type CommandSpec map[string]any
 
 type CommandStatus map[string]any
 
-type CommandConflictQueryContext map[string]any
-
-type CommandConflictQueryFetch string
-
-const (
-	CommandConflictQueryFetchLinks CommandConflictQueryFetch = "links"
-	CommandConflictQueryFetchItems CommandConflictQueryFetch = "items"
-)
-
-type CommandConflictQuerySpecMatch string
-
-const (
-	CommandConflictQuerySpecMatchAll  CommandConflictQuerySpecMatch = "all"
-	CommandConflictQuerySpecMatchAny  CommandConflictQuerySpecMatch = "any"
-	CommandConflictQuerySpecMatchNone CommandConflictQuerySpecMatch = "none"
-)
-
-type CommandConflictQuerySpecSortOrder string
-
-const (
-	CommandConflictQuerySpecSortOrderAsc  CommandConflictQuerySpecSortOrder = "asc"
-	CommandConflictQuerySpecSortOrderDesc CommandConflictQuerySpecSortOrder = "desc"
-)
-
-type CommandConflictQuerySpecSort struct {
-	By    string                            `json:"by"`
-	Order CommandConflictQuerySpecSortOrder `json:"order,omitempty"`
-}
-
-type CommandConflictQuerySpec struct {
-	Match CommandConflictQuerySpecMatch `json:"match,omitempty"`
-	Terms []query.Term                  `json:"terms,omitempty"`
-	Sort  *CommandConflictQuerySpecSort `json:"sort,omitempty"`
-}
-
-type CommandConflictQuery struct {
-	Kind    base.Kind                    `json:"kind,omitempty"`
-	Context *CommandConflictQueryContext `json:"context,omitempty"`
-	Fetch   CommandConflictQueryFetch    `json:"fetch,omitempty"`
-	Spec    *CommandConflictQuerySpec    `json:"spec,omitempty"`
-}
-
 type Command struct {
-	Id             string                `json:"id,omitempty"`
-	OwnerId        string                `json:"ownerId,omitempty"`
-	Kind           base.Kind             `json:"kind,omitempty"`
-	Version        *float32              `json:"version,omitempty"`
-	Created        string                `json:"created,omitempty"`
-	LastModified   string                `json:"lastModified,omitempty"`
-	Links          base.Links            `json:"links,omitempty"`
-	Tags           CommandTags           `json:"tags,omitempty"`
-	Type           string                `json:"type"`
-	LifecycleStage CommandLifecycleStage `json:"lifecycleStage,omitempty"`
-	Spec           CommandSpec           `json:"spec,omitempty"`
-	Status         CommandStatus         `json:"status,omitempty"`
-	ConflictQuery  CommandConflictQuery  `json:"conflictQuery,omitempty"`
+	Id             string                `json:"id,omitzero" validate:"uuid"`
+	OwnerId        string                `json:"ownerId,omitzero" validate:"uuid"`
+	Kind           base.Kind             `json:"kind,omitzero"`
+	Version        *float64              `json:"version,omitzero" validate:"positive,integer"`
+	Created        string                `json:"created,omitzero" validate:"date"`
+	LastModified   string                `json:"lastModified,omitzero" validate:"date"`
+	Links          base.Links            `json:"links,omitzero"`
+	Tags           CommandTags           `json:"tags,omitzero" validate:"optional"`
+	Type           string                `json:"type" validate:"required"`
+	LifecycleStage CommandLifecycleStage `json:"lifecycleStage,omitzero" validate:"default=pending"`
+	Spec           CommandSpec           `json:"spec,omitzero"`
+	Status         CommandStatus         `json:"status,omitzero"`
+	ConflictQuery  *query.Query          `json:"conflictQuery,omitzero" validate:"optional"`
 }
 
-type CommandLifecycleStage string
+type CommandLifecycleStage string //ts:export
 
 const (
 	CommandLifecycleStagePending               CommandLifecycleStage = "pending"
@@ -91,135 +61,18 @@ const (
 	CommandLifecycleStageFailed                CommandLifecycleStage = "failed"
 )
 
-type CopyVolumeSideStatusStage string
-
-const (
-	CopyVolumeSideStatusStageCaptureSource                 CopyVolumeSideStatusStage = "capture-source"
-	CopyVolumeSideStatusStageAwaitReceiver                 CopyVolumeSideStatusStage = "await-receiver"
-	CopyVolumeSideStatusStageApplySourceEgress             CopyVolumeSideStatusStage = "apply-source-egress"
-	CopyVolumeSideStatusStageRunBulkSync                   CopyVolumeSideStatusStage = "run-bulk-sync"
-	CopyVolumeSideStatusStagePrepareDestination            CopyVolumeSideStatusStage = "prepare-destination"
-	CopyVolumeSideStatusStageApplyReceiver                 CopyVolumeSideStatusStage = "apply-receiver"
-	CopyVolumeSideStatusStageAwaitBulkSync                 CopyVolumeSideStatusStage = "await-bulk-sync"
-	CopyVolumeSideStatusStageCommitAndPrepareSwap          CopyVolumeSideStatusStage = "commit-and-prepare-swap"
-	CopyVolumeSideStatusStageShutdownTargetReplica         CopyVolumeSideStatusStage = "shutdown-target-replica"
-	CopyVolumeSideStatusStageAwaitTargetReplicaTermination CopyVolumeSideStatusStage = "await-target-replica-termination"
-	CopyVolumeSideStatusStageCleanupK8S                    CopyVolumeSideStatusStage = "cleanup-k8s"
-	CopyVolumeSideStatusStageFail                          CopyVolumeSideStatusStage = "fail"
-)
-
-type CopyVolumeSideStatus struct {
-	Stage                CopyVolumeSideStatusStage `json:"stage,omitempty"`
-	Messages             []string                  `json:"messages,omitempty"`
-	LockNames            []string                  `json:"lockNames,omitempty"`
-	TempStorageClassName string                    `json:"tempStorageClassName,omitempty"`
-	Complete             bool                      `json:"complete,omitempty"`
-	CleanedUp            bool                      `json:"cleanedUp,omitempty"`
-}
-
-type CopyVolumeSpec struct {
-	Location                             string   `json:"location"`
-	TargetLocation                       string   `json:"targetLocation"`
-	VolumeIndex                          float32  `json:"volumeIndex"`
-	AcknowledgeDestinationVolumeDeletion bool     `json:"acknowledgeDestinationVolumeDeletion,omitempty"`
-	TimeoutSeconds                       *float32 `json:"timeoutSeconds,omitempty"`
-	TargetVolumeSet                      string   `json:"targetVolumeSet,omitempty"`
-	TargetVolumeSetId                    string   `json:"targetVolumeSetId,omitempty"`
-	TargetGvc                            string   `json:"targetGvc,omitempty"`
-	Locations                            []string `json:"locations,omitempty"`
-}
-
-type CopyVolumeStatusClusterIdByLocation map[string]string
-
-type CopyVolumeStatusSourceStage string
-
-const (
-	CopyVolumeStatusSourceStageCaptureSource                 CopyVolumeStatusSourceStage = "capture-source"
-	CopyVolumeStatusSourceStageAwaitReceiver                 CopyVolumeStatusSourceStage = "await-receiver"
-	CopyVolumeStatusSourceStageApplySourceEgress             CopyVolumeStatusSourceStage = "apply-source-egress"
-	CopyVolumeStatusSourceStageRunBulkSync                   CopyVolumeStatusSourceStage = "run-bulk-sync"
-	CopyVolumeStatusSourceStagePrepareDestination            CopyVolumeStatusSourceStage = "prepare-destination"
-	CopyVolumeStatusSourceStageApplyReceiver                 CopyVolumeStatusSourceStage = "apply-receiver"
-	CopyVolumeStatusSourceStageAwaitBulkSync                 CopyVolumeStatusSourceStage = "await-bulk-sync"
-	CopyVolumeStatusSourceStageCommitAndPrepareSwap          CopyVolumeStatusSourceStage = "commit-and-prepare-swap"
-	CopyVolumeStatusSourceStageShutdownTargetReplica         CopyVolumeStatusSourceStage = "shutdown-target-replica"
-	CopyVolumeStatusSourceStageAwaitTargetReplicaTermination CopyVolumeStatusSourceStage = "await-target-replica-termination"
-	CopyVolumeStatusSourceStageCleanupK8S                    CopyVolumeStatusSourceStage = "cleanup-k8s"
-	CopyVolumeStatusSourceStageFail                          CopyVolumeStatusSourceStage = "fail"
-)
-
-type CopyVolumeStatusSource struct {
-	Stage                CopyVolumeStatusSourceStage `json:"stage,omitempty"`
-	Messages             []string                    `json:"messages,omitempty"`
-	LockNames            []string                    `json:"lockNames,omitempty"`
-	TempStorageClassName string                      `json:"tempStorageClassName,omitempty"`
-	Complete             bool                        `json:"complete,omitempty"`
-	CleanedUp            bool                        `json:"cleanedUp,omitempty"`
-}
-
-type CopyVolumeStatusTargetStage string
-
-const (
-	CopyVolumeStatusTargetStageCaptureSource                 CopyVolumeStatusTargetStage = "capture-source"
-	CopyVolumeStatusTargetStageAwaitReceiver                 CopyVolumeStatusTargetStage = "await-receiver"
-	CopyVolumeStatusTargetStageApplySourceEgress             CopyVolumeStatusTargetStage = "apply-source-egress"
-	CopyVolumeStatusTargetStageRunBulkSync                   CopyVolumeStatusTargetStage = "run-bulk-sync"
-	CopyVolumeStatusTargetStagePrepareDestination            CopyVolumeStatusTargetStage = "prepare-destination"
-	CopyVolumeStatusTargetStageApplyReceiver                 CopyVolumeStatusTargetStage = "apply-receiver"
-	CopyVolumeStatusTargetStageAwaitBulkSync                 CopyVolumeStatusTargetStage = "await-bulk-sync"
-	CopyVolumeStatusTargetStageCommitAndPrepareSwap          CopyVolumeStatusTargetStage = "commit-and-prepare-swap"
-	CopyVolumeStatusTargetStageShutdownTargetReplica         CopyVolumeStatusTargetStage = "shutdown-target-replica"
-	CopyVolumeStatusTargetStageAwaitTargetReplicaTermination CopyVolumeStatusTargetStage = "await-target-replica-termination"
-	CopyVolumeStatusTargetStageCleanupK8S                    CopyVolumeStatusTargetStage = "cleanup-k8s"
-	CopyVolumeStatusTargetStageFail                          CopyVolumeStatusTargetStage = "fail"
-)
-
-type CopyVolumeStatusTarget struct {
-	Stage                CopyVolumeStatusTargetStage `json:"stage,omitempty"`
-	Messages             []string                    `json:"messages,omitempty"`
-	LockNames            []string                    `json:"lockNames,omitempty"`
-	TempStorageClassName string                      `json:"tempStorageClassName,omitempty"`
-	Complete             bool                        `json:"complete,omitempty"`
-	CleanedUp            bool                        `json:"cleanedUp,omitempty"`
-}
-
-type CopyVolumeStatusNewVolumeAttributes map[string]string
-
-type CopyVolumeStatus struct {
-	ClusterId                   string                              `json:"clusterId,omitempty"`
-	ClusterIdByLocation         CopyVolumeStatusClusterIdByLocation `json:"clusterIdByLocation,omitempty"`
-	Messages                    []string                            `json:"messages,omitempty"`
-	Source                      CopyVolumeStatusSource              `json:"source,omitempty"`
-	Target                      CopyVolumeStatusTarget              `json:"target,omitempty"`
-	ReceiverHost                string                              `json:"receiverHost,omitempty"`
-	ReceiverSniService          string                              `json:"receiverSniService,omitempty"`
-	TargetGatewayAddress        string                              `json:"targetGatewayAddress,omitempty"`
-	NewStorageDeviceId          string                              `json:"newStorageDeviceId,omitempty"`
-	NewResourceName             string                              `json:"newResourceName,omitempty"`
-	NewVolumeAttributes         CopyVolumeStatusNewVolumeAttributes `json:"newVolumeAttributes,omitempty"`
-	NewVolumeSize               *float32                            `json:"newVolumeSize,omitempty"`
-	NewVolumeZone               string                              `json:"newVolumeZone,omitempty"`
-	DestinationDeviceIdToRemove string                              `json:"destinationDeviceIdToRemove,omitempty"`
-	TargetHasWorkloadPod        bool                                `json:"targetHasWorkloadPod,omitempty"`
-	SourceDeviceId              string                              `json:"sourceDeviceId,omitempty"`
-	SourceInUse                 bool                                `json:"sourceInUse,omitempty"`
-	BulkSyncTargetPodUid        string                              `json:"bulkSyncTargetPodUid,omitempty"`
-	BulkSyncAttempt             *float32                            `json:"bulkSyncAttempt,omitempty"`
-	BulkSyncCompletedAt         string                              `json:"bulkSyncCompletedAt,omitempty"`
-	BulkSyncProgressPercent     *float32                            `json:"bulkSyncProgressPercent,omitempty"`
-	BulkSyncTransferredBytes    *float32                            `json:"bulkSyncTransferredBytes,omitempty"`
-	BulkSyncRate                string                              `json:"bulkSyncRate,omitempty"`
-	BulkSyncEta                 string                              `json:"bulkSyncEta,omitempty"`
+func (CommandLifecycleStage) EnumValues() []string {
+	return []string{"pending", "running", "cancellation-requested", "cancelled", "completed", "failed"}
 }
 
 type CreateVolumeSnapshotSpecSnapshotTags map[string]string
 
 type CreateVolumeSnapshotSpec struct {
-	Location               string                                 `json:"location"`
-	VolumeIndex            float32                                `json:"volumeIndex"`
-	SnapshotName           string                                 `json:"snapshotName"`
-	SnapshotExpirationDate string                                 `json:"snapshotExpirationDate,omitempty"`
-	SnapshotTags           []CreateVolumeSnapshotSpecSnapshotTags `json:"snapshotTags,omitempty"`
+	Location               string                                 `json:"location" validate:"required"`
+	VolumeIndex            float64                                `json:"volumeIndex" validate:"required"`
+	SnapshotName           base.Name                              `json:"snapshotName" validate:"required"`
+	SnapshotExpirationDate string                                 `json:"snapshotExpirationDate,omitzero" validate:"date"`
+	SnapshotTags           []CreateVolumeSnapshotSpecSnapshotTags `json:"snapshotTags,omitzero"`
 }
 
 type CreateVolumeSnapshotStatusStage string
@@ -234,64 +87,16 @@ const (
 type CreateVolumeSnapshotStatusClusterIdByLocation map[string]string
 
 type CreateVolumeSnapshotStatus struct {
-	Stage               CreateVolumeSnapshotStatusStage               `json:"stage,omitempty"`
-	Messages            []string                                      `json:"messages,omitempty"`
-	ClusterId           string                                        `json:"clusterId,omitempty"`
-	ClusterIdByLocation CreateVolumeSnapshotStatusClusterIdByLocation `json:"clusterIdByLocation,omitempty"`
-	NewSnapshotId       string                                        `json:"newSnapshotId,omitempty"`
-	NewSnapshotSize     *float32                                      `json:"newSnapshotSize,omitempty"`
-	CreationStartTime   string                                        `json:"creationStartTime,omitempty"`
+	Stage               CreateVolumeSnapshotStatusStage               `json:"stage,omitzero" validate:"required,default=create-snapshot,valid=create-snapshot|update-volume-set|cleanup-k8s|revert"`
+	Messages            []string                                      `json:"messages,omitzero"`
+	ClusterId           string                                        `json:"clusterId,omitzero"`
+	ClusterIdByLocation CreateVolumeSnapshotStatusClusterIdByLocation `json:"clusterIdByLocation,omitzero"`
+	NewSnapshotId       string                                        `json:"newSnapshotId,omitzero"`
+	NewSnapshotSize     *float64                                      `json:"newSnapshotSize,omitzero"`
+	CreationStartTime   string                                        `json:"creationStartTime,omitzero" validate:"date"`
 }
 
 type DeleteCloudDevicesStatusClusterIdByLocation map[string]string
-
-type DeleteCloudDevicesStatusVolumeLifecycle string
-
-const (
-	DeleteCloudDevicesStatusVolumeLifecycleCreating  DeleteCloudDevicesStatusVolumeLifecycle = "creating"
-	DeleteCloudDevicesStatusVolumeLifecycleUnused    DeleteCloudDevicesStatusVolumeLifecycle = "unused"
-	DeleteCloudDevicesStatusVolumeLifecycleUnbound   DeleteCloudDevicesStatusVolumeLifecycle = "unbound"
-	DeleteCloudDevicesStatusVolumeLifecycleBound     DeleteCloudDevicesStatusVolumeLifecycle = "bound"
-	DeleteCloudDevicesStatusVolumeLifecycleDeleted   DeleteCloudDevicesStatusVolumeLifecycle = "deleted"
-	DeleteCloudDevicesStatusVolumeLifecycleRepairing DeleteCloudDevicesStatusVolumeLifecycle = "repairing"
-)
-
-type DeleteCloudDevicesStatusVolumeDiskType string
-
-const (
-	DeleteCloudDevicesStatusVolumeDiskTypeGp3                DeleteCloudDevicesStatusVolumeDiskType = "gp3"
-	DeleteCloudDevicesStatusVolumeDiskTypePdBalanced         DeleteCloudDevicesStatusVolumeDiskType = "pd-balanced"
-	DeleteCloudDevicesStatusVolumeDiskTypePdSsd              DeleteCloudDevicesStatusVolumeDiskType = "pd-ssd"
-	DeleteCloudDevicesStatusVolumeDiskTypeHyperdiskBalanced  DeleteCloudDevicesStatusVolumeDiskType = "hyperdisk-balanced"
-	DeleteCloudDevicesStatusVolumeDiskTypePremiumV2Lrs       DeleteCloudDevicesStatusVolumeDiskType = "PremiumV2_LRS"
-	DeleteCloudDevicesStatusVolumeDiskTypeDoBlockStorage     DeleteCloudDevicesStatusVolumeDiskType = "do-block-storage"
-	DeleteCloudDevicesStatusVolumeDiskTypeHcloudVolume       DeleteCloudDevicesStatusVolumeDiskType = "hcloud-volume"
-	DeleteCloudDevicesStatusVolumeDiskTypeLinodeBlockStorage DeleteCloudDevicesStatusVolumeDiskType = "linode-block-storage"
-	DeleteCloudDevicesStatusVolumeDiskTypeOciBvBalanced      DeleteCloudDevicesStatusVolumeDiskType = "oci-bv-balanced"
-	DeleteCloudDevicesStatusVolumeDiskTypeJuicefs            DeleteCloudDevicesStatusVolumeDiskType = "juicefs"
-	DeleteCloudDevicesStatusVolumeDiskTypeHostpath           DeleteCloudDevicesStatusVolumeDiskType = "hostpath"
-)
-
-type DeleteCloudDevicesStatusVolumeAttributes map[string]string
-
-type DeleteCloudDevicesStatusVolume struct {
-	Lifecycle           DeleteCloudDevicesStatusVolumeLifecycle  `json:"lifecycle,omitempty"`
-	StorageDeviceId     string                                   `json:"storageDeviceId,omitempty"`
-	OldStorageDeviceIds []string                                 `json:"oldStorageDeviceIds,omitempty"`
-	ResourceName        string                                   `json:"resourceName,omitempty"`
-	Index               float32                                  `json:"index"`
-	CurrentSize         float32                                  `json:"currentSize"`
-	CurrentBytesUsed    *float32                                 `json:"currentBytesUsed,omitempty"`
-	CurrentBytesFree    *float32                                 `json:"currentBytesFree,omitempty"`
-	Iops                *float32                                 `json:"iops,omitempty"`
-	Throughput          *float32                                 `json:"throughput,omitempty"`
-	Driver              string                                   `json:"driver"`
-	DiskType            DeleteCloudDevicesStatusVolumeDiskType   `json:"diskType,omitempty"`
-	VolumeSnapshots     []volumeSet.VolumeSnapshot               `json:"volumeSnapshots,omitempty"`
-	Attributes          DeleteCloudDevicesStatusVolumeAttributes `json:"attributes,omitempty"`
-	Zone                string                                   `json:"zone,omitempty"`
-	Node                string                                   `json:"node,omitempty"`
-}
 
 type DeleteCloudDevicesStatusStage string
 
@@ -303,26 +108,26 @@ const (
 )
 
 type DeleteCloudDevicesStatusPvcRef struct {
-	Namespace string `json:"namespace"`
-	Name      string `json:"name"`
+	Namespace string `json:"namespace" validate:"required"`
+	Name      string `json:"name" validate:"required"`
 }
 
 type DeleteCloudDevicesStatusSnapshotDeletionStatus map[string]SnapshotDeletionStatus
 
 type DeleteCloudDevicesStatus struct {
-	ClusterId              string                                         `json:"clusterId,omitempty"`
-	ClusterIdByLocation    DeleteCloudDevicesStatusClusterIdByLocation    `json:"clusterIdByLocation,omitempty"`
-	Volume                 DeleteCloudDevicesStatusVolume                 `json:"volume"`
-	Stage                  DeleteCloudDevicesStatusStage                  `json:"stage,omitempty"`
-	Messages               []string                                       `json:"messages,omitempty"`
-	PvcRef                 DeleteCloudDevicesStatusPvcRef                 `json:"pvcRef,omitempty"`
-	SnapshotDeletionStatus DeleteCloudDevicesStatusSnapshotDeletionStatus `json:"snapshotDeletionStatus"`
+	ClusterId              string                                         `json:"clusterId,omitzero"`
+	ClusterIdByLocation    DeleteCloudDevicesStatusClusterIdByLocation    `json:"clusterIdByLocation,omitzero"`
+	Volume                 volumeSet.PersistentVolumeStatus               `json:"volume" validate:"required"`
+	Stage                  DeleteCloudDevicesStatusStage                  `json:"stage,omitzero" validate:"required,default=delete-snapshots,valid=delete-snapshots|delete-volume|finalize-volume-deletion|update-volume-set"`
+	Messages               []string                                       `json:"messages,omitzero"`
+	PvcRef                 *DeleteCloudDevicesStatusPvcRef                `json:"pvcRef,omitzero"`
+	SnapshotDeletionStatus DeleteCloudDevicesStatusSnapshotDeletionStatus `json:"snapshotDeletionStatus" validate:"required,default={}"`
 }
 
 type DeleteOrphanedVolumeSnapshotSpec struct {
-	Location    string  `json:"location"`
-	SnapshotId  string  `json:"snapshotId"`
-	VolumeIndex float32 `json:"volumeIndex"`
+	Location    string  `json:"location" validate:"required"`
+	SnapshotId  string  `json:"snapshotId" validate:"required"`
+	VolumeIndex float64 `json:"volumeIndex" validate:"required"`
 }
 
 type DeleteOrphanedVolumeSnapshotStatusStage string
@@ -337,17 +142,17 @@ const (
 type DeleteOrphanedVolumeSnapshotStatusClusterIdByLocation map[string]string
 
 type DeleteOrphanedVolumeSnapshotStatus struct {
-	Stage               DeleteOrphanedVolumeSnapshotStatusStage               `json:"stage,omitempty"`
-	ClusterId           string                                                `json:"clusterId,omitempty"`
-	ClusterIdByLocation DeleteOrphanedVolumeSnapshotStatusClusterIdByLocation `json:"clusterIdByLocation,omitempty"`
-	Messages            []string                                              `json:"messages,omitempty"`
+	Stage               DeleteOrphanedVolumeSnapshotStatusStage               `json:"stage,omitzero" validate:"required,default=delete-snapshot,valid=delete-snapshot|update-volume-set|fail"`
+	ClusterId           string                                                `json:"clusterId,omitzero"`
+	ClusterIdByLocation DeleteOrphanedVolumeSnapshotStatusClusterIdByLocation `json:"clusterIdByLocation,omitzero"`
+	Messages            []string                                              `json:"messages,omitzero"`
 }
 
 type DeleteOrphanedVolumeSpec struct {
-	Location                     string  `json:"location"`
-	StorageDeviceId              string  `json:"storageDeviceId"`
-	VolumeIndex                  float32 `json:"volumeIndex"`
-	NewlyObservedStorageDeviceId string  `json:"newlyObservedStorageDeviceId,omitempty"`
+	Location                     string  `json:"location" validate:"required"`
+	StorageDeviceId              string  `json:"storageDeviceId" validate:"required"`
+	VolumeIndex                  float64 `json:"volumeIndex" validate:"required"`
+	NewlyObservedStorageDeviceId string  `json:"newlyObservedStorageDeviceId,omitzero"`
 }
 
 type DeleteOrphanedVolumeStatusStage string
@@ -362,10 +167,10 @@ const (
 type DeleteOrphanedVolumeStatusClusterIdByLocation map[string]string
 
 type DeleteOrphanedVolumeStatus struct {
-	Stage               DeleteOrphanedVolumeStatusStage               `json:"stage,omitempty"`
-	ClusterId           string                                        `json:"clusterId,omitempty"`
-	ClusterIdByLocation DeleteOrphanedVolumeStatusClusterIdByLocation `json:"clusterIdByLocation,omitempty"`
-	Messages            []string                                      `json:"messages,omitempty"`
+	Stage               DeleteOrphanedVolumeStatusStage               `json:"stage,omitzero" validate:"required,default=delete-storage-resources,valid=delete-storage-resources|cleanup-k8s|update-volume-set|fail"`
+	ClusterId           string                                        `json:"clusterId,omitzero"`
+	ClusterIdByLocation DeleteOrphanedVolumeStatusClusterIdByLocation `json:"clusterIdByLocation,omitzero"`
+	Messages            []string                                      `json:"messages,omitzero"`
 }
 
 type DeleteVolumeSetLocationStatusStage string
@@ -377,55 +182,32 @@ const (
 	DeleteVolumeSetLocationStatusStageComplete              DeleteVolumeSetLocationStatusStage = "complete"
 )
 
+// DeleteVolumeSetLocationStatusVolumes = pattern(Number, DeleteCloudDevicesStatus) —
+// the NUMBER key rule is a RegisterType (reflection hardcodes map keys to String).
 type DeleteVolumeSetLocationStatusVolumes map[string]DeleteCloudDevicesStatus
 
 type DeleteVolumeSetLocationStatus struct {
-	Stage   DeleteVolumeSetLocationStatusStage   `json:"stage,omitempty"`
-	Volumes DeleteVolumeSetLocationStatusVolumes `json:"volumes,omitempty"`
-}
-
-type DeleteVolumeSetSpecVolumeSetTags map[string]any
-
-type DeleteVolumeSetSpecVolumeSet struct {
-	Id           string                           `json:"id,omitempty"`
-	Name         base.Name                        `json:"name,omitempty"`
-	Kind         base.Kind                        `json:"kind,omitempty"`
-	Version      *float32                         `json:"version,omitempty"`
-	Description  string                           `json:"description,omitempty"`
-	Tags         DeleteVolumeSetSpecVolumeSetTags `json:"tags,omitempty"`
-	Created      string                           `json:"created,omitempty"`
-	LastModified string                           `json:"lastModified,omitempty"`
-	Links        base.Links                       `json:"links,omitempty"`
-	Spec         volumeSet.VolumeSetSpec          `json:"spec"`
-	Status       volumeSet.VolumeSetStatus        `json:"status,omitempty"`
-	Gvc          any                              `json:"gvc,omitempty"`
+	Stage   DeleteVolumeSetLocationStatusStage   `json:"stage,omitzero" validate:"required,default=delete-volumes,valid=delete-volumes|delete-orphaned-volumes|cleanup-filesystem|complete"`
+	Volumes DeleteVolumeSetLocationStatusVolumes `json:"volumes,omitzero"`
 }
 
 type DeleteVolumeSetSpec struct {
-	VolumeSet DeleteVolumeSetSpecVolumeSet `json:"volumeSet"`
-	Locations []string                     `json:"locations,omitempty"`
+	VolumeSet volumeSet.VolumeSet `json:"volumeSet" validate:"required"`
+	// command.ts:405 `Joi.array().items(Joi.string().required())`. The rule is built in
+	// validate.go: the engine now has Joi's required-item semantics, so this reports
+	// array.includesRequiredUnknowns rather than array.min's different message.
+	Locations []string `json:"locations,omitzero"`
 }
 
 type DeleteVolumeSetStatus map[string]DeleteVolumeSetLocationStatus
 
 type DeleteVolumeSnapshotSpec struct {
-	Location     string  `json:"location"`
-	VolumeIndex  float32 `json:"volumeIndex"`
-	SnapshotName string  `json:"snapshotName"`
+	Location     string  `json:"location" validate:"required"`
+	VolumeIndex  float64 `json:"volumeIndex" validate:"required"`
+	SnapshotName string  `json:"snapshotName" validate:"required"`
 }
 
 type DeleteVolumeSnapshotStatusClusterIdByLocation map[string]string
-
-type DeleteVolumeSnapshotStatusSnapshotTags map[string]string
-
-type DeleteVolumeSnapshotStatusSnapshot struct {
-	Name    string                                   `json:"name"`
-	Id      string                                   `json:"id,omitempty"`
-	Created string                                   `json:"created"`
-	Expires string                                   `json:"expires,omitempty"`
-	Size    *float32                                 `json:"size,omitempty"`
-	Tags    []DeleteVolumeSnapshotStatusSnapshotTags `json:"tags,omitempty"`
-}
 
 type DeleteVolumeSnapshotStatusStage string
 
@@ -436,17 +218,17 @@ const (
 )
 
 type DeleteVolumeSnapshotStatus struct {
-	ClusterId           string                                        `json:"clusterId,omitempty"`
-	ClusterIdByLocation DeleteVolumeSnapshotStatusClusterIdByLocation `json:"clusterIdByLocation,omitempty"`
-	Snapshot            DeleteVolumeSnapshotStatusSnapshot            `json:"snapshot"`
-	Stage               DeleteVolumeSnapshotStatusStage               `json:"stage,omitempty"`
-	Messages            []string                                      `json:"messages,omitempty"`
-	SnapshotId          string                                        `json:"snapshotId,omitempty"`
+	ClusterId           string                                        `json:"clusterId,omitzero"`
+	ClusterIdByLocation DeleteVolumeSnapshotStatusClusterIdByLocation `json:"clusterIdByLocation,omitzero"`
+	Snapshot            volumeSet.VolumeSnapshot                      `json:"snapshot" validate:"required"`
+	Stage               DeleteVolumeSnapshotStatusStage               `json:"stage,omitzero" validate:"required,default=delete-snapshot,valid=delete-snapshot|update-volume-set"`
+	Messages            []string                                      `json:"messages,omitzero"`
+	SnapshotId          string                                        `json:"snapshotId,omitzero"`
 }
 
 type DeleteVolumeSpec struct {
-	Location    string  `json:"location"`
-	VolumeIndex float32 `json:"volumeIndex"`
+	Location    string  `json:"location" validate:"required"`
+	VolumeIndex float64 `json:"volumeIndex" validate:"required"`
 }
 
 type DeleteVolumeStatusStage string
@@ -463,19 +245,20 @@ const (
 type DeleteVolumeStatusClusterIdByLocation map[string]string
 
 type DeleteVolumeStatus struct {
-	Stage                   DeleteVolumeStatusStage               `json:"stage,omitempty"`
-	ClusterId               string                                `json:"clusterId,omitempty"`
-	ClusterIdByLocation     DeleteVolumeStatusClusterIdByLocation `json:"clusterIdByLocation,omitempty"`
-	Messages                []string                              `json:"messages,omitempty"`
-	InUseByWorkloadId       string                                `json:"inUseByWorkloadId,omitempty"`
-	StorageDeviceIdToRemove string                                `json:"storageDeviceIdToRemove,omitempty"`
+	Stage                   DeleteVolumeStatusStage               `json:"stage,omitzero" validate:"required,default=update-volume-set,valid=update-volume-set|delete-storage-resources|shutdown-replica|await-replica-termination|fail|cleanup-k8s"`
+	ClusterId               string                                `json:"clusterId,omitzero"`
+	ClusterIdByLocation     DeleteVolumeStatusClusterIdByLocation `json:"clusterIdByLocation,omitzero"`
+	Messages                []string                              `json:"messages,omitzero"`
+	InUseByWorkloadId       string                                `json:"inUseByWorkloadId,omitzero"`
+	StorageDeviceIdToRemove string                                `json:"storageDeviceIdToRemove,omitzero"`
 }
 
+// ExpandVolumeSpec — timeoutSeconds default (600 when not >0) is a Refine.
 type ExpandVolumeSpec struct {
-	Location           string   `json:"location"`
-	VolumeIndex        float32  `json:"volumeIndex"`
-	NewStorageCapacity float32  `json:"newStorageCapacity"`
-	TimeoutSeconds     *float32 `json:"timeoutSeconds,omitempty"`
+	Location           string   `json:"location" validate:"required"`
+	VolumeIndex        float64  `json:"volumeIndex" validate:"required"`
+	NewStorageCapacity float64  `json:"newStorageCapacity" validate:"required"`
+	TimeoutSeconds     *float64 `json:"timeoutSeconds,omitzero"`
 }
 
 type ExpandVolumeStatusClusterIdByLocation map[string]string
@@ -495,19 +278,19 @@ const (
 )
 
 type ExpandVolumeStatus struct {
-	ClusterId             string                                `json:"clusterId,omitempty"`
-	ClusterIdByLocation   ExpandVolumeStatusClusterIdByLocation `json:"clusterIdByLocation,omitempty"`
-	Messages              []string                              `json:"messages,omitempty"`
-	Stage                 ExpandVolumeStatusStage               `json:"stage,omitempty"`
-	ReplicaRestartedAt    string                                `json:"replicaRestartedAt,omitempty"`
-	OnlineResizeStartedAt string                                `json:"onlineResizeStartedAt,omitempty"`
-	LockNames             []string                              `json:"lockNames,omitempty"`
-	StorageDeviceId       string                                `json:"storageDeviceId,omitempty"`
+	ClusterId             string                                `json:"clusterId,omitzero"`
+	ClusterIdByLocation   ExpandVolumeStatusClusterIdByLocation `json:"clusterIdByLocation,omitzero"`
+	Messages              []string                              `json:"messages,omitzero"`
+	Stage                 ExpandVolumeStatusStage               `json:"stage,omitzero" validate:"required,default=expand-volume,valid=expand-volume|delete-stateful-set|await-online-resize|await-replica-termination|await-expansion-completed|update-volume-set|recreate-replica|cleanup-k8s|revert"`
+	ReplicaRestartedAt    string                                `json:"replicaRestartedAt,omitzero" validate:"date"`
+	OnlineResizeStartedAt string                                `json:"onlineResizeStartedAt,omitzero" validate:"date"`
+	LockNames             []string                              `json:"lockNames,omitzero"`
+	StorageDeviceId       string                                `json:"storageDeviceId,omitzero"`
 }
 
 type ReplaceVolumeSpec struct {
-	Location    string  `json:"location"`
-	VolumeIndex float32 `json:"volumeIndex"`
+	Location    string  `json:"location" validate:"required"`
+	VolumeIndex float64 `json:"volumeIndex" validate:"required"`
 }
 
 type ReplaceVolumeStatusStage string
@@ -529,35 +312,37 @@ const (
 
 type ReplaceVolumeStatusClusterIdByLocation map[string]string
 
+// ReplaceVolumeStatusNewVolumeAttributes = pattern(String, String().allow(”)) —
+// the map value's allow(”) is a RegisterType.
 type ReplaceVolumeStatusNewVolumeAttributes map[string]string
 
 type ReplaceVolumeStatus struct {
-	Stage                   ReplaceVolumeStatusStage               `json:"stage,omitempty"`
-	Messages                []string                               `json:"messages,omitempty"`
-	ClusterId               string                                 `json:"clusterId,omitempty"`
-	ClusterIdByLocation     ReplaceVolumeStatusClusterIdByLocation `json:"clusterIdByLocation,omitempty"`
-	InUseByWorkloadId       string                                 `json:"inUseByWorkloadId,omitempty"`
-	StorageDeviceIdToRemove string                                 `json:"storageDeviceIdToRemove,omitempty"`
-	NewStorageDeviceId      string                                 `json:"newStorageDeviceId,omitempty"`
-	NewVolumeAttributes     ReplaceVolumeStatusNewVolumeAttributes `json:"newVolumeAttributes,omitempty"`
-	NewResourceName         string                                 `json:"newResourceName,omitempty"`
-	NextVolumeSize          *float32                               `json:"nextVolumeSize,omitempty"`
-	TempStorageClassName    string                                 `json:"tempStorageClassName,omitempty"`
-	LockNames               []string                               `json:"lockNames,omitempty"`
+	Stage                   ReplaceVolumeStatusStage               `json:"stage,omitzero" validate:"required,default=create-volume,valid=create-volume|cleanup-after-volume-creation|update-volume-set|configure-storage-resources|remove-finalizer|shutdown-replica|await-replica-termination|cleanup-k8s|fail|revert|cleanup-old-storage-device|restart-replica"`
+	Messages                []string                               `json:"messages,omitzero"`
+	ClusterId               string                                 `json:"clusterId,omitzero"`
+	ClusterIdByLocation     ReplaceVolumeStatusClusterIdByLocation `json:"clusterIdByLocation,omitzero"`
+	InUseByWorkloadId       string                                 `json:"inUseByWorkloadId,omitzero"`
+	StorageDeviceIdToRemove string                                 `json:"storageDeviceIdToRemove,omitzero"`
+	NewStorageDeviceId      string                                 `json:"newStorageDeviceId,omitzero"`
+	NewVolumeAttributes     ReplaceVolumeStatusNewVolumeAttributes `json:"newVolumeAttributes,omitzero"`
+	NewResourceName         string                                 `json:"newResourceName,omitzero"`
+	NextVolumeSize          *float64                               `json:"nextVolumeSize,omitzero"`
+	TempStorageClassName    string                                 `json:"tempStorageClassName,omitzero"`
+	LockNames               []string                               `json:"lockNames,omitzero"`
 }
 
 type RestoreVolumeSpec struct {
-	VolumeIndex  float32 `json:"volumeIndex"`
-	Location     string  `json:"location"`
-	SnapshotName string  `json:"snapshotName"`
-	Zone         string  `json:"zone,omitempty"`
+	VolumeIndex  float64 `json:"volumeIndex" validate:"required"`
+	Location     string  `json:"location" validate:"required"`
+	SnapshotName string  `json:"snapshotName" validate:"required"`
+	Zone         string  `json:"zone,omitzero" validate:"allow="`
 }
 
 type RunCronWorkloadSpec struct {
-	Location              string                       `json:"location"`
-	ScheduleName          string                       `json:"scheduleName,omitempty"`
-	ContainerOverrides    []workload.ContainerOverride `json:"containerOverrides,omitempty"`
-	ActiveDeadlineSeconds *float32                     `json:"activeDeadlineSeconds,omitempty"`
+	Location              string                       `json:"location" validate:"required"`
+	ScheduleName          string                       `json:"scheduleName,omitzero"`
+	ContainerOverrides    []workload.ContainerOverride `json:"containerOverrides,omitzero"`
+	ActiveDeadlineSeconds *float64                     `json:"activeDeadlineSeconds,omitzero" validate:"integer,min=1"`
 }
 
 type RunCronWorkloadStatusClusterIdByLocation map[string]string
@@ -586,35 +371,105 @@ const (
 )
 
 type RunCronWorkloadStatus struct {
-	Replica                     string                                    `json:"replica,omitempty"`
-	ClusterIdByLocation         RunCronWorkloadStatusClusterIdByLocation  `json:"clusterIdByLocation,omitempty"`
-	MinimumWorkloadVersion      *float32                                  `json:"minimumWorkloadVersion,omitempty"`
-	Messages                    []string                                  `json:"messages,omitempty"`
-	AdmissionRetries            *float32                                  `json:"admissionRetries,omitempty"`
-	FirstAdmissionRejectionTime string                                    `json:"firstAdmissionRejectionTime,omitempty"`
-	LastRejectedReplica         string                                    `json:"lastRejectedReplica,omitempty"`
-	AdmissionRetryRequested     bool                                      `json:"admissionRetryRequested,omitempty"`
-	RetryReason                 RunCronWorkloadStatusRetryReason          `json:"retryReason,omitempty"`
-	InfraRetries                *float32                                  `json:"infraRetries,omitempty"`
-	Disruptions                 *float32                                  `json:"disruptions,omitempty"`
-	LastDisruptedReplica        string                                    `json:"lastDisruptedReplica,omitempty"`
-	PendingTerminalStage        RunCronWorkloadStatusPendingTerminalStage `json:"pendingTerminalStage,omitempty"`
-	JobName                     string                                    `json:"jobName,omitempty"`
-	WorkloadVersion             *float32                                  `json:"workloadVersion,omitempty"`
-	StartTime                   string                                    `json:"startTime,omitempty"`
-	CompletionTime              string                                    `json:"completionTime,omitempty"`
-	Conditions                  []cronjob.JobExecutionCondition           `json:"conditions,omitempty"`
-	Containers                  RunCronWorkloadStatusContainers           `json:"containers,omitempty"`
-	FirstImagePullBackOffTime   string                                    `json:"firstImagePullBackOffTime,omitempty"`
-	Details                     RunCronWorkloadStatusDetails              `json:"details,omitempty"`
+	Replica                     string                                    `json:"replica,omitzero"`
+	ClusterIdByLocation         RunCronWorkloadStatusClusterIdByLocation  `json:"clusterIdByLocation,omitzero"`
+	MinimumWorkloadVersion      *float64                                  `json:"minimumWorkloadVersion,omitzero"`
+	Messages                    []string                                  `json:"messages,omitzero"`
+	AdmissionRetries            *float64                                  `json:"admissionRetries,omitzero" validate:"integer"`
+	FirstAdmissionRejectionTime string                                    `json:"firstAdmissionRejectionTime,omitzero"`
+	LastRejectedReplica         string                                    `json:"lastRejectedReplica,omitzero"`
+	AdmissionRetryRequested     *bool                                     `json:"admissionRetryRequested,omitzero"`
+	RetryReason                 RunCronWorkloadStatusRetryReason          `json:"retryReason,omitzero" validate:"valid=admission-rejection|never-started"`
+	InfraRetries                *float64                                  `json:"infraRetries,omitzero" validate:"integer"`
+	Disruptions                 *float64                                  `json:"disruptions,omitzero" validate:"integer"`
+	LastDisruptedReplica        string                                    `json:"lastDisruptedReplica,omitzero"`
+	PendingTerminalStage        RunCronWorkloadStatusPendingTerminalStage `json:"pendingTerminalStage,omitzero" validate:"valid=completed|failed"`
+	JobName                     string                                    `json:"jobName,omitzero"`
+	WorkloadVersion             *float64                                  `json:"workloadVersion,omitzero" validate:"integer"`
+	StartTime                   string                                    `json:"startTime,omitzero" validate:"date"`
+	CompletionTime              string                                    `json:"completionTime,omitzero" validate:"date"`
+	Conditions                  []cronjob.JobExecutionCondition           `json:"conditions,omitzero"`
+	Containers                  RunCronWorkloadStatusContainers           `json:"containers,omitzero"`
+	FirstImagePullBackOffTime   string                                    `json:"firstImagePullBackOffTime,omitzero" validate:"date"`
+	Details                     RunCronWorkloadStatusDetails              `json:"details,omitzero" validate:"valid=invalid|removed"`
 }
 
+// ShrinkVolumeSpec — timeoutSeconds default (600 when not >0) is a Refine.
 type ShrinkVolumeSpec struct {
-	Location           string   `json:"location"`
-	VolumeIndex        float32  `json:"volumeIndex"`
-	NewStorageCapacity float32  `json:"newStorageCapacity"`
-	TimeoutSeconds     *float32 `json:"timeoutSeconds,omitempty"`
+	Location           string   `json:"location" validate:"required"`
+	VolumeIndex        float64  `json:"volumeIndex" validate:"required"`
+	NewStorageCapacity float64  `json:"newStorageCapacity" validate:"required"`
+	TimeoutSeconds     *float64 `json:"timeoutSeconds,omitzero"`
 }
+
+// CopyVolumeSpec ports command.ts CopyVolumeSpec (master 8ea018b06..770c7f6af). The
+// Joi custom (timeoutSeconds default, the same-location check, the derived `locations`)
+// is CopyVolumeSpec.ValidationRule.
+type CopyVolumeSpec struct {
+	Location                             string   `json:"location" validate:"required"`
+	TargetLocation                       string   `json:"targetLocation" validate:"required"`
+	VolumeIndex                          float64  `json:"volumeIndex" validate:"required"`
+	AcknowledgeDestinationVolumeDeletion *bool    `json:"acknowledgeDestinationVolumeDeletion,omitzero" validate:"default=false"`
+	TimeoutSeconds                       *float64 `json:"timeoutSeconds,omitzero" validate:"optional"`
+	TargetVolumeSet                      string   `json:"targetVolumeSet,omitzero" validate:"optional"`
+	TargetVolumeSetId                    string   `json:"targetVolumeSetId,omitzero" validate:"optional"`
+	TargetGvc                            string   `json:"targetGvc,omitzero" validate:"optional"`
+	Locations                            []string `json:"locations,omitzero" validate:"optional"`
+}
+
+// CopyVolumeSideStatus is one actuator's half of a copy; each side writes only its own.
+type CopyVolumeSideStatus struct {
+	Stage                CopyVolumeSideStatusStage `json:"stage,omitzero" validate:"required"`
+	Messages             []string                  `json:"messages,omitzero"`
+	LockNames            []string                  `json:"lockNames,omitzero"`
+	TempStorageClassName string                    `json:"tempStorageClassName,omitzero"`
+	Complete             *bool                     `json:"complete,omitzero" validate:"default=false"`
+	CleanedUp            *bool                     `json:"cleanedUp,omitzero" validate:"default=false"`
+}
+
+type CopyVolumeSideStatusStage string
+
+func (CopyVolumeSideStatusStage) EnumValues() []string {
+	return []string{
+		"capture-source", "await-receiver", "apply-source-egress", "run-bulk-sync",
+		"prepare-destination", "apply-receiver", "await-bulk-sync", "commit-and-prepare-swap",
+		"shutdown-target-replica", "await-target-replica-termination",
+		"cleanup-k8s", "fail",
+	}
+}
+
+// CopyVolumeStatus ports command.ts CopyVolumeStatus. Like every command status it is
+// not validated on write; it is typed for the consumers that read it.
+type CopyVolumeStatus struct {
+	ClusterId                   string                `json:"clusterId,omitzero"`
+	ClusterIdByLocation         map[string]string     `json:"clusterIdByLocation,omitzero"`
+	Messages                    []string              `json:"messages,omitzero"`
+	Source                      *CopyVolumeSideStatus `json:"source,omitzero"`
+	Target                      *CopyVolumeSideStatus `json:"target,omitzero"`
+	ReceiverHost                string                `json:"receiverHost,omitzero"`
+	ReceiverSniService          string                `json:"receiverSniService,omitzero"`
+	TargetGatewayAddress        string                `json:"targetGatewayAddress,omitzero"`
+	NewStorageDeviceId          string                `json:"newStorageDeviceId,omitzero"`
+	NewResourceName             string                `json:"newResourceName,omitzero"`
+	NewVolumeAttributes         map[string]string     `json:"newVolumeAttributes,omitzero"`
+	NewVolumeSize               *float64              `json:"newVolumeSize,omitzero"`
+	DestinationDeviceIdToRemove string                `json:"destinationDeviceIdToRemove,omitzero"`
+	TargetHasWorkloadPod        *bool                 `json:"targetHasWorkloadPod,omitzero"`
+	SourceDeviceId              string                `json:"sourceDeviceId,omitzero"`
+	SourceInUse                 *bool                 `json:"sourceInUse,omitzero"`
+	BulkSyncTargetPodUid        string                `json:"bulkSyncTargetPodUid,omitzero"`
+	BulkSyncAttempt             *float64              `json:"bulkSyncAttempt,omitzero"`
+	BulkSyncCompletedAt         string                `json:"bulkSyncCompletedAt,omitzero" validate:"date"`
+	BulkSyncProgressPercent     *float64              `json:"bulkSyncProgressPercent,omitzero"`
+	BulkSyncTransferredBytes    *float64              `json:"bulkSyncTransferredBytes,omitzero"`
+	BulkSyncRate                string                `json:"bulkSyncRate,omitzero"`
+	BulkSyncEta                 string                `json:"bulkSyncEta,omitzero"`
+}
+
+// TerminalStages are the lifecycle stages a command never leaves (command.ts
+// TerminalCommandStages). Defined once: a hand-written copy that omitted "cancelled"
+// wedged volume-set deletion on both sides.
+var TerminalStages = []string{"failed", "completed", "cancelled"}
 
 type ShrinkVolumeStatusStage string
 
@@ -635,45 +490,29 @@ type ShrinkVolumeStatusClusterIdByLocation map[string]string
 
 type ShrinkVolumeStatusOldVolumeAttributes map[string]string
 
-type ShrinkVolumeStatusOldDiskType string
-
-const (
-	ShrinkVolumeStatusOldDiskTypeGp3                ShrinkVolumeStatusOldDiskType = "gp3"
-	ShrinkVolumeStatusOldDiskTypePdBalanced         ShrinkVolumeStatusOldDiskType = "pd-balanced"
-	ShrinkVolumeStatusOldDiskTypePdSsd              ShrinkVolumeStatusOldDiskType = "pd-ssd"
-	ShrinkVolumeStatusOldDiskTypeHyperdiskBalanced  ShrinkVolumeStatusOldDiskType = "hyperdisk-balanced"
-	ShrinkVolumeStatusOldDiskTypePremiumV2Lrs       ShrinkVolumeStatusOldDiskType = "PremiumV2_LRS"
-	ShrinkVolumeStatusOldDiskTypeDoBlockStorage     ShrinkVolumeStatusOldDiskType = "do-block-storage"
-	ShrinkVolumeStatusOldDiskTypeHcloudVolume       ShrinkVolumeStatusOldDiskType = "hcloud-volume"
-	ShrinkVolumeStatusOldDiskTypeLinodeBlockStorage ShrinkVolumeStatusOldDiskType = "linode-block-storage"
-	ShrinkVolumeStatusOldDiskTypeOciBvBalanced      ShrinkVolumeStatusOldDiskType = "oci-bv-balanced"
-	ShrinkVolumeStatusOldDiskTypeJuicefs            ShrinkVolumeStatusOldDiskType = "juicefs"
-	ShrinkVolumeStatusOldDiskTypeHostpath           ShrinkVolumeStatusOldDiskType = "hostpath"
-)
-
 type ShrinkVolumeStatusNewVolumeAttributes map[string]string
 
 type ShrinkVolumeStatus struct {
-	Stage                   ShrinkVolumeStatusStage               `json:"stage,omitempty"`
-	Messages                []string                              `json:"messages,omitempty"`
-	ClusterId               string                                `json:"clusterId,omitempty"`
-	ClusterIdByLocation     ShrinkVolumeStatusClusterIdByLocation `json:"clusterIdByLocation,omitempty"`
-	InUseByWorkloadId       string                                `json:"inUseByWorkloadId,omitempty"`
-	StorageDeviceIdToRemove string                                `json:"storageDeviceIdToRemove,omitempty"`
-	OldVolumeAttributes     ShrinkVolumeStatusOldVolumeAttributes `json:"oldVolumeAttributes,omitempty"`
-	OldVolumeSize           *float32                              `json:"oldVolumeSize,omitempty"`
-	OldDiskType             ShrinkVolumeStatusOldDiskType         `json:"oldDiskType,omitempty"`
-	NewStorageDeviceId      string                                `json:"newStorageDeviceId,omitempty"`
-	NewVolumeAttributes     ShrinkVolumeStatusNewVolumeAttributes `json:"newVolumeAttributes,omitempty"`
-	NewResourceName         string                                `json:"newResourceName,omitempty"`
-	NextVolumeSize          *float32                              `json:"nextVolumeSize,omitempty"`
-	TempStorageClassName    string                                `json:"tempStorageClassName,omitempty"`
-	LockNames               []string                              `json:"lockNames,omitempty"`
-	PresyncTargetPodUid     string                                `json:"presyncTargetPodUid,omitempty"`
-	PresyncAttempt          *float32                              `json:"presyncAttempt,omitempty"`
-	PresyncProgressPercent  *float32                              `json:"presyncProgressPercent,omitempty"`
-	FinalSyncCompletedAt    string                                `json:"finalSyncCompletedAt,omitempty"`
-	AwaitDataReadySince     string                                `json:"awaitDataReadySince,omitempty"`
+	Stage                   ShrinkVolumeStatusStage               `json:"stage,omitzero" validate:"required,default=create-volume,valid=create-volume|apply-presync-resources|inject-and-await-presync|apply-delta-source|commit-and-prepare-swap|shutdown-replica|await-replica-termination|await-data-ready|cleanup-k8s|fail"`
+	Messages                []string                              `json:"messages,omitzero"`
+	ClusterId               string                                `json:"clusterId,omitzero"`
+	ClusterIdByLocation     ShrinkVolumeStatusClusterIdByLocation `json:"clusterIdByLocation,omitzero"`
+	InUseByWorkloadId       string                                `json:"inUseByWorkloadId,omitzero"`
+	StorageDeviceIdToRemove string                                `json:"storageDeviceIdToRemove,omitzero"`
+	OldVolumeAttributes     ShrinkVolumeStatusOldVolumeAttributes `json:"oldVolumeAttributes,omitzero"`
+	OldVolumeSize           *float64                              `json:"oldVolumeSize,omitzero"`
+	OldDiskType             volumeSet.DiskType                    `json:"oldDiskType,omitzero"`
+	NewStorageDeviceId      string                                `json:"newStorageDeviceId,omitzero"`
+	NewVolumeAttributes     ShrinkVolumeStatusNewVolumeAttributes `json:"newVolumeAttributes,omitzero"`
+	NewResourceName         string                                `json:"newResourceName,omitzero"`
+	NextVolumeSize          *float64                              `json:"nextVolumeSize,omitzero"`
+	TempStorageClassName    string                                `json:"tempStorageClassName,omitzero"`
+	LockNames               []string                              `json:"lockNames,omitzero"`
+	PresyncTargetPodUid     string                                `json:"presyncTargetPodUid,omitzero"`
+	PresyncAttempt          *float64                              `json:"presyncAttempt,omitzero"`
+	PresyncProgressPercent  *float64                              `json:"presyncProgressPercent,omitzero"`
+	FinalSyncCompletedAt    string                                `json:"finalSyncCompletedAt,omitzero" validate:"date"`
+	AwaitDataReadySince     string                                `json:"awaitDataReadySince,omitzero" validate:"date"`
 }
 
 type SnapshotDeletionStatusStage string
@@ -685,20 +524,20 @@ const (
 )
 
 type SnapshotDeletionStatus struct {
-	Stage    SnapshotDeletionStatusStage `json:"stage,omitempty"`
-	Messages []string                    `json:"messages,omitempty"`
+	Stage    SnapshotDeletionStatusStage `json:"stage,omitzero" validate:"default=pending,valid=pending|k8s-resources-created|deleted"`
+	Messages []string                    `json:"messages,omitzero"`
 }
 
 type StopReplicaSpec struct {
-	Location string `json:"location"`
-	Replica  string `json:"replica,omitempty"`
+	Location string `json:"location" validate:"required"`
+	Replica  string `json:"replica,omitzero"`
 }
 
 type StopReplicaStatusClusterIdByLocation map[string]string
 
 type StopReplicaStatus struct {
-	ClusterId               string                               `json:"clusterId,omitempty"`
-	ClusterIdByLocation     StopReplicaStatusClusterIdByLocation `json:"clusterIdByLocation,omitempty"`
-	PodCreatedByCommandLink string                               `json:"podCreatedByCommandLink,omitempty"`
-	PodId                   string                               `json:"podId"`
+	ClusterId               string                               `json:"clusterId,omitzero"`
+	ClusterIdByLocation     StopReplicaStatusClusterIdByLocation `json:"clusterIdByLocation,omitzero"`
+	PodCreatedByCommandLink string                               `json:"podCreatedByCommandLink,omitzero"`
+	PodId                   string                               `json:"podId" validate:"required"`
 }

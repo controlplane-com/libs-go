@@ -60,6 +60,15 @@ spec:
               bindings:
                 items:
                   properties:
+                    condition:
+                      properties:
+                        description:
+                          type: string
+                        expression:
+                          type: string
+                        title:
+                          type: string
+                      type: object
                     resource:
                       type: string
                     roles:

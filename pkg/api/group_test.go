@@ -29,12 +29,12 @@ func newTestGroup(name string) *group.Group {
 	return &group.Group{
 		Name:        base.Name(name),
 		Description: "Test group created by integration test",
-		Version:     common.Float32Ptr(1),
+		Version:     common.Float64Ptr(1),
 		Tags: group.GroupTags{
 			"test":        "true",
 			"integration": "libs-go",
 		},
-		IdentityMatcher: group.GroupIdentityMatcher{
+		IdentityMatcher: &group.GroupIdentityMatcher{
 			Expression: "false", // A valid expression that matches nothing
 			Language:   group.GroupIdentityMatcherLanguageJavascript,
 		},
@@ -351,12 +351,12 @@ func (s *GroupTestSuite) TestGroup_WithMemberLinks() {
 	grp := &group.Group{
 		Name:        base.Name(groupName),
 		Description: "Test group with member links",
-		Version:     common.Float32Ptr(1),
+		Version:     common.Float64Ptr(1),
 		Tags: group.GroupTags{
 			"test": "true",
 		},
-		MemberLinks: []string{fmt.Sprintf("/org/%s/serviceaccount/%s", s.TestOrg(), saName)},
-		IdentityMatcher: group.GroupIdentityMatcher{
+		MemberLinks: group.MemberLinks{group.MemberLink(fmt.Sprintf("/org/%s/serviceaccount/%s", s.TestOrg(), saName))},
+		IdentityMatcher: &group.GroupIdentityMatcher{
 			Expression: "false",
 			Language:   group.GroupIdentityMatcherLanguageJavascript,
 		},
@@ -405,12 +405,12 @@ func (s *GroupTestSuite) TestGroup_UpdateMemberLinks() {
 	grp := &group.Group{
 		Name:        base.Name(groupName),
 		Description: "Test group for updating members",
-		Version:     common.Float32Ptr(1),
+		Version:     common.Float64Ptr(1),
 		Tags: group.GroupTags{
 			"test": "true",
 		},
-		MemberLinks: []string{fmt.Sprintf("/org/%s/serviceaccount/%s", s.TestOrg(), saName1)},
-		IdentityMatcher: group.GroupIdentityMatcher{
+		MemberLinks: group.MemberLinks{group.MemberLink(fmt.Sprintf("/org/%s/serviceaccount/%s", s.TestOrg(), saName1))},
+		IdentityMatcher: &group.GroupIdentityMatcher{
 			Expression: "false",
 			Language:   group.GroupIdentityMatcherLanguageJavascript,
 		},
@@ -424,9 +424,9 @@ func (s *GroupTestSuite) TestGroup_UpdateMemberLinks() {
 	}()
 
 	// Update the group to include both service accounts
-	grp.MemberLinks = []string{
-		fmt.Sprintf("/org/%s/serviceaccount/%s", s.TestOrg(), saName1),
-		fmt.Sprintf("/org/%s/serviceaccount/%s", s.TestOrg(), saName2),
+	grp.MemberLinks = group.MemberLinks{
+		group.MemberLink(fmt.Sprintf("/org/%s/serviceaccount/%s", s.TestOrg(), saName1)),
+		group.MemberLink(fmt.Sprintf("/org/%s/serviceaccount/%s", s.TestOrg(), saName2)),
 	}
 
 	updated, err := s.Client().Groups().Update(ctx, s.TestOrg(), groupName, grp)
@@ -443,11 +443,11 @@ func (s *GroupTestSuite) TestGroup_WithIdentityMatcher() {
 	grp := &group.Group{
 		Name:        base.Name(groupName),
 		Description: "Test group with identity matcher",
-		Version:     common.Float32Ptr(1),
+		Version:     common.Float64Ptr(1),
 		Tags: group.GroupTags{
 			"test": "true",
 		},
-		IdentityMatcher: group.GroupIdentityMatcher{
+		IdentityMatcher: &group.GroupIdentityMatcher{
 			Expression: "email && email.endsWith('@example.com')",
 			Language:   group.GroupIdentityMatcherLanguageJavascript,
 		},

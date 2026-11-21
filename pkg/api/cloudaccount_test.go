@@ -32,7 +32,7 @@ func newTestCloudAccount(name string) *cloudaccount.CloudAccount {
 	return &cloudaccount.CloudAccount{
 		Name:        base.Name(name),
 		Description: "Test cloud account created by integration test",
-		Version:     common.Float32Ptr(1),
+		Version:     common.Float64Ptr(1),
 		Tags: cloudaccount.CloudAccountTags{
 			"test":        "true",
 			"integration": "libs-go",

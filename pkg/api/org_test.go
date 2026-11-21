@@ -33,7 +33,7 @@ func (s *OrgTestSuite) TestOrg_List() {
 	found := false
 	for o, err := range s.Client().Orgs().List(ctx) {
 		s.Require().NoError(err)
-		if o.Name == s.TestOrg() {
+		if string(o.Name) == s.TestOrg() {
 			found = true
 			break
 		}
@@ -52,7 +52,7 @@ func (s *OrgTestSuite) TestOrg_ListAll() {
 
 	found := false
 	for _, org := range orgs {
-		if org.Name == s.TestOrg() {
+		if string(org.Name) == s.TestOrg() {
 			found = true
 			break
 		}
@@ -80,7 +80,7 @@ func (s *OrgTestSuite) TestOrg_Get() {
 	// Get the test org
 	org, err := s.Client().Orgs().Get(ctx, s.TestOrg())
 	s.Require().NoError(err)
-	s.Equal(s.TestOrg(), org.Name)
+	s.Equal(s.TestOrg(), string(org.Name))
 	s.Equal("org", string(org.Kind))
 }
 
@@ -150,7 +150,7 @@ func (s *OrgTestSuite) TestOrg_Query() {
 	found := false
 	for o, err := range s.Client().Orgs().Query(ctx, q) {
 		s.Require().NoError(err)
-		if o.Name == s.TestOrg() {
+		if string(o.Name) == s.TestOrg() {
 			found = true
 			break
 		}
@@ -177,7 +177,7 @@ func (s *OrgTestSuite) TestOrg_QueryAll() {
 
 	found := false
 	for _, org := range orgs {
-		if org.Name == s.TestOrg() {
+		if string(org.Name) == s.TestOrg() {
 			found = true
 			break
 		}
@@ -225,6 +225,10 @@ func (s *OrgTestSuite) TestOrg_Spec() {
 	s.Require().NoError(err)
 
 	// Spec fields are optional but we can inspect them
+	if org.Spec == nil || org.Spec.Observability == nil {
+		s.T().Logf("Org %s: no spec.observability", org.Name)
+		return
+	}
 	s.T().Logf("Org %s: sessionTimeout=%v, observability.logsRetention=%v",
 		org.Name, org.Spec.SessionTimeoutSeconds, org.Spec.Observability.LogsRetentionDays)
 }

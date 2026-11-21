@@ -3,36 +3,35 @@
 package mk8sAddons
 
 import "github.com/controlplane-com/libs-go/pkg/schema/workload"
-import "github.com/controlplane-com/libs-go/pkg/schema/base"
 
 type AwsECRAddonConfig struct {
-	RoleArn string `json:"roleArn,omitempty"`
+	RoleArn string `json:"roleArn,omitzero"`
 }
 
 type AwsEFSAddonConfig struct {
-	RoleArn string `json:"roleArn,omitempty"`
+	RoleArn string `json:"roleArn,omitzero"`
 }
 
 type AwsELBAddonConfig struct {
-	RoleArn string `json:"roleArn,omitempty"`
+	RoleArn string `json:"roleArn,omitzero"`
 }
 
 type AwsTrustPolicyConfigTrustPolicy map[string]any
 
 type AwsTrustPolicyConfig struct {
-	TrustPolicy AwsTrustPolicyConfigTrustPolicy `json:"trustPolicy,omitempty"`
+	TrustPolicy AwsTrustPolicyConfigTrustPolicy `json:"trustPolicy,omitzero"`
 }
 
 type AwsWorkloadIdentityAddonStatusOidcProviderConfig struct {
-	ProviderUrl string `json:"providerUrl,omitempty"`
-	Audience    string `json:"audience,omitempty"`
+	ProviderUrl string `json:"providerUrl,omitzero"`
+	Audience    string `json:"audience,omitzero"`
 }
 
 type AwsWorkloadIdentityAddonStatusTrustPolicy map[string]any
 
 type AwsWorkloadIdentityAddonStatus struct {
-	OidcProviderConfig AwsWorkloadIdentityAddonStatusOidcProviderConfig `json:"oidcProviderConfig,omitempty"`
-	TrustPolicy        AwsWorkloadIdentityAddonStatusTrustPolicy        `json:"trustPolicy,omitempty"`
+	OidcProviderConfig *AwsWorkloadIdentityAddonStatusOidcProviderConfig `json:"oidcProviderConfig,omitzero"`
+	TrustPolicy        AwsWorkloadIdentityAddonStatusTrustPolicy         `json:"trustPolicy,omitzero"`
 }
 
 type AzureACRAddonConfig struct {
@@ -40,7 +39,7 @@ type AzureACRAddonConfig struct {
 }
 
 type AzureAddonConfig struct {
-	TenantId string `json:"tenantId,omitempty"`
+	TenantId string `json:"tenantId,omitzero"`
 }
 
 type ByokAddonConfigConfigActuatorLogLevel string
@@ -52,113 +51,113 @@ const (
 )
 
 type ByokAddonConfigConfigActuator struct {
-	MinCpu    workload.Cpu                          `json:"minCpu,omitempty"`
-	MaxCpu    workload.Cpu                          `json:"maxCpu,omitempty"`
-	MinMemory workload.Memory                       `json:"minMemory,omitempty"`
-	MaxMemory workload.Memory                       `json:"maxMemory,omitempty"`
-	LogLevel  ByokAddonConfigConfigActuatorLogLevel `json:"logLevel,omitempty"`
-	Env       FlexibleAddonConfig                   `json:"env,omitempty"`
+	MinCpu    workload.Cpu                          `json:"minCpu,omitzero"`
+	MaxCpu    workload.Cpu                          `json:"maxCpu,omitzero"`
+	MinMemory workload.Memory                       `json:"minMemory,omitzero"`
+	MaxMemory workload.Memory                       `json:"maxMemory,omitzero"`
+	LogLevel  ByokAddonConfigConfigActuatorLogLevel `json:"logLevel,omitzero"`
+	Env       FlexibleAddonConfig                   `json:"env,omitzero"`
 }
 
 type ByokAddonConfigConfigMaintainer struct {
-	Env FlexibleAddonConfig `json:"env,omitempty"`
+	Env FlexibleAddonConfig `json:"env,omitzero"`
 }
 
 type ByokAddonConfigConfigJuicefs struct {
-	Enabled bool `json:"enabled,omitempty"`
+	Enabled *bool `json:"enabled,omitzero"`
 }
 
 type ByokAddonConfigConfigMiddlebox struct {
-	Enabled            bool     `json:"enabled,omitempty"`
-	BandwidthAlertMbps *float32 `json:"bandwidthAlertMbps,omitempty"`
-	Ip                 string   `json:"ip,omitempty"`
-	IngressReplicas    *float32 `json:"ingressReplicas,omitempty"`
-	Port               *float32 `json:"port,omitempty"`
+	Enabled            *bool    `json:"enabled,omitzero"`
+	BandwidthAlertMbps *float64 `json:"bandwidthAlertMbps,omitzero"`
+	Ip                 string   `json:"ip,omitzero"`
+	IngressReplicas    *float64 `json:"ingressReplicas,omitzero"`
+	Port               *float64 `json:"port,omitzero"`
 }
 
 type ByokAddonConfigConfigCommonPdb struct {
-	MaxUnavailable *float32 `json:"maxUnavailable,omitempty"`
+	MaxUnavailable *float64 `json:"maxUnavailable,omitzero"`
 }
 
 type ByokAddonConfigConfigCommon struct {
-	DeploymentReplicas *float32                       `json:"deploymentReplicas,omitempty"`
-	Pdb                ByokAddonConfigConfigCommonPdb `json:"pdb,omitempty"`
+	DeploymentReplicas *float64                        `json:"deploymentReplicas,omitzero"`
+	Pdb                *ByokAddonConfigConfigCommonPdb `json:"pdb,omitzero"`
 }
 
 type ByokAddonConfigConfigLonghorn struct {
-	NumberOfReplicas *float32 `json:"numberOfReplicas,omitempty"`
-	Replicas         *float32 `json:"replicas,omitempty"`
-	IsDefault        bool     `json:"isDefault,omitempty"`
+	NumberOfReplicas *float64 `json:"numberOfReplicas,omitzero"`
+	Replicas         *float64 `json:"replicas,omitzero"`
+	IsDefault        *bool    `json:"isDefault,omitzero"`
 }
 
 type ByokAddonConfigConfigByok struct {
-	NoDefaultStorageClasses bool `json:"noDefaultStorageClasses,omitempty"`
+	NoDefaultStorageClasses *bool `json:"noDefaultStorageClasses,omitzero"`
 }
 
 type ByokAddonConfigConfigIngress struct {
-	Cpu           workload.Cpu    `json:"cpu,omitempty"`
-	Memory        workload.Memory `json:"memory,omitempty"`
-	TargetPercent *float32        `json:"targetPercent,omitempty"`
+	Cpu           workload.Cpu    `json:"cpu,omitzero"`
+	Memory        workload.Memory `json:"memory,omitzero"`
+	TargetPercent *float64        `json:"targetPercent,omitzero"`
 }
 
 type ByokAddonConfigConfigIstioIstiod struct {
-	Replicas  *float32        `json:"replicas,omitempty"`
-	MinCpu    workload.Cpu    `json:"minCpu,omitempty"`
-	MaxCpu    workload.Cpu    `json:"maxCpu,omitempty"`
-	MinMemory workload.Memory `json:"minMemory,omitempty"`
-	MaxMemory workload.Memory `json:"maxMemory,omitempty"`
-	Pdb       *float32        `json:"pdb,omitempty"`
+	Replicas  *float64        `json:"replicas,omitzero"`
+	MinCpu    workload.Cpu    `json:"minCpu,omitzero"`
+	MaxCpu    workload.Cpu    `json:"maxCpu,omitzero"`
+	MinMemory workload.Memory `json:"minMemory,omitzero"`
+	MaxMemory workload.Memory `json:"maxMemory,omitzero"`
+	Pdb       *float64        `json:"pdb,omitzero"`
 }
 
 type ByokAddonConfigConfigIstioIngressgateway struct {
-	Replicas  *float32        `json:"replicas,omitempty"`
-	MaxCpu    workload.Cpu    `json:"maxCpu,omitempty"`
-	MaxMemory workload.Memory `json:"maxMemory,omitempty"`
+	Replicas  *float64        `json:"replicas,omitzero"`
+	MaxCpu    workload.Cpu    `json:"maxCpu,omitzero"`
+	MaxMemory workload.Memory `json:"maxMemory,omitzero"`
 }
 
 type ByokAddonConfigConfigIstioSidecar struct {
-	MinCpu    workload.Cpu    `json:"minCpu,omitempty"`
-	MinMemory workload.Memory `json:"minMemory,omitempty"`
+	MinCpu    workload.Cpu    `json:"minCpu,omitzero"`
+	MinMemory workload.Memory `json:"minMemory,omitzero"`
 }
 
 type ByokAddonConfigConfigIstio struct {
-	Istiod         ByokAddonConfigConfigIstioIstiod         `json:"istiod,omitempty"`
-	Ingressgateway ByokAddonConfigConfigIstioIngressgateway `json:"ingressgateway,omitempty"`
-	Sidecar        ByokAddonConfigConfigIstioSidecar        `json:"sidecar,omitempty"`
+	Istiod         *ByokAddonConfigConfigIstioIstiod         `json:"istiod,omitzero"`
+	Ingressgateway *ByokAddonConfigConfigIstioIngressgateway `json:"ingressgateway,omitzero"`
+	Sidecar        *ByokAddonConfigConfigIstioSidecar        `json:"sidecar,omitzero"`
 }
 
 type ByokAddonConfigConfigLogSplitter struct {
-	MinCpu        workload.Cpu    `json:"minCpu,omitempty"`
-	MaxCpu        workload.Cpu    `json:"maxCpu,omitempty"`
-	MinMemory     workload.Memory `json:"minMemory,omitempty"`
-	MaxMemory     workload.Memory `json:"maxMemory,omitempty"`
-	MemBufferSize string          `json:"memBufferSize,omitempty"`
-	PerPodRate    *float32        `json:"perPodRate,omitempty"`
+	MinCpu        workload.Cpu    `json:"minCpu,omitzero"`
+	MaxCpu        workload.Cpu    `json:"maxCpu,omitzero"`
+	MinMemory     workload.Memory `json:"minMemory,omitzero"`
+	MaxMemory     workload.Memory `json:"maxMemory,omitzero"`
+	MemBufferSize string          `json:"memBufferSize,omitzero"`
+	PerPodRate    *float64        `json:"perPodRate,omitzero"`
 }
 
 type ByokAddonConfigConfigMonitoringKubeStateMetrics struct {
-	MinMemory workload.Memory `json:"minMemory,omitempty"`
+	MinMemory workload.Memory `json:"minMemory,omitzero"`
 }
 
 type ByokAddonConfigConfigMonitoringPrometheusMain struct {
-	Storage workload.Memory `json:"storage,omitempty"`
+	Storage workload.Memory `json:"storage,omitzero"`
 }
 
 type ByokAddonConfigConfigMonitoringPrometheus struct {
-	Main ByokAddonConfigConfigMonitoringPrometheusMain `json:"main,omitempty"`
+	Main *ByokAddonConfigConfigMonitoringPrometheusMain `json:"main,omitzero"`
 }
 
 type ByokAddonConfigConfigMonitoringRemoteWriteBasicAuth struct {
-	Username      string `json:"username,omitempty"`
-	Username_file string `json:"username_file,omitempty"`
-	Password      string `json:"password,omitempty"`
-	Password_file string `json:"password_file,omitempty"`
+	Username      string `json:"username,omitzero"`
+	Username_file string `json:"username_file,omitzero"`
+	Password      string `json:"password,omitzero"`
+	Password_file string `json:"password_file,omitzero"`
 }
 
 type ByokAddonConfigConfigMonitoringRemoteWriteAuthorization struct {
-	Type             string `json:"type,omitempty"`
-	Credentials      string `json:"credentials,omitempty"`
-	Credentials_file string `json:"credentials_file,omitempty"`
+	Type             string `json:"type,omitzero"`
+	Credentials      string `json:"credentials,omitzero"`
+	Credentials_file string `json:"credentials_file,omitzero"`
 }
 
 type ByokAddonConfigConfigMonitoringRemoteWriteOauth2 map[string]any
@@ -180,158 +179,160 @@ type ByokAddonConfigConfigMonitoringRemoteWriteGoogleIam map[string]any
 type ByokAddonConfigConfigMonitoringRemoteWriteQueueConfig map[string]any
 
 type ByokAddonConfigConfigMonitoringRemoteWrite struct {
-	Basic_auth             ByokAddonConfigConfigMonitoringRemoteWriteBasicAuth             `json:"basic_auth,omitempty"`
-	Authorization          ByokAddonConfigConfigMonitoringRemoteWriteAuthorization         `json:"authorization,omitempty"`
-	Oauth2                 ByokAddonConfigConfigMonitoringRemoteWriteOauth2                `json:"oauth2,omitempty"`
-	Follow_redirects       bool                                                            `json:"follow_redirects,omitempty"`
-	Enable_http2           bool                                                            `json:"enable_http2,omitempty"`
-	Tls_config             ByokAddonConfigConfigMonitoringRemoteWriteTlsConfig             `json:"tls_config,omitempty"`
-	Proxy_url              string                                                          `json:"proxy_url,omitempty"`
-	No_proxy               string                                                          `json:"no_proxy,omitempty"`
-	Proxy_from_environment bool                                                            `json:"proxy_from_environment,omitempty"`
-	Proxy_connect_header   ByokAddonConfigConfigMonitoringRemoteWriteProxyConnectHeader    `json:"proxy_connect_header,omitempty"`
-	Http_headers           ByokAddonConfigConfigMonitoringRemoteWriteHttpHeaders           `json:"http_headers,omitempty"`
-	Url                    string                                                          `json:"url,omitempty"`
-	Remote_timeout         string                                                          `json:"remote_timeout,omitempty"`
-	Headers                FlexibleAddonConfig                                             `json:"headers,omitempty"`
-	Write_relabel_configs  []ByokAddonConfigConfigMonitoringRemoteWriteWriteRelabelConfigs `json:"write_relabel_configs,omitempty"`
-	Name                   string                                                          `json:"name,omitempty"`
-	Send_exemplars         bool                                                            `json:"send_exemplars,omitempty"`
-	Send_native_histograms bool                                                            `json:"send_native_histograms,omitempty"`
-	Sigv4                  ByokAddonConfigConfigMonitoringRemoteWriteSigv4                 `json:"sigv4,omitempty"`
-	Azuread                ByokAddonConfigConfigMonitoringRemoteWriteAzuread               `json:"azuread,omitempty"`
-	Google_iam             ByokAddonConfigConfigMonitoringRemoteWriteGoogleIam             `json:"google_iam,omitempty"`
-	Queue_config           ByokAddonConfigConfigMonitoringRemoteWriteQueueConfig           `json:"queue_config,omitempty"`
+	Basic_auth             *ByokAddonConfigConfigMonitoringRemoteWriteBasicAuth            `json:"basic_auth,omitzero"`
+	Authorization          *ByokAddonConfigConfigMonitoringRemoteWriteAuthorization        `json:"authorization,omitzero"`
+	Oauth2                 ByokAddonConfigConfigMonitoringRemoteWriteOauth2                `json:"oauth2,omitzero"`
+	Follow_redirects       *bool                                                           `json:"follow_redirects,omitzero"`
+	Enable_http2           *bool                                                           `json:"enable_http2,omitzero"`
+	Tls_config             ByokAddonConfigConfigMonitoringRemoteWriteTlsConfig             `json:"tls_config,omitzero"`
+	Proxy_url              string                                                          `json:"proxy_url,omitzero"`
+	No_proxy               string                                                          `json:"no_proxy,omitzero"`
+	Proxy_from_environment *bool                                                           `json:"proxy_from_environment,omitzero"`
+	Proxy_connect_header   ByokAddonConfigConfigMonitoringRemoteWriteProxyConnectHeader    `json:"proxy_connect_header,omitzero"`
+	Http_headers           ByokAddonConfigConfigMonitoringRemoteWriteHttpHeaders           `json:"http_headers,omitzero"`
+	Url                    string                                                          `json:"url,omitzero"`
+	Remote_timeout         string                                                          `json:"remote_timeout,omitzero"`
+	Headers                FlexibleAddonConfig                                             `json:"headers,omitzero"`
+	Write_relabel_configs  []ByokAddonConfigConfigMonitoringRemoteWriteWriteRelabelConfigs `json:"write_relabel_configs,omitzero"`
+	Name                   string                                                          `json:"name,omitzero"`
+	Send_exemplars         *bool                                                           `json:"send_exemplars,omitzero"`
+	Send_native_histograms *bool                                                           `json:"send_native_histograms,omitzero"`
+	Sigv4                  ByokAddonConfigConfigMonitoringRemoteWriteSigv4                 `json:"sigv4,omitzero"`
+	Azuread                ByokAddonConfigConfigMonitoringRemoteWriteAzuread               `json:"azuread,omitzero"`
+	Google_iam             ByokAddonConfigConfigMonitoringRemoteWriteGoogleIam             `json:"google_iam,omitzero"`
+	Queue_config           ByokAddonConfigConfigMonitoringRemoteWriteQueueConfig           `json:"queue_config,omitzero"`
 }
 
 type ByokAddonConfigConfigMonitoring struct {
-	MinMemory        workload.Memory                                 `json:"minMemory,omitempty"`
-	MaxMemory        workload.Memory                                 `json:"maxMemory,omitempty"`
-	KubeStateMetrics ByokAddonConfigConfigMonitoringKubeStateMetrics `json:"kubeStateMetrics,omitempty"`
-	Prometheus       ByokAddonConfigConfigMonitoringPrometheus       `json:"prometheus,omitempty"`
-	RemoteWrite      []ByokAddonConfigConfigMonitoringRemoteWrite    `json:"remoteWrite,omitempty"`
-	ExternalLabels   FlexibleAddonConfig                             `json:"externalLabels,omitempty"`
+	MinMemory        workload.Memory                                  `json:"minMemory,omitzero"`
+	MaxMemory        workload.Memory                                  `json:"maxMemory,omitzero"`
+	KubeStateMetrics *ByokAddonConfigConfigMonitoringKubeStateMetrics `json:"kubeStateMetrics,omitzero"`
+	Prometheus       *ByokAddonConfigConfigMonitoringPrometheus       `json:"prometheus,omitzero"`
+	RemoteWrite      []ByokAddonConfigConfigMonitoringRemoteWrite     `json:"remoteWrite,omitzero"`
+	ExternalLabels   FlexibleAddonConfig                              `json:"externalLabels,omitzero"`
 }
 
 type ByokAddonConfigConfigRedis struct {
-	MinCpu    workload.Cpu    `json:"minCpu,omitempty"`
-	MaxCpu    workload.Cpu    `json:"maxCpu,omitempty"`
-	MinMemory workload.Memory `json:"minMemory,omitempty"`
-	MaxMemory workload.Memory `json:"maxMemory,omitempty"`
-	Storage   workload.Memory `json:"storage,omitempty"`
+	MinCpu    workload.Cpu    `json:"minCpu,omitzero"`
+	MaxCpu    workload.Cpu    `json:"maxCpu,omitzero"`
+	MinMemory workload.Memory `json:"minMemory,omitzero"`
+	MaxMemory workload.Memory `json:"maxMemory,omitzero"`
+	Storage   workload.Memory `json:"storage,omitzero"`
 }
 
 type ByokAddonConfigConfigRedisHa struct {
-	MinCpu    workload.Cpu    `json:"minCpu,omitempty"`
-	MaxCpu    workload.Cpu    `json:"maxCpu,omitempty"`
-	MinMemory workload.Memory `json:"minMemory,omitempty"`
-	MaxMemory workload.Memory `json:"maxMemory,omitempty"`
-	Storage   *float32        `json:"storage,omitempty"`
+	MinCpu    workload.Cpu    `json:"minCpu,omitzero"`
+	MaxCpu    workload.Cpu    `json:"maxCpu,omitzero"`
+	MinMemory workload.Memory `json:"minMemory,omitzero"`
+	MaxMemory workload.Memory `json:"maxMemory,omitzero"`
+	Storage   *float64        `json:"storage,omitzero"`
 }
 
 type ByokAddonConfigConfigRedisSentinel struct {
-	MinCpu    workload.Cpu    `json:"minCpu,omitempty"`
-	MaxCpu    workload.Cpu    `json:"maxCpu,omitempty"`
-	MinMemory workload.Memory `json:"minMemory,omitempty"`
-	MaxMemory workload.Memory `json:"maxMemory,omitempty"`
-	Storage   *float32        `json:"storage,omitempty"`
+	MinCpu    workload.Cpu    `json:"minCpu,omitzero"`
+	MaxCpu    workload.Cpu    `json:"maxCpu,omitzero"`
+	MinMemory workload.Memory `json:"minMemory,omitzero"`
+	MaxMemory workload.Memory `json:"maxMemory,omitzero"`
+	Storage   *float64        `json:"storage,omitzero"`
 }
 
 type ByokAddonConfigConfigTempoAgent struct {
-	MinCpu    workload.Cpu    `json:"minCpu,omitempty"`
-	MinMemory workload.Memory `json:"minMemory,omitempty"`
+	MinCpu    workload.Cpu    `json:"minCpu,omitzero"`
+	MinMemory workload.Memory `json:"minMemory,omitzero"`
 }
 
 type ByokAddonConfigConfigInternalDns struct {
-	MinCpu    workload.Cpu    `json:"minCpu,omitempty"`
-	MaxCpu    workload.Cpu    `json:"maxCpu,omitempty"`
-	MinMemory workload.Memory `json:"minMemory,omitempty"`
-	MaxMemory workload.Memory `json:"maxMemory,omitempty"`
+	MinCpu    workload.Cpu    `json:"minCpu,omitzero"`
+	MaxCpu    workload.Cpu    `json:"maxCpu,omitzero"`
+	MinMemory workload.Memory `json:"minMemory,omitzero"`
+	MaxMemory workload.Memory `json:"maxMemory,omitzero"`
 }
 
 type ByokAddonConfigConfig struct {
-	Actuator      ByokAddonConfigConfigActuator      `json:"actuator,omitempty"`
-	Maintainer    ByokAddonConfigConfigMaintainer    `json:"maintainer,omitempty"`
-	Juicefs       ByokAddonConfigConfigJuicefs       `json:"juicefs,omitempty"`
-	Middlebox     ByokAddonConfigConfigMiddlebox     `json:"middlebox,omitempty"`
-	Common        ByokAddonConfigConfigCommon        `json:"common,omitempty"`
-	Longhorn      ByokAddonConfigConfigLonghorn      `json:"longhorn,omitempty"`
-	Byok          ByokAddonConfigConfigByok          `json:"byok,omitempty"`
-	Ingress       ByokAddonConfigConfigIngress       `json:"ingress,omitempty"`
-	Istio         ByokAddonConfigConfigIstio         `json:"istio,omitempty"`
-	LogSplitter   ByokAddonConfigConfigLogSplitter   `json:"logSplitter,omitempty"`
-	Monitoring    ByokAddonConfigConfigMonitoring    `json:"monitoring,omitempty"`
-	Redis         ByokAddonConfigConfigRedis         `json:"redis,omitempty"`
-	RedisHa       ByokAddonConfigConfigRedisHa       `json:"redisHa,omitempty"`
-	RedisSentinel ByokAddonConfigConfigRedisSentinel `json:"redisSentinel,omitempty"`
-	TempoAgent    ByokAddonConfigConfigTempoAgent    `json:"tempoAgent,omitempty"`
-	InternalDns   ByokAddonConfigConfigInternalDns   `json:"internalDns,omitempty"`
+	Actuator      *ByokAddonConfigConfigActuator      `json:"actuator,omitzero"`
+	Maintainer    *ByokAddonConfigConfigMaintainer    `json:"maintainer,omitzero"`
+	Juicefs       *ByokAddonConfigConfigJuicefs       `json:"juicefs,omitzero"`
+	Middlebox     *ByokAddonConfigConfigMiddlebox     `json:"middlebox,omitzero"`
+	Common        *ByokAddonConfigConfigCommon        `json:"common,omitzero"`
+	Longhorn      *ByokAddonConfigConfigLonghorn      `json:"longhorn,omitzero"`
+	Byok          *ByokAddonConfigConfigByok          `json:"byok,omitzero"`
+	Ingress       *ByokAddonConfigConfigIngress       `json:"ingress,omitzero"`
+	Istio         *ByokAddonConfigConfigIstio         `json:"istio,omitzero"`
+	LogSplitter   *ByokAddonConfigConfigLogSplitter   `json:"logSplitter,omitzero"`
+	Monitoring    *ByokAddonConfigConfigMonitoring    `json:"monitoring,omitzero"`
+	Redis         *ByokAddonConfigConfigRedis         `json:"redis,omitzero"`
+	RedisHa       *ByokAddonConfigConfigRedisHa       `json:"redisHa,omitzero"`
+	RedisSentinel *ByokAddonConfigConfigRedisSentinel `json:"redisSentinel,omitzero"`
+	TempoAgent    *ByokAddonConfigConfigTempoAgent    `json:"tempoAgent,omitzero"`
+	InternalDns   *ByokAddonConfigConfigInternalDns   `json:"internalDns,omitzero"`
 }
 
 type ByokAddonConfig struct {
-	IgnoreUpdates bool                  `json:"ignoreUpdates,omitempty"`
-	Location      string                `json:"location"`
-	Config        ByokAddonConfigConfig `json:"config,omitempty"`
+	IgnoreUpdates *bool                  `json:"ignoreUpdates,omitzero"`
+	Location      string                 `json:"location"`
+	Config        *ByokAddonConfigConfig `json:"config,omitzero"`
 }
 
 type DashboardAddonStatus struct {
-	Url string `json:"url,omitempty"`
+	Url string `json:"url,omitzero"`
 }
 
 type FlexibleAddonConfig map[string]string
 
 type HttpHeaderValue struct {
-	Values  []string `json:"values,omitempty"`
-	Secrets []string `json:"secrets,omitempty"`
-	Files   []string `json:"files,omitempty"`
+	Values  []string `json:"values,omitzero"`
+	Secrets []string `json:"secrets,omitzero"`
+	Files   []string `json:"files,omitzero"`
 }
 
 type KubevirtAddonConfig struct {
-	ScratchSpaceStorageClass string `json:"scratchSpaceStorageClass,omitempty"`
+	ScratchSpaceStorageClass string `json:"scratchSpaceStorageClass,omitzero"`
 }
 
 type LogsAddonConfig struct {
-	AuditEnabled      bool       `json:"auditEnabled,omitempty"`
-	IncludeNamespaces base.Regex `json:"includeNamespaces,omitempty"`
-	ExcludeNamespaces base.Regex `json:"excludeNamespaces,omitempty"`
-	Docker            bool       `json:"docker,omitempty"`
-	Kubelet           bool       `json:"kubelet,omitempty"`
-	Kernel            bool       `json:"kernel,omitempty"`
-	Events            bool       `json:"events,omitempty"`
+	AuditEnabled      *bool             `json:"auditEnabled,omitzero"`
+	IncludeNamespaces RegularExpression `json:"includeNamespaces,omitzero"`
+	ExcludeNamespaces RegularExpression `json:"excludeNamespaces,omitzero"`
+	Docker            *bool             `json:"docker,omitzero"`
+	Kubelet           *bool             `json:"kubelet,omitzero"`
+	Kernel            *bool             `json:"kernel,omitzero"`
+	Events            *bool             `json:"events,omitzero"`
 }
 
 type LogsAddonStatus struct {
-	LokiAddress string `json:"lokiAddress,omitempty"`
+	LokiAddress string `json:"lokiAddress,omitzero"`
 }
 
 type MetricsAddonConfigScrapeAnnotated struct {
-	IntervalSeconds   *float32   `json:"intervalSeconds,omitempty"`
-	IncludeNamespaces base.Regex `json:"includeNamespaces,omitempty"`
-	ExcludeNamespaces base.Regex `json:"excludeNamespaces,omitempty"`
-	RetainLabels      base.Regex `json:"retainLabels,omitempty"`
+	IntervalSeconds   *float64          `json:"intervalSeconds,omitzero"`
+	IncludeNamespaces RegularExpression `json:"includeNamespaces,omitzero"`
+	ExcludeNamespaces RegularExpression `json:"excludeNamespaces,omitzero"`
+	RetainLabels      RegularExpression `json:"retainLabels,omitzero"`
 }
 
 type MetricsAddonConfig struct {
-	KubeState        bool                              `json:"kubeState,omitempty"`
-	KubeStateDrop    string                            `json:"kubeStateDrop,omitempty"`
-	CoreDns          bool                              `json:"coreDns,omitempty"`
-	CoreDnsDrop      string                            `json:"coreDnsDrop,omitempty"`
-	Kubelet          bool                              `json:"kubelet,omitempty"`
-	KubeletDrop      string                            `json:"kubeletDrop,omitempty"`
-	Apiserver        bool                              `json:"apiserver,omitempty"`
-	ApiserverDrop    string                            `json:"apiserverDrop,omitempty"`
-	NodeExporter     bool                              `json:"nodeExporter,omitempty"`
-	NodeExporterDrop string                            `json:"nodeExporterDrop,omitempty"`
-	Cadvisor         bool                              `json:"cadvisor,omitempty"`
-	CadvisorDrop     string                            `json:"cadvisorDrop,omitempty"`
-	ScrapeAnnotated  MetricsAddonConfigScrapeAnnotated `json:"scrapeAnnotated,omitempty"`
+	KubeState    *bool `json:"kubeState,omitzero"`
+	CoreDns      *bool `json:"coreDns,omitzero"`
+	Kubelet      *bool `json:"kubelet,omitzero"`
+	Apiserver    *bool `json:"apiserver,omitzero"`
+	NodeExporter *bool `json:"nodeExporter,omitzero"`
+	Cadvisor     *bool `json:"cadvisor,omitzero"`
+	// Per-collector drop regexes (master 82e90536d): a scraped series whose metric name
+	// matches is dropped. Same RE2-validated Regex as the namespace/label fields.
+	KubeStateDrop    RegularExpression                  `json:"kubeStateDrop,omitzero"`
+	CoreDnsDrop      RegularExpression                  `json:"coreDnsDrop,omitzero"`
+	KubeletDrop      RegularExpression                  `json:"kubeletDrop,omitzero"`
+	ApiserverDrop    RegularExpression                  `json:"apiserverDrop,omitzero"`
+	NodeExporterDrop RegularExpression                  `json:"nodeExporterDrop,omitzero"`
+	CadvisorDrop     RegularExpression                  `json:"cadvisorDrop,omitzero"`
+	ScrapeAnnotated  *MetricsAddonConfigScrapeAnnotated `json:"scrapeAnnotated,omitzero"`
 }
 
 type MetricsAddonStatusRemoteWriteConfig map[string]any
 
 type MetricsAddonStatus struct {
-	PrometheusEndpoint string                              `json:"prometheusEndpoint,omitempty"`
-	RemoteWriteConfig  MetricsAddonStatusRemoteWriteConfig `json:"remoteWriteConfig,omitempty"`
+	PrometheusEndpoint string                              `json:"prometheusEndpoint,omitzero"`
+	RemoteWriteConfig  MetricsAddonStatusRemoteWriteConfig `json:"remoteWriteConfig,omitzero"`
 }
 
 type NodeLocalDnsAddonConfig struct {
@@ -341,14 +342,19 @@ type NonCustomizableAddonConfig struct {
 }
 
 type NvidiaAddonConfig struct {
-	TaintGPUNodes bool `json:"taintGPUNodes,omitempty"`
+	TaintGPUNodes *bool `json:"taintGPUNodes,omitzero"`
 }
 
+// Registry is a container-registry host: a hostname or "*" (was Joi.alternatives of two strings).
+type Registry string
+
 type RegistryMirrorConfigMirrors struct {
-	Registry any/* TODO: [object Object]*/ `json:"registry"`
-	Mirrors  []string `json:"mirrors,omitempty"`
+	Registry Registry `json:"registry"`
+	Mirrors  []string `json:"mirrors,omitzero"`
 }
 
 type RegistryMirrorConfig struct {
-	Mirrors []RegistryMirrorConfigMirrors `json:"mirrors,omitempty"`
+	Mirrors []RegistryMirrorConfigMirrors `json:"mirrors,omitzero"`
 }
+
+type RegularExpression string

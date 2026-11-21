@@ -22,12 +22,12 @@ const (
 
 type EphemeralPool struct {
 	Name    string              `json:"name"`
-	Labels  mk8sCommon.Labels   `json:"labels,omitempty"`
-	Taints  mk8sCommon.Taints   `json:"taints,omitempty"`
-	MaxPods mk8sCommon.MaxPods  `json:"maxPods,omitempty"`
-	Count   float32             `json:"count"`
-	Arch    EphemeralPoolArch   `json:"arch,omitempty"`
-	Flavor  EphemeralPoolFlavor `json:"flavor,omitempty"`
+	Labels  mk8sCommon.Labels   `json:"labels,omitzero"`
+	Taints  mk8sCommon.Taints   `json:"taints,omitzero"`
+	MaxPods *mk8sCommon.MaxPods `json:"maxPods,omitzero"`
+	Count   float64             `json:"count"`
+	Arch    EphemeralPoolArch   `json:"arch,omitzero" validate:"required"`
+	Flavor  EphemeralPoolFlavor `json:"flavor,omitzero" validate:"required"`
 	Cpu     string              `json:"cpu"`
 	Memory  string              `json:"memory"`
 }
@@ -43,8 +43,8 @@ const (
 )
 
 type EphemeralProvider struct {
-	Location  EphemeralProviderLocation `json:"location,omitempty"`
-	NodePools []EphemeralPool           `json:"nodePools,omitempty"`
+	Location  EphemeralProviderLocation `json:"location,omitzero" validate:"required"`
+	NodePools []EphemeralPool           `json:"nodePools,omitzero"`
 }
 
 type EphemeralProviderStatus map[string]any

@@ -1,6 +1,12 @@
-/* auto-generated */
+/* hand-maintained — canonical source of truth for the `event` resource schema.
+ * `validate:` tags drive pkg/validate.FromType. See nodelibs/schema/src/event.ts.
+ * NOT Base-derived (plain object). EventContext is .unknown(true) (registered on
+ * that type). Registered as the `event` kind.
+ */
 
 package event
+
+import "github.com/controlplane-com/libs-go/pkg/schema/base"
 
 type EventContextComponent string
 
@@ -15,24 +21,37 @@ const (
 	EventContextComponentOther         EventContextComponent = "other"
 )
 
+// EventContext ports event.ts:3. .unknown(true) is registered on this type so
+// arbitrary properties pass through.
 type EventContext struct {
-	Category      string                `json:"category,omitempty"`
-	Component     EventContextComponent `json:"component,omitempty"`
-	CloudProvider string                `json:"cloudProvider,omitempty"`
-	Cluster       string                `json:"cluster,omitempty"`
-	PrincipalLink string                `json:"principalLink,omitempty"`
-	Fingerprint   string                `json:"fingerprint,omitempty"`
+	Category      string                `json:"category,omitzero"`
+	Component     EventContextComponent `json:"component,omitzero" validate:"valid=actuator|dns-updater|scheduler|iam-broker|metadata-proxy|data-service|mk8s|other"`
+	CloudProvider string                `json:"cloudProvider,omitzero"`
+	Cluster       string                `json:"cluster,omitzero"`
+	PrincipalLink string                `json:"principalLink,omitzero"`
+	Fingerprint   string                `json:"fingerprint,omitzero" validate:"max=64"`
+	// EventContext is .unknown(true) (validate.go:22): properties it does not name
+	// round-trip untouched.
+	Extras base.Extras `json:"-"`
+} //ts:export
 
-	/* WARNING!! Arbitrary properties are being ignored! */
+type eventContextAlias EventContext
+
+func (c EventContext) MarshalJSON() ([]byte, error) {
+	return base.MarshalExtras(eventContextAlias(c), c.Extras)
+}
+
+func (c *EventContext) UnmarshalJSON(b []byte) error {
+	return base.UnmarshalExtras(b, (*eventContextAlias)(c), &c.Extras)
 }
 
 type Event struct {
-	Id            string       `json:"id,omitempty"`
-	Created       string       `json:"created,omitempty"`
-	Kind          string       `json:"kind,omitempty"`
-	LastEventTime string       `json:"lastEventTime,omitempty"`
-	EventCount    *float32     `json:"eventCount,omitempty"`
-	Status        string       `json:"status"`
-	Pinned        bool         `json:"pinned,omitempty"`
-	Context       EventContext `json:"context,omitempty"`
+	Id            string        `json:"id,omitzero"`
+	Created       string        `json:"created,omitzero" validate:"date"`
+	Kind          string        `json:"kind,omitzero"`
+	LastEventTime string        `json:"lastEventTime,omitzero" validate:"date"`
+	EventCount    *float64      `json:"eventCount,omitzero" validate:"integer"`
+	Status        string        `json:"status" validate:"required"`
+	Pinned        *bool         `json:"pinned,omitzero"`
+	Context       *EventContext `json:"context,omitzero" validate:"default={},optional"`
 }

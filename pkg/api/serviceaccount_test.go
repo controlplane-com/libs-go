@@ -29,7 +29,7 @@ func newTestServiceAccount(name string) *serviceaccount.ServiceAccount {
 	return &serviceaccount.ServiceAccount{
 		Name:        base.Name(name),
 		Description: "Test service account created by integration test",
-		Version:     common.Float32Ptr(1),
+		Version:     common.Float64Ptr(1),
 		Tags: serviceaccount.ServiceAccountTags{
 			"test":        "true",
 			"integration": "libs-go",

@@ -1,4 +1,20 @@
-/* auto-generated */
+/* hand-maintained — canonical source of truth for the `mk8s` resource schema.
+ * Formerly emitted by joi-to-go from nodelibs/schema/src/mk8s.ts; now the CANONICAL
+ * definition carrying `validate:` struct tags that pkg/validate.FromType reflects into
+ * the *validate.Rule tree (replacing pkg/handlers/schema_mk8s.go's Mk8sSchema/
+ * Mk8sSpecRule/mk8sProviderRule/firewallRuleRule builders).
+ *
+ * spec.provider is provider-DISCRIMINATED: exactly one of the twelve provider keys
+ * (the Joi .xor). That object-level relation is registered in pkg/handlers
+ * (schema_reflect_mk8s.go) via RegisterObjectRules(Mk8SClusterSpecProvider, {Xor}).
+ * The twelve provider BODIES, spec.addOns and status are irreducible sub-trees
+ * (per-provider complex defaults, pattern-map key/value customs, float bounds — DSL
+ * gaps documented in schema_reflect_mk8s.go) so they resolve to the prebuilt
+ * pkg/handlers rules via the base-type registry, exactly like base.Name→NameRule.
+ * The allow-all firewall default (a content-ful array default a field tag cannot
+ * carry) is injected by a Refine on Mk8SClusterSpec. See go-libs/schema/ipSet for
+ * the tag DSL grammar.
+ */
 
 package mk8s
 
@@ -17,7 +33,12 @@ import "github.com/controlplane-com/libs-go/pkg/schema/mk8sDigitalOcean"
 import "github.com/controlplane-com/libs-go/pkg/schema/mk8sGcp"
 import "github.com/controlplane-com/libs-go/pkg/schema/mk8sAddons"
 
-type Mk8SClusterTags map[string]any
+type Mk8SClusterTags = base.Tags
+
+// FirewallSourceCIDR is the strongly-typed replacement for the firewall
+// sourceCIDR `custom=mk8sIpV4V6` tag: Joi.string().ip({version:[ipv4,ipv6],
+// cidr:optional}).
+type FirewallSourceCIDR string
 
 type Mk8SClusterSpecVersion string
 
@@ -40,67 +61,76 @@ const (
 	Mk8SClusterSpecVersion1365  Mk8SClusterSpecVersion = "1.36.5"
 )
 
+// EnumValues resolves the version field to Joi.valid(...upgradePath) via the
+// reflection Valuer registry (mk8s.ts upgradePath; keep ascending order).
+func (Mk8SClusterSpecVersion) EnumValues() []string {
+	return []string{
+		"1.26.0", "1.26.4", "1.27.3", "1.28.2", "1.28.4", "1.29.7", "1.30.3",
+		"1.31.5", "1.31.13", "1.32.1", "1.32.9", "1.33.5", "1.34.2", "1.35.3", "1.35.9", "1.36.5",
+	}
+}
+
 type Mk8SClusterSpecFirewall struct {
-	SourceCIDR  string `json:"sourceCIDR"`
-	Description string `json:"description,omitempty"`
+	SourceCIDR  FirewallSourceCIDR `json:"sourceCIDR" validate:"required"`
+	Description string             `json:"description,omitzero" validate:"allow="`
 }
 
 type Mk8SClusterSpecProvider struct {
-	Generic      mk8sGeneric.GenericProvider           `json:"generic,omitempty"`
-	Hetzner      mk8sHetzner.HetznerProvider           `json:"hetzner,omitempty"`
-	Aws          mk8sAws.AwsProvider                   `json:"aws,omitempty"`
-	Linode       mk8sLinode.LinodeProvider             `json:"linode,omitempty"`
-	Oblivus      mk8sOblivus.OblivusProvider           `json:"oblivus,omitempty"`
-	Lambdalabs   mk8sLambdalabs.LambdalabsProvider     `json:"lambdalabs,omitempty"`
-	Paperspace   mk8sPaperspace.PaperspaceProvider     `json:"paperspace,omitempty"`
-	Ephemeral    mk8sEphemeral.EphemeralProvider       `json:"ephemeral,omitempty"`
-	Triton       mk8sTriton.TritonProvider             `json:"triton,omitempty"`
-	Azure        mk8sAzure.AzureProvider               `json:"azure,omitempty"`
-	Digitalocean mk8sDigitalOcean.DigitalOceanProvider `json:"digitalocean,omitempty"`
-	Gcp          mk8sGcp.GcpProvider                   `json:"gcp,omitempty"`
+	Generic      *mk8sGeneric.GenericProvider           `json:"generic,omitzero"`
+	Hetzner      *mk8sHetzner.HetznerProvider           `json:"hetzner,omitzero"`
+	Aws          *mk8sAws.AwsProvider                   `json:"aws,omitzero"`
+	Linode       *mk8sLinode.LinodeProvider             `json:"linode,omitzero"`
+	Oblivus      *mk8sOblivus.OblivusProvider           `json:"oblivus,omitzero"`
+	Lambdalabs   *mk8sLambdalabs.LambdalabsProvider     `json:"lambdalabs,omitzero"`
+	Paperspace   *mk8sPaperspace.PaperspaceProvider     `json:"paperspace,omitzero"`
+	Ephemeral    *mk8sEphemeral.EphemeralProvider       `json:"ephemeral,omitzero"`
+	Triton       *mk8sTriton.TritonProvider             `json:"triton,omitzero"`
+	Azure        *mk8sAzure.AzureProvider               `json:"azure,omitzero"`
+	Digitalocean *mk8sDigitalOcean.DigitalOceanProvider `json:"digitalocean,omitzero"`
+	Gcp          *mk8sGcp.GcpProvider                   `json:"gcp,omitzero"`
 }
 
 type Mk8SClusterSpecAddOns struct {
-	Dashboard             mk8sAddons.NonCustomizableAddonConfig `json:"dashboard,omitempty"`
-	Headlamp              mk8sAddons.NonCustomizableAddonConfig `json:"headlamp,omitempty"`
-	AzureWorkloadIdentity mk8sAddons.AzureAddonConfig           `json:"azureWorkloadIdentity,omitempty"`
-	AwsWorkloadIdentity   mk8sAddons.NonCustomizableAddonConfig `json:"awsWorkloadIdentity,omitempty"`
-	LocalPathStorage      mk8sAddons.NonCustomizableAddonConfig `json:"localPathStorage,omitempty"`
-	Metrics               mk8sAddons.MetricsAddonConfig         `json:"metrics,omitempty"`
-	Logs                  mk8sAddons.LogsAddonConfig            `json:"logs,omitempty"`
-	RegistryMirror        mk8sAddons.RegistryMirrorConfig       `json:"registryMirror,omitempty"`
-	Nvidia                mk8sAddons.NvidiaAddonConfig          `json:"nvidia,omitempty"`
-	AwsEFS                mk8sAddons.AwsEFSAddonConfig          `json:"awsEFS,omitempty"`
-	AwsECR                mk8sAddons.AwsECRAddonConfig          `json:"awsECR,omitempty"`
-	AwsELB                mk8sAddons.AwsELBAddonConfig          `json:"awsELB,omitempty"`
-	AzureACR              mk8sAddons.AzureACRAddonConfig        `json:"azureACR,omitempty"`
-	Sysbox                mk8sAddons.NonCustomizableAddonConfig `json:"sysbox,omitempty"`
-	Byok                  mk8sAddons.ByokAddonConfig            `json:"byok,omitempty"`
-	Kubevirt              mk8sAddons.KubevirtAddonConfig        `json:"kubevirt,omitempty"`
-	NodeLocalDns          mk8sAddons.NodeLocalDnsAddonConfig    `json:"nodeLocalDns,omitempty"`
-	Kata                  mk8sAddons.NonCustomizableAddonConfig `json:"kata,omitempty"`
+	Dashboard             *mk8sAddons.NonCustomizableAddonConfig `json:"dashboard,omitzero"`
+	Headlamp              *mk8sAddons.NonCustomizableAddonConfig `json:"headlamp,omitzero"`
+	AzureWorkloadIdentity *mk8sAddons.AzureAddonConfig           `json:"azureWorkloadIdentity,omitzero"`
+	AwsWorkloadIdentity   *mk8sAddons.NonCustomizableAddonConfig `json:"awsWorkloadIdentity,omitzero"`
+	LocalPathStorage      *mk8sAddons.NonCustomizableAddonConfig `json:"localPathStorage,omitzero"`
+	Metrics               *mk8sAddons.MetricsAddonConfig         `json:"metrics,omitzero"`
+	Logs                  *mk8sAddons.LogsAddonConfig            `json:"logs,omitzero"`
+	RegistryMirror        *mk8sAddons.RegistryMirrorConfig       `json:"registryMirror,omitzero"`
+	Nvidia                *mk8sAddons.NvidiaAddonConfig          `json:"nvidia,omitzero"`
+	AwsEFS                *mk8sAddons.AwsEFSAddonConfig          `json:"awsEFS,omitzero"`
+	AwsECR                *mk8sAddons.AwsECRAddonConfig          `json:"awsECR,omitzero"`
+	AwsELB                *mk8sAddons.AwsELBAddonConfig          `json:"awsELB,omitzero"`
+	AzureACR              *mk8sAddons.AzureACRAddonConfig        `json:"azureACR,omitzero"`
+	Sysbox                *mk8sAddons.NonCustomizableAddonConfig `json:"sysbox,omitzero"`
+	Byok                  *mk8sAddons.ByokAddonConfig            `json:"byok,omitzero"`
+	Kubevirt              *mk8sAddons.KubevirtAddonConfig        `json:"kubevirt,omitzero"`
+	NodeLocalDns          *mk8sAddons.NodeLocalDnsAddonConfig    `json:"nodeLocalDns,omitzero"`
+	Kata                  *mk8sAddons.NonCustomizableAddonConfig `json:"kata,omitzero"`
 }
 
 type Mk8SClusterSpec struct {
-	Version  Mk8SClusterSpecVersion    `json:"version,omitempty"`
-	Firewall []Mk8SClusterSpecFirewall `json:"firewall,omitempty"`
-	Provider Mk8SClusterSpecProvider   `json:"provider"`
-	AddOns   Mk8SClusterSpecAddOns     `json:"addOns,omitempty"`
+	Version  Mk8SClusterSpecVersion    `json:"version,omitzero" validate:"required"`
+	Firewall []Mk8SClusterSpecFirewall `json:"firewall,omitzero"`
+	Provider Mk8SClusterSpecProvider   `json:"provider" validate:"required"`
+	AddOns   *Mk8SClusterSpecAddOns    `json:"addOns,omitzero"`
 }
 
 type Mk8sCluster struct {
-	Id           string          `json:"id,omitempty"`
-	Name         base.Name       `json:"name,omitempty"`
-	Kind         base.Kind       `json:"kind,omitempty"`
-	Version      *float32        `json:"version,omitempty"`
-	Description  string          `json:"description,omitempty"`
-	Tags         Mk8SClusterTags `json:"tags,omitempty"`
-	Created      string          `json:"created,omitempty"`
-	LastModified string          `json:"lastModified,omitempty"`
-	Links        base.Links      `json:"links,omitempty"`
-	Spec         Mk8SClusterSpec `json:"spec"`
-	Alias        string          `json:"alias,omitempty"`
-	Status       Mk8sStatus      `json:"status,omitempty"`
+	Id           string          `json:"id,omitzero" validate:"uuid,readOnly"`
+	Name         base.Name       `json:"name,omitzero"`
+	Kind         base.Kind       `json:"kind,omitzero"`
+	Version      *float64        `json:"version,omitzero" validate:"positive,integer,readOnly"`
+	Description  string          `json:"description,omitzero" validate:"trim,max=250,allow="`
+	Tags         Mk8SClusterTags `json:"tags,omitzero" validate:"default={}"`
+	Created      string          `json:"created,omitzero" validate:"date,readOnly"`
+	LastModified string          `json:"lastModified,omitzero" validate:"date,readOnly"`
+	Links        base.Links      `json:"links,omitzero" validate:"readOnly"`
+	Spec         Mk8SClusterSpec `json:"spec" validate:"required"`
+	Alias        string          `json:"alias,omitzero" validate:"optional,readOnly"`
+	Status       *Mk8sStatus     `json:"status,omitzero"`
 }
 
 type Mk8SSpecVersion string
@@ -126,66 +156,66 @@ const (
 
 type Mk8SSpecFirewall struct {
 	SourceCIDR  string `json:"sourceCIDR"`
-	Description string `json:"description,omitempty"`
+	Description string `json:"description,omitzero"`
 }
 
 type Mk8SSpecProvider struct {
-	Generic      mk8sGeneric.GenericProvider           `json:"generic,omitempty"`
-	Hetzner      mk8sHetzner.HetznerProvider           `json:"hetzner,omitempty"`
-	Aws          mk8sAws.AwsProvider                   `json:"aws,omitempty"`
-	Linode       mk8sLinode.LinodeProvider             `json:"linode,omitempty"`
-	Oblivus      mk8sOblivus.OblivusProvider           `json:"oblivus,omitempty"`
-	Lambdalabs   mk8sLambdalabs.LambdalabsProvider     `json:"lambdalabs,omitempty"`
-	Paperspace   mk8sPaperspace.PaperspaceProvider     `json:"paperspace,omitempty"`
-	Ephemeral    mk8sEphemeral.EphemeralProvider       `json:"ephemeral,omitempty"`
-	Triton       mk8sTriton.TritonProvider             `json:"triton,omitempty"`
-	Azure        mk8sAzure.AzureProvider               `json:"azure,omitempty"`
-	Digitalocean mk8sDigitalOcean.DigitalOceanProvider `json:"digitalocean,omitempty"`
-	Gcp          mk8sGcp.GcpProvider                   `json:"gcp,omitempty"`
+	Generic      *mk8sGeneric.GenericProvider           `json:"generic,omitzero"`
+	Hetzner      *mk8sHetzner.HetznerProvider           `json:"hetzner,omitzero"`
+	Aws          *mk8sAws.AwsProvider                   `json:"aws,omitzero"`
+	Linode       *mk8sLinode.LinodeProvider             `json:"linode,omitzero"`
+	Oblivus      *mk8sOblivus.OblivusProvider           `json:"oblivus,omitzero"`
+	Lambdalabs   *mk8sLambdalabs.LambdalabsProvider     `json:"lambdalabs,omitzero"`
+	Paperspace   *mk8sPaperspace.PaperspaceProvider     `json:"paperspace,omitzero"`
+	Ephemeral    *mk8sEphemeral.EphemeralProvider       `json:"ephemeral,omitzero"`
+	Triton       *mk8sTriton.TritonProvider             `json:"triton,omitzero"`
+	Azure        *mk8sAzure.AzureProvider               `json:"azure,omitzero"`
+	Digitalocean *mk8sDigitalOcean.DigitalOceanProvider `json:"digitalocean,omitzero"`
+	Gcp          *mk8sGcp.GcpProvider                   `json:"gcp,omitzero"`
 }
 
 type Mk8SSpecAddOns struct {
-	Dashboard             mk8sAddons.NonCustomizableAddonConfig `json:"dashboard,omitempty"`
-	Headlamp              mk8sAddons.NonCustomizableAddonConfig `json:"headlamp,omitempty"`
-	AzureWorkloadIdentity mk8sAddons.AzureAddonConfig           `json:"azureWorkloadIdentity,omitempty"`
-	AwsWorkloadIdentity   mk8sAddons.NonCustomizableAddonConfig `json:"awsWorkloadIdentity,omitempty"`
-	LocalPathStorage      mk8sAddons.NonCustomizableAddonConfig `json:"localPathStorage,omitempty"`
-	Metrics               mk8sAddons.MetricsAddonConfig         `json:"metrics,omitempty"`
-	Logs                  mk8sAddons.LogsAddonConfig            `json:"logs,omitempty"`
-	RegistryMirror        mk8sAddons.RegistryMirrorConfig       `json:"registryMirror,omitempty"`
-	Nvidia                mk8sAddons.NvidiaAddonConfig          `json:"nvidia,omitempty"`
-	AwsEFS                mk8sAddons.AwsEFSAddonConfig          `json:"awsEFS,omitempty"`
-	AwsECR                mk8sAddons.AwsECRAddonConfig          `json:"awsECR,omitempty"`
-	AwsELB                mk8sAddons.AwsELBAddonConfig          `json:"awsELB,omitempty"`
-	AzureACR              mk8sAddons.AzureACRAddonConfig        `json:"azureACR,omitempty"`
-	Sysbox                mk8sAddons.NonCustomizableAddonConfig `json:"sysbox,omitempty"`
-	Byok                  mk8sAddons.ByokAddonConfig            `json:"byok,omitempty"`
-	Kubevirt              mk8sAddons.KubevirtAddonConfig        `json:"kubevirt,omitempty"`
-	NodeLocalDns          mk8sAddons.NodeLocalDnsAddonConfig    `json:"nodeLocalDns,omitempty"`
-	Kata                  mk8sAddons.NonCustomizableAddonConfig `json:"kata,omitempty"`
+	Dashboard             *mk8sAddons.NonCustomizableAddonConfig `json:"dashboard,omitzero"`
+	Headlamp              *mk8sAddons.NonCustomizableAddonConfig `json:"headlamp,omitzero"`
+	AzureWorkloadIdentity *mk8sAddons.AzureAddonConfig           `json:"azureWorkloadIdentity,omitzero"`
+	AwsWorkloadIdentity   *mk8sAddons.NonCustomizableAddonConfig `json:"awsWorkloadIdentity,omitzero"`
+	LocalPathStorage      *mk8sAddons.NonCustomizableAddonConfig `json:"localPathStorage,omitzero"`
+	Metrics               *mk8sAddons.MetricsAddonConfig         `json:"metrics,omitzero"`
+	Logs                  *mk8sAddons.LogsAddonConfig            `json:"logs,omitzero"`
+	RegistryMirror        *mk8sAddons.RegistryMirrorConfig       `json:"registryMirror,omitzero"`
+	Nvidia                *mk8sAddons.NvidiaAddonConfig          `json:"nvidia,omitzero"`
+	AwsEFS                *mk8sAddons.AwsEFSAddonConfig          `json:"awsEFS,omitzero"`
+	AwsECR                *mk8sAddons.AwsECRAddonConfig          `json:"awsECR,omitzero"`
+	AwsELB                *mk8sAddons.AwsELBAddonConfig          `json:"awsELB,omitzero"`
+	AzureACR              *mk8sAddons.AzureACRAddonConfig        `json:"azureACR,omitzero"`
+	Sysbox                *mk8sAddons.NonCustomizableAddonConfig `json:"sysbox,omitzero"`
+	Byok                  *mk8sAddons.ByokAddonConfig            `json:"byok,omitzero"`
+	Kubevirt              *mk8sAddons.KubevirtAddonConfig        `json:"kubevirt,omitzero"`
+	NodeLocalDns          *mk8sAddons.NodeLocalDnsAddonConfig    `json:"nodeLocalDns,omitzero"`
+	Kata                  *mk8sAddons.NonCustomizableAddonConfig `json:"kata,omitzero"`
 }
 
 type Mk8sSpec struct {
-	Version  Mk8SSpecVersion    `json:"version,omitempty"`
-	Firewall []Mk8SSpecFirewall `json:"firewall,omitempty"`
+	Version  Mk8SSpecVersion    `json:"version,omitzero" validate:"required"`
+	Firewall []Mk8SSpecFirewall `json:"firewall,omitzero"`
 	Provider Mk8SSpecProvider   `json:"provider"`
-	AddOns   Mk8SSpecAddOns     `json:"addOns,omitempty"`
+	AddOns   *Mk8SSpecAddOns    `json:"addOns,omitzero"`
 }
 
 type Mk8SStatusAddOns struct {
-	Dashboard           mk8sAddons.DashboardAddonStatus           `json:"dashboard,omitempty"`
-	Headlamp            mk8sAddons.DashboardAddonStatus           `json:"headlamp,omitempty"`
-	AwsWorkloadIdentity mk8sAddons.AwsWorkloadIdentityAddonStatus `json:"awsWorkloadIdentity,omitempty"`
-	Metrics             mk8sAddons.MetricsAddonStatus             `json:"metrics,omitempty"`
-	Logs                mk8sAddons.LogsAddonStatus                `json:"logs,omitempty"`
-	AwsECR              mk8sAddons.AwsTrustPolicyConfig           `json:"awsECR,omitempty"`
-	AwsEFS              mk8sAddons.AwsTrustPolicyConfig           `json:"awsEFS,omitempty"`
-	AwsELB              mk8sAddons.AwsTrustPolicyConfig           `json:"awsELB,omitempty"`
+	Dashboard           *mk8sAddons.DashboardAddonStatus           `json:"dashboard,omitzero"`
+	Headlamp            *mk8sAddons.DashboardAddonStatus           `json:"headlamp,omitzero"`
+	AwsWorkloadIdentity *mk8sAddons.AwsWorkloadIdentityAddonStatus `json:"awsWorkloadIdentity,omitzero"`
+	Metrics             *mk8sAddons.MetricsAddonStatus             `json:"metrics,omitzero"`
+	Logs                *mk8sAddons.LogsAddonStatus                `json:"logs,omitzero"`
+	AwsECR              *mk8sAddons.AwsTrustPolicyConfig           `json:"awsECR,omitzero"`
+	AwsEFS              *mk8sAddons.AwsTrustPolicyConfig           `json:"awsEFS,omitzero"`
+	AwsELB              *mk8sAddons.AwsTrustPolicyConfig           `json:"awsELB,omitzero"`
 }
 
 type Mk8sStatus struct {
-	OidcProviderUrl string           `json:"oidcProviderUrl,omitempty"`
-	ServerUrl       string           `json:"serverUrl,omitempty"`
-	HomeLocation    string           `json:"homeLocation,omitempty"`
-	AddOns          Mk8SStatusAddOns `json:"addOns,omitempty"`
+	OidcProviderUrl string            `json:"oidcProviderUrl,omitzero" validate:"uri"`
+	ServerUrl       string            `json:"serverUrl,omitzero" validate:"uri"`
+	HomeLocation    string            `json:"homeLocation,omitzero"`
+	AddOns          *Mk8SStatusAddOns `json:"addOns,omitzero"`
 }

@@ -1,35 +1,37 @@
-/* auto-generated */
+/* hand-maintained — canonical source of truth (nodelibs/schema/src/discovery.ts).
+ * `validate:` struct tags drive pkg/validate.FromType; DSL on go-libs/schema/ipSet/models.go.
+ * Only five of the endpoints are `Joi.string().uri()` — the rest are plain strings. */
 
 package discovery
 
 type DiscoveryEndpoints struct {
-	Billing           string `json:"billing,omitempty"`
-	Console           string `json:"console,omitempty"`
-	Browser           string `json:"browser,omitempty"`
-	Hub               string `json:"hub,omitempty"`
-	Registry          string `json:"registry,omitempty"`
-	Audit             string `json:"audit,omitempty"`
-	Logs              string `json:"logs,omitempty"`
-	Metrics           string `json:"metrics,omitempty"`
-	MetricsNg         string `json:"metrics-ng,omitempty"`
-	Tracing           string `json:"tracing,omitempty"`
-	Byok              string `json:"byok,omitempty"`
-	Metering          string `json:"metering,omitempty"`
-	BillingNg         string `json:"billing-ng,omitempty"`
-	Grafana           string `json:"grafana,omitempty"`
-	TerraformExporter string `json:"terraform-exporter,omitempty"`
-	K8sCrdExporter    string `json:"k8s-crd-exporter,omitempty"`
-	Mcp               string `json:"mcp,omitempty"`
-	Auth              string `json:"auth,omitempty"`
+	Billing           string `json:"billing,omitzero" validate:"uri"`
+	Console           string `json:"console,omitzero" validate:"uri"`
+	Browser           string `json:"browser,omitzero" validate:"uri"`
+	Hub               string `json:"hub,omitzero" validate:"uri"`
+	Registry          string `json:"registry,omitzero"`
+	Audit             string `json:"audit,omitzero"`
+	Logs              string `json:"logs,omitzero"`
+	Metrics           string `json:"metrics,omitzero"`
+	MetricsNg         string `json:"metrics-ng,omitzero"`
+	Tracing           string `json:"tracing,omitzero"`
+	Byok              string `json:"byok,omitzero"`
+	Metering          string `json:"metering,omitzero"`
+	BillingNg         string `json:"billing-ng,omitzero"`
+	Grafana           string `json:"grafana,omitzero"`
+	TerraformExporter string `json:"terraform-exporter,omitzero"`
+	K8sCrdExporter    string `json:"k8s-crd-exporter,omitzero"`
+	Mcp               string `json:"mcp,omitzero"`
+	Auth              string `json:"auth,omitzero" validate:"uri"`
 }
 
 type DiscoveryFirebase struct {
-	ApiKey     string `json:"apiKey,omitempty"`
-	AuthDomain string `json:"authDomain,omitempty"`
-	ProjectId  string `json:"projectId,omitempty"`
+	ApiKey     string `json:"apiKey,omitzero"`
+	AuthDomain string `json:"authDomain,omitzero"`
+	ProjectId  string `json:"projectId,omitzero"`
 }
 
 type Discovery struct {
-	Endpoints DiscoveryEndpoints `json:"endpoints,omitempty"`
-	Firebase  DiscoveryFirebase  `json:"firebase,omitempty"`
+	Endpoints *DiscoveryEndpoints `json:"endpoints,omitzero"`
+	Firebase  *DiscoveryFirebase  `json:"firebase,omitzero"`
 }

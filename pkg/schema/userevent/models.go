@@ -15,13 +15,13 @@ type UserEventPayloadUserRemoved struct {
 }
 
 type UserEventPayload struct {
-	UserCreated *UserEventPayloadUserCreated `json:"userCreated,omitempty"`
-	UserRemoved *UserEventPayloadUserRemoved `json:"userRemoved,omitempty"`
+	UserCreated *UserEventPayloadUserCreated `json:"userCreated,omitzero"`
+	UserRemoved *UserEventPayloadUserRemoved `json:"userRemoved,omitzero"`
 }
 
 type UserEvent struct {
-	Id        string           `json:"id,omitempty"`
-	Created   string           `json:"created,omitempty"`
-	Delivered string           `json:"delivered,omitempty"`
-	Payload   UserEventPayload `json:"payload,omitempty"`
+	Id        string           `json:"id,omitzero"`
+	Created   string           `json:"created,omitzero"`
+	Delivered string           `json:"delivered,omitzero"`
+	Payload   UserEventPayload `json:"payload"`
 }
