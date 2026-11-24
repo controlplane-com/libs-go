@@ -41,6 +41,10 @@ spec:
             properties:
               authConfig:
                 properties:
+                  allowedProviders:
+                    items:
+                      type: string
+                    type: array
                   domainAutoMembers:
                     items:
                       type: string

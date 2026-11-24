@@ -59,6 +59,20 @@ func (ThreatDetection) ValidationRule() *validate.Rule {
 
 // --- leaf nominal types ---
 
+// ValidationRule reflects AuthConfig and layers org.ts checkAuthConfig.
+func (AuthConfig) ValidationRule() *validate.Rule {
+	return validate.RefineT(validate.Reflect(AuthConfig{}), authConfigRefine)
+}
+
+// ValidationRule ports the allowedProviders item: Joi.string().valid(...SIGN_IN_PROVIDERS).
+func (SignInProvider) ValidationRule() *validate.Rule {
+	vals := make([]any, len(SignInProviders))
+	for i, p := range SignInProviders {
+		vals[i] = p
+	}
+	return validate.String().Valid(vals...)
+}
+
 // ValidationRule ports the AlertEmail leaf: Joi.string().email().
 func (AlertEmail) ValidationRule() *validate.Rule { return validate.String().Email() }
 
@@ -109,6 +123,10 @@ func (DomainNameList) ValidationRule() *validate.Rule {
 	return validate.Array(DomainName("").ValidationRule()).Sort().Dedupe()
 }
 
+func (SignInProviderList) ValidationRule() *validate.Rule {
+	return validate.Array(SignInProvider("").ValidationRule()).Sort().Dedupe()
+}
+
 func (StringDedupeList) ValidationRule() *validate.Rule {
 	return validate.Array(validate.String()).Dedupe()
 }
@@ -138,6 +156,18 @@ func observabilityDefault() *ObservabilityConfig {
 func orgSpecRefine(spec *OrgSpec, h *validate.Helper) error {
 	if !h.Present("observability") {
 		spec.Observability = observabilityDefault()
+	}
+	return nil
+}
+
+// authConfigRefine ports org.ts checkAuthConfig.
+func authConfigRefine(ac *AuthConfig, h *validate.Helper) error {
+	listed := len(ac.AllowedProviders)
+	if util.Bool(ac.SamlOnly) && listed > 0 {
+		return h.Errorf("any.custom", "samlOnly and allowedProviders are mutually exclusive")
+	}
+	if len(ac.DomainAutoMembers) > 0 && listed > 0 {
+		return h.Errorf("any.custom", "domainAutoMembers adds members only on SAML sign-in, which allowedProviders does not allow")
 	}
 	return nil
 }

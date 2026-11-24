@@ -2,6 +2,8 @@ package cloudaccount
 
 import (
 	"net/http"
+	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/controlplane-com/libs-go/pkg/schema/validate"
@@ -47,4 +49,65 @@ func TestNullDataIsNotAnObject(t *testing.T) {
 	if _, verr := validate.Decode[CloudAccount](validate.Bytes(`{"name":"ca1","provider":"aws"}`), nil, validate.Prefs{}); verr != nil {
 		t.Fatalf("absent data rejected: %v", verr)
 	}
+}
+
+func TestAwsRoleNameAndBoundary(t *testing.T) {
+	long := strings.Repeat("a", 65)
+	for body, ok := range map[string]bool{
+		`{"name":"ca1","provider":"aws","data":{"roleArn":"arn:aws:iam::1:role/` + long[:64] + `"}}`:                                               true,
+		`{"name":"ca1","provider":"aws","data":{"roleArn":"arn:aws:iam::1:role/cpln/` + long[:64] + `"}}`:                                          true,
+		`{"name":"ca1","provider":"aws","data":{"roleArn":"arn:aws:iam::1:role/` + long + `"}}`:                                                    false,
+		`{"name":"ca1","provider":"aws","data":{"roleArn":"arn:aws:iam::1:role/x","boundaryPolicyArn":"arn:aws:iam::1:policy/cpln-x-boundary"}}`:   true,
+		`{"name":"ca1","provider":"aws","data":{"roleArn":"arn:aws:iam::1:role/x","boundaryPolicyArn":"arn:aws:iam::1:policy/cpln/x/boundary"}}`:   true,
+		`{"name":"ca1","provider":"aws","data":{"roleArn":"arn:aws:iam::1:role/x","boundary":"arn:aws:iam::1:policy/x"}}`:                          false,
+		`{"name":"ca1","provider":"aws","data":{"roleArn":"arn:aws:iam::1:role/x","boundaryPolicyArn":"arn:aws:iam::1:role/x"}}`:                   false,
+		`{"name":"ca1","provider":"aws","data":{"roleArn":"arn:aws:iam::1:role/cpln/` + long + `"}}`:                                               false,
+		`{"name":"ca1","provider":"aws","data":{"roleArn":"arn:aws:iam::1:role/x","boundaryPolicyArn":"arn:aws:iam::aws:policy/PowerUserAccess"}}`: true,
+		`{"name":"ca1","provider":"gcp","data":{"projectId":"abcdef","boundaryPolicyArn":"arn:aws:iam::1:policy/x"}}`:                              false,
+	} {
+		if _, verr := validate.Decode[CloudAccount](validate.Bytes(body), nil, validate.Prefs{}); (verr == nil) != ok {
+			t.Errorf("%s: accepted=%v, want %v (%v)", body, verr == nil, ok, verr)
+		}
+	}
+}
+
+func TestSuffixRule(t *testing.T) {
+	rule := Suffix("").ValidationRule()
+	for v, ok := range map[string]bool{"a": true, "eu2": true, "abcdefg": true, "abcdefgh": false, "-abc": false, "a-b": false, "ABC": false, "": false} {
+		if _, err := rule.ValidateAt(nil, v, nil, validate.Prefs{}); (err == nil) != ok {
+			t.Errorf("%q: accepted=%v, want %v", v, err == nil, ok)
+		}
+	}
+	for _, body := range []string{
+		`{"name":"ca1","provider":"aws","data":{"roleArn":"arn:aws:iam::1:role/cpln-x-abc","suffix":"abc"}}`,
+		`{"name":"ca1","provider":"gcp","data":{"projectId":"abcdef","suffix":"abc"}}`,
+	} {
+		if _, verr := validate.Decode[CloudAccount](validate.Bytes(body), nil, validate.Prefs{}); verr == nil {
+			t.Errorf("suffix stored: %s", body)
+		}
+	}
+}
+
+func TestAwsBoundarySameAccountOrAwsManaged(t *testing.T) {
+	for boundary, ok := range map[string]bool{
+		"arn:aws:iam::111122223333:policy/cpln/acme-boundary": true,
+		"arn:aws:iam::aws:policy/PowerUserAccess":             true,
+		"arn:aws:iam::999999999999:policy/other":              false,
+		"arn:aws-cn:iam::111122223333:policy/x":               false,
+		"arn:aws:iam::111122223333:policy/path/":              false,
+	} {
+		body := `{"name":"ca1","provider":"aws","data":{"roleArn":"arn:aws:iam::111122223333:role/cpln-acme","boundaryPolicyArn":"` + boundary + `"}}`
+		if _, verr := validate.Decode[CloudAccount](validate.Bytes(body), nil, validate.Prefs{}); (verr == nil) != ok {
+			t.Errorf("%s: accepted=%v, want %v (%v)", boundary, verr == nil, ok, verr)
+		}
+	}
+}
+
+func TestDataIsImmutable(t *testing.T) {
+	for _, f := range validate.ImmutableFields(reflect.TypeFor[CloudAccount]()) {
+		if f == "data" {
+			return
+		}
+	}
+	t.Fatal("data is not among the immutable fields")
 }

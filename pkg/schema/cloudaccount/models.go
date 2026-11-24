@@ -18,18 +18,25 @@ import "github.com/controlplane-com/libs-go/pkg/schema/base"
 // `pattern=cloudAccountAwsRoleArn` tag (Joi.string().regex(awsRoleArnRe)).
 type AwsRoleArn string
 
+// Suffix of an AWS bridge role, cpln-<org>-<suffix>; validates the instructions' ?suffix=.
+type Suffix string
+
+// AwsPolicyArn is an IAM policy ARN, customer or AWS managed.
+type AwsPolicyArn string
+
 // GcpProjectId is a GCP project id — the strongly-typed replacement for the
 // `pattern=gcpProjectId` tag (Joi.string().regex(gcpProjectIDRe)).
 type GcpProjectId string
 
 // SecretLink is an org-local link constrained to a "secret" resource — the
 // strongly-typed replacement for the `localLink=secret` tag on the azure/ngs
-// credential body (Joi LocalLink.custom(toKind('secret')), cloudaccount.ts:22/26).
+// credential body (Joi LocalLink.custom(toKind('secret')), cloudaccount.ts).
 // It expands a `//secret/foo` link to org-absolute and kind-checks it.
 type SecretLink string
 
 type AwsConfig struct {
-	RoleArn AwsRoleArn `json:"roleArn" validate:"required"`
+	RoleArn           AwsRoleArn   `json:"roleArn" validate:"required"`
+	BoundaryPolicyArn AwsPolicyArn `json:"boundaryPolicyArn,omitzero"`
 }
 
 type AzureConfig struct {
@@ -57,7 +64,7 @@ type CloudAccount struct {
 	LastModified string              `json:"lastModified,omitzero" validate:"date,readOnly"`
 	Links        base.Links          `json:"links,omitzero" validate:"readOnly"`
 	Provider     base.CloudProvider  `json:"provider,omitzero"`
-	Data         any                 `json:"data,omitzero" ts:"GcpConfig | AwsConfig | AzureConfig | NgsConfig"`
+	Data         any                 `json:"data,omitzero" validate:"unmodifiable" ts:"GcpConfig | AwsConfig | AzureConfig | NgsConfig"`
 	Status       *CloudAccountStatus `json:"status,omitzero"`
 }
 

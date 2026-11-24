@@ -20,6 +20,7 @@ package cloudaccount
 
 import (
 	"regexp"
+	"strings"
 
 	"github.com/controlplane-com/libs-go/pkg/schema/base"
 	"github.com/controlplane-com/libs-go/pkg/schema/validate"
@@ -33,7 +34,7 @@ func (CloudAccount) ValidationRule() *validate.Rule {
 }
 
 // cloudAccountRefine ports `data: Joi.alternatives().conditional('provider', [...])`
-// (cloudaccount.ts:32):
+// (cloudaccount.ts):
 // the provider scalar selects the credential body (gcp→GcpConfig, aws→AwsConfig,
 // azure→AzureConfig, ngs→NgsConfig); an unmatched provider leaves `data`
 // unconstrained (Joi's conditional with no matching branch and no otherwise). The
@@ -86,7 +87,23 @@ func dataPresent(ca any, h *validate.Helper) bool {
 // --- nested credential bodies (reflected; no object-level rules of their own) ---
 
 // ValidationRule reflects AwsConfig (was CloudAccountAwsConfigRule / Joi AwsConfig).
-func (AwsConfig) ValidationRule() *validate.Rule { return validate.Reflect(AwsConfig{}) }
+func (AwsConfig) ValidationRule() *validate.Rule {
+	return validate.Reflect(AwsConfig{}).CustomTyped(awsBoundaryRefine)
+}
+
+// awsBoundaryRefine ports AwsConfig's .custom: AWS takes a boundary only from the role's own
+// partition and account, or an AWS managed one.
+func awsBoundaryRefine(v any, h *validate.Helper) (any, error) {
+	boundary := validate.Str(v, "boundaryPolicyArn")
+	if boundary == "" {
+		return v, nil
+	}
+	role, b := strings.Split(validate.Str(v, "roleArn"), ":"), strings.Split(boundary, ":")
+	if len(role) < 5 || len(b) < 5 || b[1] != role[1] || (b[4] != role[4] && b[4] != "aws") {
+		return nil, h.Errorf("any.custom", `"boundaryPolicyArn" must be in the partition and account of "roleArn", or AWS managed`)
+	}
+	return v, nil
+}
 
 // ValidationRule reflects GcpConfig (was CloudAccountGcpConfigRule / Joi GcpConfig).
 func (GcpConfig) ValidationRule() *validate.Rule { return validate.Reflect(GcpConfig{}) }
@@ -99,18 +116,27 @@ func (NgsConfig) ValidationRule() *validate.Rule { return validate.Reflect(NgsCo
 
 // --- nominal leaf types (replace the old pattern=/localLink= tags) ---
 
-// awsRoleArnRe ports AwsConfig.roleArn's regex (nodelibs/schema/src/cloudaccount.ts:6-8),
+// awsRoleArnRe ports AwsConfig.roleArn's regex (nodelibs/schema/src/cloudaccount.ts),
 // formerly RegisterPattern("cloudAccountAwsRoleArn", …).
-var awsRoleArnRe = regexp.MustCompile(`^arn:(aws|aws-us-gov|aws-cn):iam::[0-9]+:role/.+`)
+var awsRoleArnRe = regexp.MustCompile(`^arn:(aws|aws-us-gov|aws-cn):iam::[0-9]+:role/(.*/)?[^/]{1,64}$`)
 
 func (AwsRoleArn) ValidationRule() *validate.Rule { return validate.String().Regex(awsRoleArnRe) }
 
-// gcpProjectIDRe ports GcpConfig.projectId's regex (cloudaccount.ts:14-18),
+var awsPolicyArnRe = regexp.MustCompile(`^arn:(aws|aws-us-gov|aws-cn):iam::([0-9]+|aws):policy/(.*/)?[^/]+$`)
+
+func (AwsPolicyArn) ValidationRule() *validate.Rule { return validate.String().Regex(awsPolicyArnRe) }
+
+// gcpProjectIDRe ports GcpConfig.projectId's regex (cloudaccount.ts),
 // formerly RegisterPattern("gcpProjectId", …). Joi applies min/max separately, so
 // those stay declarative tags on the field.
 var gcpProjectIDRe = regexp.MustCompile(`[a-z]([a-z]|-|[0-9])+`)
 
 func (GcpProjectId) ValidationRule() *validate.Rule { return validate.String().Regex(gcpProjectIDRe) }
+
+// suffixRe is CloudAccountSuffix (cloudaccount.ts): 1-7 lowercase letters and digits.
+var suffixRe = regexp.MustCompile(`^[a-z0-9]{1,7}$`)
+
+func (Suffix) ValidationRule() *validate.Rule { return validate.String().Regex(suffixRe) }
 
 func (SecretLink) ValidationRule() *validate.Rule {
 	return base.LocalLinkRule().Custom(base.ToKind("secret"))

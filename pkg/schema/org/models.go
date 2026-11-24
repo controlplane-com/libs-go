@@ -39,9 +39,16 @@ type OrgStatus struct {
 }
 
 type AuthConfig struct {
-	DomainAutoMembers DomainNameList `json:"domainAutoMembers,omitzero"`
-	SamlOnly          *bool          `json:"samlOnly,omitzero"`
+	DomainAutoMembers DomainNameList     `json:"domainAutoMembers,omitzero"`
+	SamlOnly          *bool              `json:"samlOnly,omitzero"`
+	AllowedProviders  SignInProviderList `json:"allowedProviders,omitzero"`
 }
+
+// SignInProvider is a sign-in method an org can allow (see signin.go).
+type SignInProvider string
+
+// SignInProviderList ports AuthConfig.allowedProviders: sorted, duplicates removed.
+type SignInProviderList []SignInProvider
 
 // ObservabilityConfig ports org.ts:46. The retention fields default to 30; the
 // whole-object default (org.ts:88) is injected by orgSpecRefine when absent.
