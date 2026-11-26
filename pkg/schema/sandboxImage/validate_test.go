@@ -33,8 +33,10 @@ func TestSpecMatchesJoi(t *testing.T) {
 			want: `{"base":{"image":"x/y:1"},"tag":"v2","type":"dev"}`},
 		{body: `{"tag":"_ok-1.2"}`, want: `{"tag":"_ok-1.2","type":"dev"}`},
 		{body: `{"tag":"` + long + `"}`, want: `{"tag":"` + long + `","type":"dev"}`},
-		{body: `{"type":"agent"}`, want: `{"tag":"latest","type":"agent"}`},
-		{body: `{"type":"bogus"}`, typ: "any.only", msg: `"type" must be one of [dev, agent]`},
+		{body: `{"type":"session"}`, want: `{"tag":"latest","type":"session"}`},
+		// the old spelling is read as session by the handler, before the schema pass
+		{body: `{"type":"agent"}`, typ: "any.only", msg: `"type" must be one of [dev, session]`},
+		{body: `{"type":"bogus"}`, typ: "any.only", msg: `"type" must be one of [dev, session]`},
 		{body: `{"tag":"bad tag!"}`, typ: "string.pattern.base", msg: sprintfPat(pat, `"bad tag!"`)},
 		{body: `{"tag":"-lead"}`, typ: "string.pattern.base", msg: sprintfPat(pat, `"-lead"`)},
 		{body: `{"tag":""}`, typ: "string.empty", msg: `"tag" is not allowed to be empty`},

@@ -44,6 +44,7 @@ var (
 	routePrefixJS     = `^\/[0-9a-zA-Z-\._~\/]*$`
 	routeHostPrefixRe = regexp.MustCompile(`^[0-9a-zA-Z\-\._]*$`)
 	routeHostPrefixJS = `^[0-9a-zA-Z-\._]*$`
+	sessionCookieRe   = regexp.MustCompile(`^[0-9a-zA-Z_-]+$`)
 	corsMaxAgeRe      = regexp.MustCompile(`^[\d\.]+[hms]+$`)
 	hostnameRe        = regexp.MustCompile(`^([a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?\.)*[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?$`)
 )
@@ -151,6 +152,20 @@ func RouteCanaryRule() *validate.Rule {
 	})
 }
 
+// RouteCanaryAffinityRule ports domain.ts RouteCanaryAffinity.
+func RouteCanaryAffinityRule() *validate.Rule {
+	return validate.Object(map[string]*validate.Rule{
+		"cookie": validate.String().Regex(sessionCookieRe).Max(64).Required(),
+	})
+}
+
+// RouteSessionAffinityRule ports domain.ts RouteSessionAffinity.
+func RouteSessionAffinityRule() *validate.Rule {
+	return validate.Object(map[string]*validate.Rule{
+		"canary": RouteCanaryAffinityRule().Required(),
+	})
+}
+
 // routeCanaryWeight ports the Route .custom (domain.ts:101-122): combined canary
 // weight must not exceed 100.
 func routeCanaryWeight(r *Route, h *validate.Helper) error {
@@ -181,14 +196,15 @@ func RouteRule() *validate.Rule {
 				"any.unknown": "caseInsensitive applies to prefix only; use the (?i) flag in the regex instead",
 			})}).
 			Optional(),
-		"workloadLink": base.LocalLinkRule().Custom(base.ToKind("!workload")).Required(),
-		"port":         portRule().Optional(),
-		"hostPrefix":   validate.String().RegexAs(routeHostPrefixRe, routeHostPrefixJS).Optional(),
-		"hostRegex":    base.RegexRule().Optional(),
-		"headers":      validate.Object(map[string]*validate.Rule{"request": headerOperationRule()}).Optional(),
-		"replica":      validate.Number().Integer().Min(0).Optional(),
-		"mirror":       validate.Array(RouteMirrorRule().Optional()),
-		"canaries":     validate.Array(RouteCanaryRule()).Optional(),
+		"workloadLink":    base.LocalLinkRule().Custom(base.ToKind("!workload")).Required(),
+		"port":            portRule().Optional(),
+		"hostPrefix":      validate.String().RegexAs(routeHostPrefixRe, routeHostPrefixJS).Optional(),
+		"hostRegex":       base.RegexRule().Optional(),
+		"headers":         validate.Object(map[string]*validate.Rule{"request": headerOperationRule()}).Optional(),
+		"replica":         validate.Number().Integer().Min(0).Optional(),
+		"mirror":          validate.Array(RouteMirrorRule().Optional()),
+		"canaries":        validate.Array(RouteCanaryRule()).Optional(),
+		"sessionAffinity": RouteSessionAffinityRule().Optional(),
 	}).Xor("prefix", "regex").Nand("hostPrefix", "hostRegex").CustomTyped(validate.CustomT(routeCanaryWeight))
 }
 

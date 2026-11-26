@@ -267,19 +267,28 @@ type RouteMirror struct {
 	Percent      float64  `json:"percent"`
 } //ts:export
 
+type RouteCanaryAffinity struct {
+	Cookie string `json:"cookie"`
+} //ts:export
+
+type RouteSessionAffinity struct {
+	Canary RouteCanaryAffinity `json:"canary"`
+} //ts:export
+
 type Route struct {
-	ReplacePrefix   string        `json:"replacePrefix,omitzero"`
-	Regex           string        `json:"regex,omitzero"`
-	Prefix          string        `json:"prefix,omitzero"`
-	CaseInsensitive *bool         `json:"caseInsensitive,omitzero"`
-	WorkloadLink    string        `json:"workloadLink"`
-	Port            *float64      `json:"port,omitzero"`
-	HostPrefix      string        `json:"hostPrefix,omitzero"`
-	HostRegex       string        `json:"hostRegex,omitzero"`
-	Headers         *RouteHeaders `json:"headers,omitzero"`
-	Replica         *float64      `json:"replica,omitzero"`
-	Mirror          []RouteMirror `json:"mirror,omitzero"`
-	Canaries        []RouteCanary `json:"canaries,omitzero"`
+	ReplacePrefix   string                `json:"replacePrefix,omitzero"`
+	Regex           string                `json:"regex,omitzero"`
+	Prefix          string                `json:"prefix,omitzero"`
+	CaseInsensitive *bool                 `json:"caseInsensitive,omitzero"`
+	WorkloadLink    string                `json:"workloadLink"`
+	Port            *float64              `json:"port,omitzero"`
+	HostPrefix      string                `json:"hostPrefix,omitzero"`
+	HostRegex       string                `json:"hostRegex,omitzero"`
+	Headers         *RouteHeaders         `json:"headers,omitzero"`
+	Replica         *float64              `json:"replica,omitzero"`
+	Mirror          []RouteMirror         `json:"mirror,omitzero"`
+	Canaries        []RouteCanary         `json:"canaries,omitzero"`
+	SessionAffinity *RouteSessionAffinity `json:"sessionAffinity,omitzero"`
 }
 
 type RouteCanary struct {

@@ -35,10 +35,10 @@ type SandboxImageSpec struct {
 	Type SandboxImageSpecType  `json:"type,omitzero" validate:"default=dev"`
 }
 
-// SandboxImageSpecType: dev builds the base plus the sandbox layer; agent copies the base alone.
+// SandboxImageSpecType: dev builds the base plus the sandbox layer; session copies the base alone, for sessions.
 type SandboxImageSpecType string
 
-func (SandboxImageSpecType) EnumValues() []string { return []string{"dev", "agent"} }
+func (SandboxImageSpecType) EnumValues() []string { return []string{"dev", "session"} }
 
 type SandboxImageStatusPhase string
 

@@ -137,6 +137,14 @@ spec:
                             type: string
                           replica:
                             type: number
+                          sessionAffinity:
+                            properties:
+                              canary:
+                                properties:
+                                  cookie:
+                                    type: string
+                                type: object
+                            type: object
                           workloadLink:
                             type: string
                         type: object
